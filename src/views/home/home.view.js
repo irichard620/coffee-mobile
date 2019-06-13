@@ -33,6 +33,7 @@ class HomePage extends Component {
 	}
 	onAddClick() {
 		// Pull up add menu
+		this.props.navigation.navigate('Builder')
 	}
 	render() {
 		const { tab } = this.state;
