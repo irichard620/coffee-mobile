@@ -11,13 +11,15 @@ import Vessel from './vessel';
 import * as constants from './builder-constants';
 import BuilderModal from './modal';
 import SwipeList from './swipe-list';
+import update from 'immutability-helper';
 
 class BuilderPage extends Component {
 	constructor(props) {
     super(props);
 		this.state = {
 			visibleModal: false,
-			modalType: null,
+			modalId: "",
+			modalType: "",
 			modalText: "",
 			modalSelect: "Fine",
 			recipeName: "New Recipe",
@@ -44,13 +46,13 @@ class BuilderPage extends Component {
 			this.setState({ visibleModal: true, modalType: id });
 		} else if (id.includes(constants.VESSEL_ELEM)) {
 			// Update vessel
-			this.setState({ brewingVessel: constants.vesselLabels[id], vesselId: id, visibleModal: false, modalType: null, });
+			this.setState({ brewingVessel: constants.vesselLabels[id], vesselId: id, visibleModal: false, modalType: "", });
 		} else if (id.includes(constants.FILTER_ELEM)) {
 			// Update vessel
-			this.setState({ filterType: constants.filterLabels[id], visibleModal: false, modalType: null, });
+			this.setState({ filterType: constants.filterLabels[id], visibleModal: false, modalType: "", });
 		} else if (id.includes(constants.ORIENTATION_ELEM)) {
 			// Update vessel
-			this.setState({ orientation: constants.orientationLabels[id], visibleModal: false, modalType: null, });
+			this.setState({ orientation: constants.orientationLabels[id], visibleModal: false, modalType: "", });
 		} else {
 			// Add new step
 			newStep = {
@@ -61,7 +63,7 @@ class BuilderPage extends Component {
 			}
 			this.setState({
 				visibleModal: false,
-				modalType: null,
+				modalType: "",
 				steps: [
 					...this.state.steps,
 					newStep
@@ -71,18 +73,116 @@ class BuilderPage extends Component {
   };
 
 	onCloseClick = () => {
-		// If id empty - add new step to end
-
 		// If id there, find element and update it
 		this.setState({
 			visibleModal: false,
-			modalType: null,
+			modalType: "",
 		});
+	}
+
+	onModalSave = (id) => {
+		const { modalType, modalText, modalSelect, steps } = this.state
+		// If modal was for recipe name, just update that
+		if (modalType == constants.RECIPE_NAME_ELEM) {
+			this.setState({ recipeName: modalText, visibleModal: false, modalType: "" });
+		} else if (id == '') {
+			// Get title label
+			titleLabel = '';
+			if (modalType.includes(constants.NEW_STEP_ELEM)) {
+				titleLabel = constants.stepLabels[modalType];
+			} else if (modalType.includes(constants.RECIPE_NAME_ELEM)) {
+				titleLabel = 'Recipe Name';
+			}
+
+			// Get description
+			description = '';
+			if (modalType == constants.STEP_HEAT_WATER) {
+	      description = 'Heat water to ' + modalText + 'F';
+	    } else if (modalType == constants.STEP_GRIND_COFFEE) {
+	      description = modalText + ' grams of coffee ground ' + modalSelect;
+	    } else if (modalType == constants.STEP_BLOOM_GROUNDS) {
+	      description = 'Bloom grounds with ' + modalText + ' of water';
+	    } else if (modalType == constants.STEP_POUR_WATER) {
+	      description = 'Pour in ' + modalText + ' of water';
+	    } else if (modalType == constants.STEP_WAIT ) {
+	      description = 'Wait ' + modalText + ' seconds';
+	    } else if (modalType == constants.RECIPE_NAME_ELEM) {
+	      description = modalText;
+	    }
+
+			// Add new step and update state
+			newStep = {
+				id: uuidv4(),
+				type: modalType,
+				title: titleLabel,
+				description: description,
+			}
+			this.setState({
+				visibleModal: false,
+				modalType: "",
+				steps: [
+					...steps,
+					newStep
+				]
+			})
+		} else if (id != '') {
+			// Get description
+			description = '';
+			if (modalType == constants.STEP_HEAT_WATER) {
+	      description = 'Heat water to ' + modalText + 'F';
+	    } else if (modalType == constants.STEP_GRIND_COFFEE) {
+	      description = modalText + ' grams of coffee ground ' + modalSelect;
+	    } else if (modalType == constants.STEP_BLOOM_GROUNDS) {
+	      description = 'Bloom grounds with ' + modalText + ' of water';
+	    } else if (modalType == constants.STEP_POUR_WATER) {
+	      description = 'Pour in ' + modalText + ' of water';
+	    } else if (modalType == constants.STEP_WAIT ) {
+	      description = 'Wait ' + modalText + ' seconds';
+	    }
+
+			// Find index
+			var index = -1;
+			for (var i = 0; i < steps.length; i++) {
+		    // Check id
+				if (steps[i]['id'] == id) {
+					index = i;
+				}
+			}
+
+			if (index !== -1) {
+				this.setState({
+					visibleModal: false,
+					modalType: "",
+					steps: update(steps, {[index]: {description: {$set: description}}})
+				})
+		  }
+		}
 	}
 
 	onStepClick = (id) => {
 		// Pull up modify menu
 		this.setState({ visibleModal: true, modalType: id })
+	}
+
+	onPressEdit = (id, type) => {
+		this.setState({ visibleModal: true, modalType: type, modalId: id })
+	}
+
+	onPressDelete = (id) => {
+		// make a separate copy of the array
+		var array = [...this.state.steps];
+		// Find index
+		var index = -1;
+		for (var i = 0; i < array.length; i++) {
+	    // Check id
+			if (array[i]['id'] == id) {
+				index = i;
+			}
+		}
+	  if (index !== -1) {
+	    array.splice(index, 1);
+	    this.setState({ steps: array });
+	  }
 	}
 
 	onChangeText = (text) => {
@@ -97,7 +197,7 @@ class BuilderPage extends Component {
 	}
 
 	render() {
-		const { recipeName, brewingVessel, filterType, orientation, modalType,
+		const { recipeName, brewingVessel, filterType, orientation, modalId, modalType,
 			modalText, modalSelect, steps, vesselId } = this.state;
 
 		// Check if we should disable certain fields
@@ -142,6 +242,8 @@ class BuilderPage extends Component {
 				</View>
 				<View style={styles.line}/>
 				<SwipeList
+					onPressEdit={this.onPressEdit}
+					onPressDelete={this.onPressDelete}
 					data={steps}
 				/>
 				<View style={styles.addandsave}>
@@ -153,7 +255,8 @@ class BuilderPage extends Component {
 				</View>
 				<BuilderModal
 					visibleModal={this.state.visibleModal}
-					onSwipeComplete={() => this.setState({ visibleModal: false })}
+					onSwipeComplete={this.onCloseClick}
+					modalId={modalId}
 					modalType={modalType}
 					modalText={modalText}
 					modalSelect={modalSelect}
@@ -162,6 +265,7 @@ class BuilderPage extends Component {
 					onPressItem={this.onPressItem}
 					onChangeText={this.onChangeText}
 					onChangePicker={this.onChangePicker}
+					onModalSave={this.onModalSave}
 				/>
 			</ScrollView>
 		);

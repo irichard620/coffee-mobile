@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Picker } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Picker, Button } from 'react-native';
 import Modal from "react-native-modal";
 import List from '../../components/list';
 import Close from '../../components/close';
@@ -10,18 +10,6 @@ class BuilderModal extends Component {
 	constructor(props) {
     super(props);
   }
-
-	onPressItem = (id) => {
-		// Set
-    console.log(id + ' selected');
-  };
-
-	onCloseClick = () => {
-		this.setState({
-			visibleModal: false,
-			modalType: null,
-		});
-	}
 
 	newStepOptions = () => {
 		arrToUse = [];
@@ -74,6 +62,8 @@ class BuilderModal extends Component {
       return 'Water Amount';
     } else if (modalType == constants.STEP_WAIT ) {
       return 'Wait Time';
+    } else if (modalType == constants.RECIPE_NAME_ELEM) {
+      return 'Recipe Name';
     }
     return '';
   }
@@ -99,7 +89,7 @@ class BuilderModal extends Component {
 		}
 
     // Elems with atleast one text
-    isTextInput = true
+    isTextInput = !isListModal
     isSelectInput = false
     if (modalType == constants.STEP_GRIND_COFFEE) {
       isSelectInput = true
@@ -111,6 +101,14 @@ class BuilderModal extends Component {
       textToDisplay = this.getTextPlaceholder(modalType);
     }
 
+    // Title
+    titleToDisplay = '';
+    if (modalType.includes(constants.NEW_STEP_ELEM)) {
+      titleToDisplay = constants.stepLabels[modalType];
+    } else if (modalType.includes(constants.RECIPE_NAME_ELEM)) {
+      titleToDisplay = 'Recipe Name';
+    }
+
 		return (
       <Modal
         isVisible={visibleModal}
@@ -119,13 +117,25 @@ class BuilderModal extends Component {
         style={styles.bottomModal}
       >
         <View style={styles.content}>
-          <Close
-            onCloseClick={this.props.onCloseClick}
-            style={styles.close}
-          />
+          <View style={styles.buttonsContainer}>
+            <Close
+              onCloseClick={this.props.onCloseClick}
+              style={styles.close}
+            />
+            {!isListModal && <Button
+              onPress={() => this.props.onModalSave(this.props.modalId)}
+              title="Save"
+              color="#1D5E9E"
+              style={styles.saveButton}
+            />}
+          </View>
+          {isTextInput && <Text style={styles.title}>{titleToDisplay}</Text>}
           {isTextInput && <TextInput
             onChangeText={(text) => this.props.onChangeText(text)}
-            value={textToDisplay}
+            value={modalText}
+            placeholder={textToDisplay}
+            placeholderTextColor='#b7b3b3'
+            style={styles.textinput}
           />}
           {isSelectInput && <View style={styles.picker}>
             <Picker
@@ -154,6 +164,19 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
   },
+  buttonsContainer: {
+    flexDirection:'row',
+    justifyContent: 'space-between'
+  },
+  saveButton: {
+  },
+  title: {
+		marginTop: 15,
+		marginBottom: 20,
+    fontSize: 20,
+    color: '#1D5E9E',
+    alignSelf: 'flex-start',
+  },
   bottomModal: {
     justifyContent: 'flex-end',
     margin: 0,
@@ -168,6 +191,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1D5E9E',
   },
+  textinput: {
+    padding: 15,
+    borderRadius: 20,
+    backgroundColor: '#F4F4F4'
+  }
 });
 
 export default BuilderModal;
