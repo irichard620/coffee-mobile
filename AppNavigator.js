@@ -10,12 +10,27 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import HomePage from './src/views/home/home.view';
 import BuilderPage from './src/views/builder/builder.view';
+import SponsorPage from './src/views/sponsor/sponsor.view';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
-const AppNavigator = createStackNavigator(
+const MainStack = createStackNavigator(
   {
     Home: {
       screen: HomePage,
+    },
+    Sponsor: {
+      screen: SponsorPage,
+    },
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: "Home",
+  }
+);
+const AppNavigator = createStackNavigator(
+  {
+    Main: {
+      screen: MainStack,
     },
     Builder: {
       screen: BuilderPage,
@@ -23,7 +38,7 @@ const AppNavigator = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: "Home",
+    initialRouteName: "Builder",
     mode: 'modal'
   }
 );

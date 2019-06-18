@@ -1,16 +1,28 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 class Sponsor extends Component {
+  constructor(props){
+		super(props);
+		this.onSponsorClick = this.onSponsorClick.bind(this);
+	}
+
+  onSponsorClick() {
+		this.props.onSponsorClick(this.props._id);
+	}
+
 	render() {
+    const { sponsor } = this.props
 		return (
-			<View style={styles.outline}>
-        <View style={styles.logo}>
-          <Text style={styles.title}>Logo here</Text>
-        </View>
-        <Text style={styles.description}>{this.props.description}</Text>
-			</View>
+      <TouchableHighlight disabled={this.props.disabled} style={styles.outline} onPress = { this.onSponsorClick }>
+  			<View>
+          <View style={styles.logo}>
+            <Text style={styles.title}>{this.props.title}</Text>
+          </View>
+          <Text style={styles.description}>{this.props.description}</Text>
+  			</View>
+      </TouchableHighlight>
 		);
 	}
 }

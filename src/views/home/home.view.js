@@ -1,9 +1,11 @@
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import Sponsor from './sponsor';
+import { fetchSponsors } from '../../actions/sponsor-actions';
 
 class HomePage extends Component {
 	constructor(props) {
@@ -14,7 +16,13 @@ class HomePage extends Component {
 		this.onFavoritesClick = this.onFavoritesClick.bind(this);
 		this.onCustomClick = this.onCustomClick.bind(this);
 		this.onAddClick = this.onAddClick.bind(this);
+		this.onSponsorClick = this.onSponsorClick.bind(this);
   }
+
+	componentDidMount() {
+		this.props.getSponsors();
+	}
+
 	onFavoritesClick() {
 		// Switch to favorites tab if not there
 		if (this.state.tab != 0) {
@@ -23,6 +31,7 @@ class HomePage extends Component {
 			})
 		}
 	}
+
 	onCustomClick() {
 		// Switch to custom tab if not there
 		if (this.state.tab != 1) {
@@ -31,17 +40,43 @@ class HomePage extends Component {
 			})
 		}
 	}
+
 	onAddClick() {
 		// Pull up add menu
 		this.props.navigation.navigate('Builder')
 	}
+
+	onSponsorClick(sponsorId) {
+		// Pull up sponsor page
+		this.props.navigation.navigate('Sponsor', {
+      sponsorId: sponsorId
+    })
+	}
+
 	render() {
+		const { sponsors } = this.props
 		const { tab } = this.state;
+		let sponsorID = ""
+		let sponsorTitle = ""
+		let sponsorDescription = "Loading Sponsors..."
+		let disabled = true
+		if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length == 0) {
+			sponsorDescription = "No Sponsors to show"
+		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
+			sponsorTitle = sponsors.sponsors[0]["company"]
+			sponsorDescription = sponsors.sponsors[0]["description"]
+			sponsorID = sponsors.sponsors[0]["_id"]
+			disabled = false
+		}
 		return (
 			<ScrollView style={styles.container}>
         <Text style={styles.title}>Good Morning, Emile.</Text>
 				<Sponsor
-					description={'Recipes perfected in Santa Cruz cafes. Bring the flavors home today.'}
+					disabled={disabled}
+					onSponsorClick={this.onSponsorClick}
+					_id={sponsorID}
+					title={sponsorTitle}
+					description={sponsorDescription}
 				/>
 				<MenuButtons
 					onFavoritesClick={this.onFavoritesClick}
@@ -95,5 +130,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   }
 });
+
+const mapStateToProps = (state) => ({ sponsors: state.sponsorsReducer.sponsors })
+
+const mapDispatchToProps = { getSponsors: fetchSponsors }
+
+HomePage = connect(mapStateToProps,mapDispatchToProps)(HomePage)
 
 export default HomePage;
