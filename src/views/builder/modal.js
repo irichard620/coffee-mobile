@@ -5,6 +5,7 @@ import Modal from "react-native-modal";
 import List from '../../components/list';
 import Close from '../../components/close';
 import * as constants from './builder-constants';
+import ButtonMini from '../../components/button-mini';
 
 class BuilderModal extends Component {
 	constructor(props) {
@@ -122,12 +123,13 @@ class BuilderModal extends Component {
               onCloseClick={this.props.onCloseClick}
               style={styles.close}
             />
-            {!isListModal && <Button
-              onPress={() => this.props.onModalSave(this.props.modalId)}
-              title="Save"
-              color="#1D5E9E"
-              style={styles.saveButton}
-            />}
+            {!isListModal && <ButtonMini
+  						onButtonClick={() => this.props.onModalSave(this.props.modalId)}
+  						type={0}
+  						title={'Save'}
+  						width={70}
+  						margin={[0, 0, 0, 0]}
+  					/>}
           </View>
           {isTextInput && <Text style={styles.title}>{titleToDisplay}</Text>}
           {isTextInput && <TextInput
@@ -144,6 +146,8 @@ class BuilderModal extends Component {
               itemStyle={styles.pickertitle}
             >
               <Picker.Item label="Fine" value="Fine" />
+              <Picker.Item label="Medium-Fine" value="Medium-Fine" />
+              <Picker.Item label="Medium" value="Medium" />
               <Picker.Item label="Medium-Coarse" value="Medium-Coarse" />
               <Picker.Item label="Coarse" value="Coarse" />
             </Picker>
@@ -161,7 +165,10 @@ class BuilderModal extends Component {
 const styles = StyleSheet.create({
 	content: {
     backgroundColor: 'white',
-    padding: 15,
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 45,
     borderRadius: 20,
   },
   buttonsContainer: {

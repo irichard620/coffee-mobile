@@ -38,7 +38,7 @@ const AppNavigator = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: "Builder",
+    initialRouteName: "Main",
     mode: 'modal'
   }
 );

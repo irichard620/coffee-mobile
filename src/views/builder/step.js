@@ -4,16 +4,25 @@ import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 class Step extends Component {
 	render() {
+    const { onStepClick, disabled, title, description, margin } = this.props
+
+    backgroundStyle = {
+      marginTop: margin[0],
+      marginRight: margin[1],
+      marginBottom: margin[2],
+      marginLeft: margin[3],
+    };
+
 		return (
       <TouchableHighlight
-        disabled={this.props.disabled}
-        style={styles.outline}
-        onPress = { this.props.onStepClick }
+        disabled={disabled}
+        style={[styles.outline, backgroundStyle]}
+        onPress = { onStepClick }
       >
   			<View>
-          <Text style={styles.title}>{this.props.title}</Text>
-          {this.props.description != '' && 
-            <Text style={styles.description}>{this.props.description}
+          <Text style={styles.title}>{title}</Text>
+          {description != '' &&
+            <Text style={styles.description}>{description}
             </Text>}
   			</View>
       </TouchableHighlight>
@@ -29,10 +38,6 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingTop: 15,
     paddingBottom: 15,
-    marginLeft: 15,
-		marginRight: 15,
-		marginTop: 0,
-		marginBottom: 15,
     backgroundColor: '#FFFFFF'
 	},
   title: {

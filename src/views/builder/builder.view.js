@@ -12,6 +12,7 @@ import * as constants from './builder-constants';
 import BuilderModal from './modal';
 import SwipeList from './swipe-list';
 import update from 'immutability-helper';
+import Button from '../../components/button';
 
 class BuilderPage extends Component {
 	constructor(props) {
@@ -21,7 +22,7 @@ class BuilderPage extends Component {
 			modalId: "",
 			modalType: "",
 			modalText: "",
-			modalSelect: "Fine",
+			modalSelect: "Medium",
 			recipeName: "New Recipe",
 			vesselId: "",
 			brewingVessel: "-",
@@ -46,20 +47,35 @@ class BuilderPage extends Component {
 			this.setState({ visibleModal: true, modalType: id });
 		} else if (id.includes(constants.VESSEL_ELEM)) {
 			// Update vessel
-			this.setState({ brewingVessel: constants.vesselLabels[id], vesselId: id, visibleModal: false, modalType: "", });
+			this.setState({
+				brewingVessel: constants.vesselLabels[id],
+				vesselId: id,
+				filterType: "-",
+				orientation: "-",
+				visibleModal: false,
+				modalType: ""
+			});
 		} else if (id.includes(constants.FILTER_ELEM)) {
-			// Update vessel
-			this.setState({ filterType: constants.filterLabels[id], visibleModal: false, modalType: "", });
+			// Update filter
+			this.setState({
+				filterType: constants.filterLabels[id],
+				visibleModal: false,
+				modalType: ""
+			});
 		} else if (id.includes(constants.ORIENTATION_ELEM)) {
-			// Update vessel
-			this.setState({ orientation: constants.orientationLabels[id], visibleModal: false, modalType: "", });
+			// Update orientation
+			this.setState({
+				orientation: constants.orientationLabels[id],
+				visibleModal: false,
+				modalType: ""
+			});
 		} else {
 			// Add new step
 			newStep = {
 				id: uuidv4(),
 				type: id,
 				title: constants.stepLabels[id],
-				description: ''
+				description: this.getDescription(id, "", ""),
 			}
 			this.setState({
 				visibleModal: false,
@@ -73,18 +89,25 @@ class BuilderPage extends Component {
   };
 
 	onCloseClick = () => {
-		// If id there, find element and update it
+		// Close and clear modal
 		this.setState({
 			visibleModal: false,
 			modalType: "",
+			modalText: "",
 		});
 	}
 
 	onModalSave = (id) => {
 		const { modalType, modalText, modalSelect, steps } = this.state
+
 		// If modal was for recipe name, just update that
 		if (modalType == constants.RECIPE_NAME_ELEM) {
-			this.setState({ recipeName: modalText, visibleModal: false, modalType: "" });
+			this.setState({
+				recipeName: modalText,
+				visibleModal: false,
+				modalType: "",
+				modalText: ""
+			});
 		} else if (id == '') {
 			// Get title label
 			titleLabel = '';
@@ -95,20 +118,7 @@ class BuilderPage extends Component {
 			}
 
 			// Get description
-			description = '';
-			if (modalType == constants.STEP_HEAT_WATER) {
-	      description = 'Heat water to ' + modalText + 'F';
-	    } else if (modalType == constants.STEP_GRIND_COFFEE) {
-	      description = modalText + ' grams of coffee ground ' + modalSelect;
-	    } else if (modalType == constants.STEP_BLOOM_GROUNDS) {
-	      description = 'Bloom grounds with ' + modalText + ' of water';
-	    } else if (modalType == constants.STEP_POUR_WATER) {
-	      description = 'Pour in ' + modalText + ' of water';
-	    } else if (modalType == constants.STEP_WAIT ) {
-	      description = 'Wait ' + modalText + ' seconds';
-	    } else if (modalType == constants.RECIPE_NAME_ELEM) {
-	      description = modalText;
-	    }
+			description = this.getDescription(modalType, modalText, modalSelect)
 
 			// Add new step and update state
 			newStep = {
@@ -116,10 +126,12 @@ class BuilderPage extends Component {
 				type: modalType,
 				title: titleLabel,
 				description: description,
+				properties: this.getProperties(modalType, modalText, modalSelect)
 			}
 			this.setState({
 				visibleModal: false,
 				modalType: "",
+				modalText: "",
 				steps: [
 					...steps,
 					newStep
@@ -127,18 +139,7 @@ class BuilderPage extends Component {
 			})
 		} else if (id != '') {
 			// Get description
-			description = '';
-			if (modalType == constants.STEP_HEAT_WATER) {
-	      description = 'Heat water to ' + modalText + 'F';
-	    } else if (modalType == constants.STEP_GRIND_COFFEE) {
-	      description = modalText + ' grams of coffee ground ' + modalSelect;
-	    } else if (modalType == constants.STEP_BLOOM_GROUNDS) {
-	      description = 'Bloom grounds with ' + modalText + ' of water';
-	    } else if (modalType == constants.STEP_POUR_WATER) {
-	      description = 'Pour in ' + modalText + ' of water';
-	    } else if (modalType == constants.STEP_WAIT ) {
-	      description = 'Wait ' + modalText + ' seconds';
-	    }
+			description = this.getDescription(modalType, modalText, modalSelect)
 
 			// Find index
 			var index = -1;
@@ -153,7 +154,12 @@ class BuilderPage extends Component {
 				this.setState({
 					visibleModal: false,
 					modalType: "",
-					steps: update(steps, {[index]: {description: {$set: description}}})
+					modalText: "",
+					modalId: "",
+					steps: update(steps, {[index]: {
+						description: {$set: description},
+						properties: {$set: this.getProperties(modalType, modalText, modalSelect)},
+					}}),
 				})
 		  }
 		}
@@ -196,6 +202,58 @@ class BuilderPage extends Component {
 		this.setState({ modalSelect: val })
 	}
 
+	onRecipeSave = () => {
+		console.log('Save recipe');
+		const { recipeName, brewingVessel, filterType, orientation, totalWater, totalCoffee,
+			steps } = this.state;
+
+
+	}
+
+	getDescription(modalType, modalText, modalSelect) {
+		// Get description
+		description = '';
+		if (modalType == constants.STEP_HEAT_WATER) {
+			return 'Heat water to ' + modalText + 'F';
+		} else if (modalType == constants.STEP_GRIND_COFFEE) {
+			return modalText + ' grams of coffee ground ' + modalSelect;
+		} else if (modalType == constants.STEP_BLOOM_GROUNDS) {
+			return 'Bloom grounds with ' + modalText + ' of water';
+		} else if (modalType == constants.STEP_POUR_WATER) {
+			return 'Pour in ' + modalText + ' of water';
+		} else if (modalType == constants.STEP_WAIT ) {
+			return 'Wait ' + modalText + ' seconds';
+		} else if (modalType == constants.STEP_RINSE_FILTER) {
+			return 'Rinse paper filter with water. Discard water.';
+		} else if (modalType == constants.STEP_ADD_GROUNDS) {
+			return 'Add grounds to the brewing vessel.';
+		} else if (modalType == constants.STEP_SERVE ) {
+			return 'Pour and enjoy!';
+		}
+	}
+
+	getProperties(modalType, modalText, modalSelect) {
+		// Get description
+		description = '';
+		if (modalType == constants.STEP_HEAT_WATER) {
+			return { waterTemp: modalText };
+		} else if (modalType == constants.STEP_GRIND_COFFEE) {
+			return { gramsCoffee: modalText, grindSize: modalSelect };
+		} else if (modalType == constants.STEP_BLOOM_GROUNDS) {
+			return { gramsWater: modalText };
+		} else if (modalType == constants.STEP_POUR_WATER) {
+			return { gramsWater: modalText };
+		} else if (modalType == constants.STEP_WAIT ) {
+			return { seconds: modalText };
+		} else if (modalType == constants.STEP_RINSE_FILTER) {
+			return {};
+		} else if (modalType == constants.STEP_ADD_GROUNDS) {
+			return {};
+		} else if (modalType == constants.STEP_SERVE ) {
+			return {};
+		}
+	}
+
 	render() {
 		const { recipeName, brewingVessel, filterType, orientation, modalId, modalType,
 			modalText, modalSelect, steps, vesselId } = this.state;
@@ -215,6 +273,7 @@ class BuilderPage extends Component {
 					title={recipeName}
 					description={'Recipe Name'}
 					onStepClick={() => this.onStepClick(constants.RECIPE_NAME_ELEM)}
+					margin={[0, 15, 15, 15]}
 				/>
 				<View style={styles.rowSteps}>
 					<View style={styles.vesselContainer}>
@@ -231,12 +290,14 @@ class BuilderPage extends Component {
 							title={filterType}
 							description={'Filter Type'}
 							onStepClick={() => this.onStepClick(constants.FILTER_ELEM)}
+							margin={[0, 15, 15, 15]}
 						/>
 						<Step
 							disabled={orientationDisabled}
 							title={orientation}
 							description={'Orientation/Size'}
 							onStepClick={() => this.onStepClick(constants.ORIENTATION_ELEM)}
+							margin={[0, 15, 15, 15]}
 						/>
 					</View>
 				</View>
@@ -251,6 +312,13 @@ class BuilderPage extends Component {
 						onAddClick={this.onAddClick}
 						backgroundColor={'#1D5E9E'}
 						textColor={'#FFFFFF'}
+					/>
+					<Button
+						onButtonClick={this.onRecipeSave}
+						type={1}
+						title={'Save'}
+						width={110}
+						margin={[15, 0, 15, 0]}
 					/>
 				</View>
 				<BuilderModal
@@ -313,7 +381,8 @@ const styles = StyleSheet.create({
   },
 	addandsave: {
 		marginTop: 15,
-		alignSelf: 'center'
+		alignSelf: 'center',
+		alignItems: 'center',
 	}
 });
 

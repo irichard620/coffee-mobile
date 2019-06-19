@@ -54,7 +54,7 @@ class SwipeListItem extends Component {
 
 	render() {
 		const { id, title, description, type, canEdit } = this.props;
-    
+
     return (
       <View style={styles.listItem}>
         <Animated.View
@@ -67,6 +67,7 @@ class SwipeListItem extends Component {
               disabled={true}
               title={title}
               description={description}
+              margin={[0, 15, 0, 15]}
             />
           </View>
           <TouchableHighlight onPress={() => this.props.onPressEdit(id, type)} disabled={!canEdit} style={styles.absoluteCell1}>
@@ -84,10 +85,15 @@ class SwipeListItem extends Component {
 const styles = StyleSheet.create({
   listItem: {
     marginRight: -175,
+    marginBottom: 15,
   },
   innerCell: {
     width: Dimensions.get('window').width,
     marginRight: 65,
+  },
+  outerCell: {
+    marginBottom: 15,
+    width: 175,
   },
   absoluteCell1: {
     position: 'absolute',
