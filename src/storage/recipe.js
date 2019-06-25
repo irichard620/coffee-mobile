@@ -1,48 +1,45 @@
 import uuidv4 from 'uuid/v4';
 import AsyncStorage from '@react-native-community/async-storage';
 
-function Recipe(id, recipeName, vesselId, brewingVessel, filterType, orientation,
-  totalWater, totalCoffee, waterTemp, grindSize, steps) {
+export function Recipe(recipeObj) {
+  recipe = {}
   // Get ID
-  if (id == '') {
-    this.id = uuidv4();
+  if ('id' not in recipeObj) {
+    recipe.id = uuidv4();
   } else {
-    this.id = id;
+    recipe.id = recipeObj['id'];
   }
 
   // Assign other values
-  this.recipeName = recipeName;
-  this.vesselId = vesselId;
-  this.brewingVessel = brewingVessel;
-  this.filterType = filterType;
-  this.orientation = orientation;
-  this.totalWater = totalWater;
-  this.totalCoffee = totalCoffee;
-  this.waterTemp = waterTemp;
-  this.grindSize = grindSize;
-  this.steps = steps;
+  recipe.recipeName = recipeObj['recipeName'];
+  recipe.vesselId = recipeObj['vesselId'];
+  recipe.brewingVessel = recipeObj['brewingVessel'];
+  recipe.filterType = recipeObj['filterType'];
+  recipe.orientation = recipeObj['orientation'];
+  recipe.totalWater = recipeObj['totalWater'];
+  recipe.totalCoffee = recipeObj['totalCoffee'];
+  recipe.waterTemp = recipeObj['waterTemp'];
+  recipe.grindSize = recipeObj['grindSize'];
+  recipe.steps = recipeObj['steps'];
+  this.recipe = recipe;
 
   // Functions
   this.getDescription = function() {
     // Line 1
     description = '';
-    if (this.orientation != '') {
-      description += this.orientation;
+    if (this.recipe.orientation != '') {
+      description += this.recipe.orientation;
     }
-    description += this.brewingVessel;
-    description += 'with a ' + this.filterType + ' filter';
+    description += this.recipe.brewingVessel;
+    description += 'with a ' + this.recipe.filterType + ' filter';
     description += '\n';
 
     // Line 2
-    description += this.totalCoffee + ' grams coffee,' + this.grindSize;
+    description += this.recipe.totalCoffee + ' grams coffee,' + this.recipe.grindSize;
 
     // Line 3
-    description += this.totalWater + ' grams of water at ' this.waterTemp + '\u2109';
+    description += this.recipe.totalWater + ' grams of water at ' this.recipe.waterTemp + '\u2109';
 
     return description
-  }
-
-  this.saveRecipeToLocal = function() {
-    AsyncStorage
   }
 }

@@ -6,6 +6,7 @@ import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import Sponsor from './sponsor';
 import { fetchSponsors } from '../../actions/sponsor-actions';
+import { fetchRecipes } from '../../actions/recipe-actions';
 
 class HomePage extends Component {
 	constructor(props) {
@@ -13,17 +14,14 @@ class HomePage extends Component {
     this.state = {
 			tab: 0
 		};
-		this.onFavoritesClick = this.onFavoritesClick.bind(this);
-		this.onCustomClick = this.onCustomClick.bind(this);
-		this.onAddClick = this.onAddClick.bind(this);
-		this.onSponsorClick = this.onSponsorClick.bind(this);
   }
 
 	componentDidMount() {
 		this.props.getSponsors();
+		this.props.getRecipes();
 	}
 
-	onFavoritesClick() {
+	onFavoritesClick = () => {
 		// Switch to favorites tab if not there
 		if (this.state.tab != 0) {
 			this.setState({
@@ -32,7 +30,7 @@ class HomePage extends Component {
 		}
 	}
 
-	onCustomClick() {
+	onCustomClick = () => {
 		// Switch to custom tab if not there
 		if (this.state.tab != 1) {
 			this.setState({
@@ -41,12 +39,12 @@ class HomePage extends Component {
 		}
 	}
 
-	onAddClick() {
+	onAddClick = () => {
 		// Pull up add menu
 		this.props.navigation.navigate('Builder')
 	}
 
-	onSponsorClick(sponsorId) {
+	onSponsorClick = (sponsorId) => {
 		// Pull up sponsor page
 		this.props.navigation.navigate('Sponsor', {
       sponsorId: sponsorId
@@ -131,9 +129,12 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => ({ sponsors: state.sponsorsReducer.sponsors })
+const mapStateToProps = (state) => ({
+	sponsors: state.sponsorsReducer.sponsors,
+	recipes: state.recipesReducer.recipes
+});
 
-const mapDispatchToProps = { getSponsors: fetchSponsors }
+const mapDispatchToProps = { getSponsors: fetchSponsors, getRecipes: fetchRecipes }
 
 HomePage = connect(mapStateToProps,mapDispatchToProps)(HomePage)
 

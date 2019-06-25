@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux'
 import {
   REQUEST_SPONSORS,
   RECEIVE_SPONSORS,
@@ -57,8 +56,4 @@ function sponsorsReducer(state = {}, action) {
   }
 }
 
-const rootReducer = combineReducers({
-  sponsorsReducer
-})
-
-export default rootReducer
+export default sponsorsReducer
