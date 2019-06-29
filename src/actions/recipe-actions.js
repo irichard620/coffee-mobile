@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import Recipe from '../storage/recipe';
+import { Recipe, defaultRecipes } from '../storage/recipe';
 
 export const REQUEST_RECIPES = 'REQUEST_RECIPES'
 function requestRecipes() {
@@ -29,15 +29,16 @@ export function fetchRecipes() {
           // Create objects and add to result
           result.push(Recipe(recipe));
         }
+        result = result.concat(defaultRecipes());
         dispatch(receiveRecipes(result))
       });
   }
 }
 
-export const SAVE_RECIPE = 'SAVE_RECIPE'
-function saveRecipe() {
+export const SAVING_RECIPE = 'SAVING_RECIPE'
+function savingRecipe() {
   return {
-    type: SAVE_RECIPE
+    type: SAVING_RECIPE
   }
 }
 
@@ -49,10 +50,10 @@ function savedRecipe() {
   }
 }
 
-export function saveRecipe() {
+export function saveRecipe(recipe) {
   return function(dispatch) {
     console.log("saving recipe")
-    dispatch(saveRecipe())
+    dispatch(savingRecipe())
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];

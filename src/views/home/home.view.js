@@ -7,18 +7,52 @@ import MenuButtons from './menu-buttons';
 import Sponsor from './sponsor';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import { fetchRecipes } from '../../actions/recipe-actions';
+import update from 'immutability-helper';
 
 class HomePage extends Component {
 	constructor(props) {
     super(props);
     this.state = {
-			tab: 0
+			tab: 0,
+			selectedFavorites: [],
+			selectedCustoms: [],
+			favorites: [],
+			customs: [],
 		};
   }
 
 	componentDidMount() {
 		this.props.getSponsors();
 		this.props.getRecipes();
+	}
+
+	componentWillReceiveProps(nextProps) {
+	  const recipes = nextProps.recipes;
+
+		newSelectedFavorites = []
+		newSelectedCustoms = []
+		newFavorites = []
+		newCustoms = []
+
+		if (recipes && !recipes.recipesIsFetching && recipes.recipes.length != 0) {
+			for (i = 0; i < recipes.recipes.length; i++) {
+				// Push to custom
+				newSelectedCustoms.push(false);
+				newCustoms.push(recipes.recipes[i]);
+
+				// Push to favorite
+				if (recipes.recipes[i].favorited) {
+					newSelectedFavorites.push(false);
+					newFavorites.push(recipes.recipes[i]);
+				}
+			}
+		}
+		this.setState({
+			selectedFavorites: newSelectedFavorites,
+			favorites: newFavorites,
+			selectedCustoms: newSelectedCustoms,
+			customs: newCustoms,
+		});
 	}
 
 	onFavoritesClick = () => {
@@ -51,14 +85,28 @@ class HomePage extends Component {
     })
 	}
 
+	onEntryClick = (idx) => {
+		const { tab, selectedFavorites, selectedCustoms } = this.state;
+
+		if (this.state.tab == 0) {
+			this.setState({selectedFavorites: selectedFavorites.map((val, i) => i === idx ? !val : val)})
+		} else {
+			this.setState({selectedCustoms: selectedCustoms.map((val, i) => i === idx ? !val : val)})
+		}
+	}
+
 	render() {
-		const { sponsors } = this.props
-		const { tab } = this.state;
+		const { sponsors, recipes } = this.props
+		const { tab, selected, customs, favorites, selectedFavorites, selectedCustoms } = this.state;
+
+		// Take care of sponsors
 		let sponsorID = ""
 		let sponsorTitle = ""
 		let sponsorDescription = "Loading Sponsors..."
 		let disabled = true
-		if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length == 0) {
+		if (!sponsors || !sponsors.sponsors) {
+			sponsorDescription = "Could not load sponsors"
+		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length == 0) {
 			sponsorDescription = "No Sponsors to show"
 		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
 			sponsorTitle = sponsors.sponsors[0]["company"]
@@ -66,6 +114,7 @@ class HomePage extends Component {
 			sponsorID = sponsors.sponsors[0]["_id"]
 			disabled = false
 		}
+
 		return (
 			<ScrollView style={styles.container}>
         <Text style={styles.title}>Good Morning, Emile.</Text>
@@ -83,32 +132,28 @@ class HomePage extends Component {
 					selected={this.state.tab}
 				/>
 
-				{tab == 0 &&
-					<React.Fragment>
-						<Entry
-		          title={'Aeropress - Standard Recipe'}
-		          description={'Inverted orientation with a paper filter\n17 grams coffee, medium grind\n230 grams of water at 205°F'}
-		        />
-		        <Entry
-		          title={'Chemex - Standard Recipe'}
-		          description={'Paper Chemex filter\n36 grams coffee, medium-coarse grind with tons of Emile\n600 grams of water at 205°F'}
-		        />
-		        <Entry
-		          title={'French Press - Standard Recipe'}
-		          description={'8 cup French Press\n55 grams coffee, coarse grind\n850 grams of water at 205°F'}
-		        />
-					</React.Fragment>}
-				{tab == 1 &&
-					<React.Fragment>
-						<Entry
-		          title={'Aeropress World Champion 2018'}
-		          description={'Inverted orientation with a paper filter\n35 grams coffee, medium-coarse grind\n200 grams of water at 185°F'}
-		        />
-		        <Entry
-		          title={'Aeropress World Champion 2017'}
-		          description={'Inverted orientation with a paper filter\n35 grams coffee, medium-coarse grind\n370 grams of water at 183°F'}
-		        />
-					</React.Fragment>}
+				{tab == 0 && favorites.map((favorite, idx) => (
+					<Entry
+						key={favorite.id}
+						idx={idx}
+						selected={selectedFavorites[idx]}
+						vesselId={favorite.vesselId}
+						title={favorite.recipeName}
+						description={favorite.getDescription()}
+						onEntryClick={this.onEntryClick}
+					/>
+				))}
+				{tab == 1 && customs.map((custom, idx) => (
+					<Entry
+						key={custom.id}
+						idx={idx}
+						selected={selectedCustoms[idx]}
+						vesselId={custom.vesselId}
+						title={custom.recipeName}
+						description={custom.getDescription()}
+						onEntryClick={this.onEntryClick}
+					/>
+				))}
 			</ScrollView>
 		);
 	}

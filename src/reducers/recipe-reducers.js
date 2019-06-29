@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import {
   REQUEST_RECIPES,
   RECEIVE_RECIPES,
-  SAVE_RECIPE,
+  SAVING_RECIPE,
   SAVED_RECIPE,
 } from '../actions/recipe-actions'
 
@@ -25,7 +25,7 @@ function recipes(
         recipes: action.recipes,
         lastUpdated: action.receivedAt
       })
-    case SAVE_RECIPE:
+    case SAVING_RECIPE:
       return Object.assign({}, state, {
         recipeIsSaving: true,
       })
@@ -44,7 +44,7 @@ function recipesReducer(state = {}, action) {
     case RECEIVE_RECIPES:
     case REQUEST_RECIPES:
     case SAVED_RECIPE:
-    case SAVE_RECIPE:
+    case SAVING_RECIPE:
       return Object.assign({}, state, {
         ["recipes"]: recipes(state["recipes"], action)
       })

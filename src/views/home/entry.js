@@ -1,19 +1,48 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
+import * as constants from '../builder/builder-constants';
 
 class Entry extends Component {
 	render() {
+		const { title, description, vesselId, selected, onEntryClick, idx } = this.props
+
+		const basePath = "../../assets/mini-vessel-icons/";
+
+		var textviewDynamic = {}
+		var titleMargin = 0
+		if (selected) {
+			textviewDynamic['flexDirection'] = 'column';
+			textviewDynamic['flex'] = 1;
+			titleMargin = 10
+		} else {
+			textviewDynamic['justifyContent'] = 'center';
+			textviewDynamic['height'] = 55;
+		}
+
+		var titleAdditional = {
+			marginBottom: titleMargin,
+		}
+
 		return (
-			<View style={styles.outline}>
-				<View style={styles.logoview}>
-					<View style={styles.circle}/>
+			<TouchableWithoutFeedback onPress = {() => onEntryClick(idx)}>
+				<View style={styles.outline}>
+					<View style={styles.logoview}>
+						{vesselId == constants.VESSEL_AEROPRESS &&
+							<Image style={styles.image} source={require(basePath + "Aeropress_Minicon.png")} />}
+						{vesselId == constants.VESSEL_CHEMEX &&
+							<Image style={styles.image} source={require(basePath + "Chemex_Minicon.png")} />}
+						{vesselId == constants.VESSEL_FRENCH_PRESS &&
+							<Image style={styles.image} source={require(basePath + "FrenchPress_Minicon.png")} />}
+						{vesselId == constants.VESSEL_POUROVER &&
+							<Image style={styles.image} source={require(basePath + "V60_Minicon.png")} />}
+					</View>
+	        <View style={textviewDynamic}>
+	          <Text style={[styles.title, titleAdditional]}>{title}</Text>
+						{selected && <Text style={styles.description}>{description}</Text>}
+	        </View>
 				</View>
-        <View style={styles.textview}>
-          <Text style={styles.title}>{this.props.title}</Text>
-					<Text style={styles.description}>{this.props.description}</Text>
-        </View>
-			</View>
+			</TouchableWithoutFeedback>
 		);
 	}
 }
@@ -39,31 +68,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF'
 	},
 	logoview: {
+		height: 55,
+    width: 55,
+    borderRadius: 20,
+    backgroundColor: '#F1F1F1',
+    marginRight: 16,
+		justifyContent: 'center',
+    alignItems: 'center',
+	},
+	image: {
+		height: 35,
+		resizeMode: 'contain',
 	},
 	textview: {
-		flexDirection: 'column',
-		flex: 1
+		justifyContent: 'center',
+		height: 55,
+		flexDirection:'column',
+		flex: 1,
 	},
-  titlerow: {
-    alignItems: 'center',
-    flexDirection:'row',
-    flexWrap:'wrap',
-    justifyContent: 'center',
-    textAlign: 'center',
-    paddingTop: 8,
-    paddingBottom: 8
-  },
-  circle: {
-    height: 56,
-    width: 56,
-    borderRadius: 28,
-    backgroundColor: '#1D5E9E',
-    marginRight: 16
-  },
   title: {
     color: '#1D5E9E',
-    fontSize: 16,
-		marginBottom: 10,
+    fontSize: 18,
+		fontWeight: '600',
+		justifyContent: 'center',
   },
   description: {
     color: '#727272',
