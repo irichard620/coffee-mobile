@@ -145,11 +145,9 @@ class BuilderModal extends Component {
               onValueChange={this.props.onChangePicker}
               itemStyle={styles.pickertitle}
             >
-              <Picker.Item label="Fine" value="Fine" />
-              <Picker.Item label="Medium-Fine" value="Medium-Fine" />
-              <Picker.Item label="Medium" value="Medium" />
-              <Picker.Item label="Medium-Coarse" value="Medium-Coarse" />
-              <Picker.Item label="Coarse" value="Coarse" />
+              {constants.grindSizes.map(grindSize => (
+                <Picker.Item label={grindSize} value={grindSize} />
+              ))}
             </Picker>
           </View>}
           {isListModal && <List

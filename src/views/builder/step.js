@@ -1,10 +1,13 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
 
 class Step extends Component {
 	render() {
-    const { onStepClick, disabled, title, description, margin } = this.props
+    const { onStepClick, onPressEdit, onPressUp, onPressDown, onPressDelete,
+      selected, disabled, id, title, description, margin, canEdit, canGoUp, canGoDown } = this.props
+
+    const baseButtonPath = "../../assets/buttons/";
 
     backgroundStyle = {
       marginTop: margin[0],
@@ -14,18 +17,33 @@ class Step extends Component {
     };
 
 		return (
-      <TouchableHighlight
-        disabled={disabled}
-        style={[styles.outline, backgroundStyle]}
-        onPress = { onStepClick }
-      >
-  			<View>
-          <Text style={styles.title}>{title}</Text>
-          {description != '' &&
-            <Text style={styles.description}>{description}
-            </Text>}
-  			</View>
-      </TouchableHighlight>
+      <TouchableWithoutFeedback onPress = {onStepClick} disabled={disabled}>
+				<View style={[styles.outline, backgroundStyle]}>
+					<View style={styles.topview}>
+            <Text style={styles.title}>{title}</Text>
+            {description != '' &&
+              <Text style={styles.description}>{description}
+              </Text>}
+					</View>
+					{selected && <View style={styles.buttonview}>
+						<Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
+						<View style={styles.rightbuttonview}>
+              {canGoUp && <TouchableWithoutFeedback onPress = {onPressUp}>
+                <Image style={styles.edit} source={require(baseButtonPath + "Move_Up.png")} />
+              </TouchableWithoutFeedback>}
+              {canGoDown && <TouchableWithoutFeedback onPress = {onPressDown}>
+                <Image style={styles.edit} source={require(baseButtonPath + "Move_Down.png")} />
+              </TouchableWithoutFeedback>}
+							{canEdit && <TouchableWithoutFeedback onPress = {onPressEdit}>
+								<Image style={styles.edit} source={require(baseButtonPath + "Edit.png")} />
+							</TouchableWithoutFeedback>}
+							<TouchableWithoutFeedback onPress = {onPressDelete}>
+								<Image style={styles.use} source={require(baseButtonPath + "Delete.png")} />
+							</TouchableWithoutFeedback>
+						</View>
+					</View>}
+				</View>
+			</TouchableWithoutFeedback>
 		);
 	}
 }
@@ -47,7 +65,38 @@ const styles = StyleSheet.create({
   description: {
     color: '#727272',
     fontSize: 14,
-  }
+  },
+  topview: {
+		alignItems: 'flex-start',
+		flexDirection:'column',
+	},
+  buttonview: {
+		marginTop: 20,
+		display: 'flex',
+		flexDirection:'row',
+		flexWrap:'nowrap',
+		justifyContent: 'space-between'
+	},
+	close: {
+		height: 25,
+    width: 25,
+		alignSelf: 'flex-end',
+		justifyContent: 'flex-start'
+	},
+	rightbuttonview: {
+		flexDirection:'row',
+		flexWrap:'nowrap',
+		justifyContent: 'flex-start'
+	},
+	edit: {
+		height: 40,
+    width: 40,
+		marginRight: 15
+	},
+	use: {
+		height: 40,
+    width: 40,
+	}
 });
 
 export default Step;

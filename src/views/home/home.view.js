@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, LayoutAnimation } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import Sponsor from './sponsor';
@@ -87,7 +87,19 @@ class HomePage extends Component {
 
 	onEntryClick = (idx) => {
 		const { tab, selectedFavorites, selectedCustoms } = this.state;
-
+		var CustomLayoutSpring = {
+	    duration: 400,
+	    create: {
+	      type: LayoutAnimation.Types.spring,
+	      property: LayoutAnimation.Properties.scaleY,
+	      springDamping: 0.7,
+	    },
+	    update: {
+	      type: LayoutAnimation.Types.spring,
+	      springDamping: 0.7,
+	    },
+	  };
+		LayoutAnimation.configureNext(CustomLayoutSpring);
 		if (this.state.tab == 0) {
 			this.setState({selectedFavorites: selectedFavorites.map((val, i) => i === idx ? !val : val)})
 		} else {
@@ -95,9 +107,46 @@ class HomePage extends Component {
 		}
 	}
 
+	onEditClick = (idx) => {
+
+	}
+
+	onGoClick = (idx) => {
+		if (this.state.tab == 0) {
+			this.props.navigation.navigate('Brew', {
+	      recipe: this.state.favorites[idx]
+	    })
+		} else {
+			this.props.navigation.navigate('Brew', {
+	      recipe: this.state.customs[idx]
+	    })
+		}
+	}
+
+	renderEntry = (idx, item) => {
+		const { tab, selectedFavorites, selectedCustoms } = this.state;
+		var selected = false;
+		if (tab == 0) {
+			selected = selectedFavorites[idx]
+		} else {
+			selected = selectedCustoms[idx]
+		}
+		return (<Entry
+			key={item.id}
+			idx={idx}
+			selected={selected}
+			vesselId={item.vesselId}
+			title={item.recipeName}
+			description={item.getDescription()}
+			onEntryClick={this.onEntryClick}
+			onEditClick={this.onEditClick}
+			onGoClick={this.onGoClick}
+		/>);
+	}
+
 	render() {
 		const { sponsors, recipes } = this.props
-		const { tab, selected, customs, favorites, selectedFavorites, selectedCustoms } = this.state;
+		const { tab, customs, favorites, selectedFavorites, selectedCustoms } = this.state;
 
 		// Take care of sponsors
 		let sponsorID = ""
@@ -133,26 +182,10 @@ class HomePage extends Component {
 				/>
 
 				{tab == 0 && favorites.map((favorite, idx) => (
-					<Entry
-						key={favorite.id}
-						idx={idx}
-						selected={selectedFavorites[idx]}
-						vesselId={favorite.vesselId}
-						title={favorite.recipeName}
-						description={favorite.getDescription()}
-						onEntryClick={this.onEntryClick}
-					/>
+					this.renderEntry(idx, favorite)
 				))}
 				{tab == 1 && customs.map((custom, idx) => (
-					<Entry
-						key={custom.id}
-						idx={idx}
-						selected={selectedCustoms[idx]}
-						vesselId={custom.vesselId}
-						title={custom.recipeName}
-						description={custom.getDescription()}
-						onEntryClick={this.onEntryClick}
-					/>
+					this.renderEntry(idx, custom)
 				))}
 			</ScrollView>
 		);
@@ -171,6 +204,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#1D5E9E',
     alignSelf: 'flex-start',
+		fontWeight: '600',
   }
 });
 

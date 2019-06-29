@@ -16,6 +16,13 @@ export const ORIENTATION_4_CUP = 'orientation3'
 export const ORIENTATION_8_CUP = 'orientation4'
 export const ORIENTATION_12_CUP = 'orientation5'
 
+// Grind Sizes
+export const GRIND_FINE = 'fine'
+export const GRIND_MEDIUM_FINE = 'medium-fine'
+export const GRIND_MEDIUM = 'medium'
+export const GRIND_MEDIUM_COARSE = 'medium-coarse'
+export const GRIND_COARSE = 'coarse'
+
 // Brew steps
 export const STEP_HEAT_WATER = 'step1';
 export const STEP_GRIND_COFFEE = 'step2';
@@ -76,3 +83,6 @@ export const orientations = {
 	[VESSEL_AEROPRESS]: [ORIENTATION_UPRIGHT, ORIENTATION_INVERTED],
 	[VESSEL_FRENCH_PRESS]: [ORIENTATION_4_CUP, ORIENTATION_8_CUP, ORIENTATION_12_CUP]
 }
+
+// List of all grind sizes
+export const grindSizes = [GRIND_FINE, GRIND_MEDIUM_FINE, GRIND_MEDIUM, GRIND_MEDIUM_COARSE, GRIND_COARSE]

@@ -18,6 +18,10 @@ class List extends Component {
     />
   );
 
+  renderSeparator = () => {
+    return (<View style={styles.line}/>);
+  }
+
 	render() {
 		return (
       <FlatList
@@ -25,6 +29,7 @@ class List extends Component {
         keyExtractor={this.keyExtractor}
   			renderItem={this.renderItem}
         style={styles.list}
+        ItemSeparatorComponent={this.renderSeparator}
   		/>
 		);
 	}
@@ -33,6 +38,10 @@ class List extends Component {
 const styles = StyleSheet.create({
   list: {
     width: '100%'
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#E3E3E3'
   }
 });
 

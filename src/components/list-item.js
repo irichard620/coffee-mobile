@@ -18,7 +18,6 @@ class ListItem extends Component {
   render() {
     return (
       <TouchableOpacity style={styles.container} onPress={this.onPress}>
-        <View style={styles.line}/>
         <View style={styles.textcontainer}>
           <Text style={styles.listtitle}>{this.props.title}</Text>
         </View>
@@ -40,10 +39,6 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15
   },
-  line: {
-    height: 1,
-    backgroundColor: '#E3E3E3'
-  }
 });
 
 export default ListItem;

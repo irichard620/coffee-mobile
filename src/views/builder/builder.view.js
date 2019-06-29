@@ -10,7 +10,7 @@ import Step from './step';
 import Vessel from './vessel';
 import * as constants from './builder-constants';
 import BuilderModal from './modal';
-import SwipeList from './swipe-list';
+import StepList from './step-list';
 import update from 'immutability-helper';
 import Button from '../../components/button';
 
@@ -22,7 +22,7 @@ class BuilderPage extends Component {
 			modalId: "",
 			modalType: "",
 			modalText: "",
-			modalSelect: "Medium",
+			modalSelect: constants.GRIND_MEDIUM,
 			recipeName: "New Recipe",
 			vesselId: "",
 			brewingVessel: "-",
@@ -31,6 +31,7 @@ class BuilderPage extends Component {
 			totalWater: 0,
 			totalCoffee: 0,
 			steps: [],
+			selected: []
 		}
   }
 
@@ -83,6 +84,10 @@ class BuilderPage extends Component {
 				steps: [
 					...this.state.steps,
 					newStep
+				],
+				selected: [
+					...this.state.selected,
+					false
 				]
 			})
 		}
@@ -135,6 +140,10 @@ class BuilderPage extends Component {
 				steps: [
 					...steps,
 					newStep
+				],
+				selected: [
+					...this.state.selected,
+					false
 				]
 			})
 		} else if (id != '') {
@@ -189,6 +198,14 @@ class BuilderPage extends Component {
 	    array.splice(index, 1);
 	    this.setState({ steps: array });
 	  }
+	}
+
+	onPressUp = (id) => {
+
+	}
+
+	onPressDown = (id) => {
+
 	}
 
 	onChangeText = (text) => {
@@ -256,7 +273,7 @@ class BuilderPage extends Component {
 
 	render() {
 		const { recipeName, brewingVessel, filterType, orientation, modalId, modalType,
-			modalText, modalSelect, steps, vesselId } = this.state;
+			modalText, modalSelect, steps, vesselId, selected } = this.state;
 
 		// Check if we should disable certain fields
 		var filterDisabled = (brewingVessel == '-');
@@ -302,10 +319,13 @@ class BuilderPage extends Component {
 					</View>
 				</View>
 				<View style={styles.line}/>
-				<SwipeList
+				<StepList
 					onPressEdit={this.onPressEdit}
 					onPressDelete={this.onPressDelete}
-					data={steps}
+					onPressUp={this.onPressUp}
+					onPressDown={this.onPressDown}
+					steps={steps}
+					selected={selected}
 				/>
 				<View style={styles.addandsave}>
 					<Add

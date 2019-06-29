@@ -11,6 +11,7 @@ import {Platform, StyleSheet, Text, View} from 'react-native';
 import HomePage from './src/views/home/home.view';
 import BuilderPage from './src/views/builder/builder.view';
 import SponsorPage from './src/views/sponsor/sponsor.view';
+import BrewPage from './src/views/brew/brew.view';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
 const MainStack = createStackNavigator(
@@ -35,6 +36,9 @@ const AppNavigator = createStackNavigator(
     Builder: {
       screen: BuilderPage,
     },
+    Brew: {
+      screen: BrewPage,
+    }
   },
   {
     headerMode: 'none',

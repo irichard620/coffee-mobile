@@ -5,9 +5,10 @@ import * as constants from '../builder/builder-constants';
 
 class Entry extends Component {
 	render() {
-		const { title, description, vesselId, selected, onEntryClick, idx } = this.props
+		const { title, description, vesselId, selected, onEntryClick, onEditClick, onGoClick, idx } = this.props
 
 		const basePath = "../../assets/mini-vessel-icons/";
+		const baseButtonPath = "../../assets/buttons/";
 
 		var textviewDynamic = {}
 		var titleMargin = 0
@@ -27,20 +28,33 @@ class Entry extends Component {
 		return (
 			<TouchableWithoutFeedback onPress = {() => onEntryClick(idx)}>
 				<View style={styles.outline}>
-					<View style={styles.logoview}>
-						{vesselId == constants.VESSEL_AEROPRESS &&
-							<Image style={styles.image} source={require(basePath + "Aeropress_Minicon.png")} />}
-						{vesselId == constants.VESSEL_CHEMEX &&
-							<Image style={styles.image} source={require(basePath + "Chemex_Minicon.png")} />}
-						{vesselId == constants.VESSEL_FRENCH_PRESS &&
-							<Image style={styles.image} source={require(basePath + "FrenchPress_Minicon.png")} />}
-						{vesselId == constants.VESSEL_POUROVER &&
-							<Image style={styles.image} source={require(basePath + "V60_Minicon.png")} />}
+					<View style={styles.topview}>
+						<View style={styles.logoview}>
+							{vesselId == constants.VESSEL_AEROPRESS &&
+								<Image style={styles.image} source={require(basePath + "Aeropress_Minicon.png")} />}
+							{vesselId == constants.VESSEL_CHEMEX &&
+								<Image style={styles.image} source={require(basePath + "Chemex_Minicon.png")} />}
+							{vesselId == constants.VESSEL_FRENCH_PRESS &&
+								<Image style={styles.image} source={require(basePath + "FrenchPress_Minicon.png")} />}
+							{vesselId == constants.VESSEL_POUROVER &&
+								<Image style={styles.image} source={require(basePath + "V60_Minicon.png")} />}
+						</View>
+		        <View style={textviewDynamic}>
+		          <Text key={idx} style={[styles.title, titleAdditional]}>{title}</Text>
+							{selected && <Text style={styles.description}>{description}</Text>}
+		        </View>
 					</View>
-	        <View style={textviewDynamic}>
-	          <Text style={[styles.title, titleAdditional]}>{title}</Text>
-						{selected && <Text style={styles.description}>{description}</Text>}
-	        </View>
+					{selected && <View style={styles.buttonview}>
+						<Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
+						<View style={styles.rightbuttonview}>
+							<TouchableWithoutFeedback onPress = {() => onEditClick(idx)}>
+								<Image style={styles.edit} source={require(baseButtonPath + "Edit.png")} />
+							</TouchableWithoutFeedback>
+							<TouchableWithoutFeedback onPress = {() => onGoClick(idx)}>
+								<Image style={styles.use} source={require(baseButtonPath + "Go.png")} />
+							</TouchableWithoutFeedback>
+						</View>
+					</View>}
 				</View>
 			</TouchableWithoutFeedback>
 		);
@@ -49,9 +63,6 @@ class Entry extends Component {
 
 const styles = StyleSheet.create({
 	outline: {
-		alignItems: 'flex-start',
-		flexDirection:'row',
-		flexWrap:'nowrap',
     borderRadius: 20,
     width: '90%',
     paddingLeft: 16,
@@ -67,6 +78,11 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     backgroundColor: '#FFFFFF'
 	},
+	topview: {
+		alignItems: 'flex-start',
+		flexDirection:'row',
+		flexWrap:'nowrap',
+	},
 	logoview: {
 		height: 55,
     width: 55,
@@ -80,12 +96,6 @@ const styles = StyleSheet.create({
 		height: 35,
 		resizeMode: 'contain',
 	},
-	textview: {
-		justifyContent: 'center',
-		height: 55,
-		flexDirection:'column',
-		flex: 1,
-	},
   title: {
     color: '#1D5E9E',
     fontSize: 18,
@@ -95,7 +105,34 @@ const styles = StyleSheet.create({
   description: {
     color: '#727272',
     fontSize: 14,
-  }
+  },
+	buttonview: {
+		marginTop: 20,
+		display: 'flex',
+		flexDirection:'row',
+		flexWrap:'nowrap',
+		justifyContent: 'space-between'
+	},
+	close: {
+		height: 25,
+    width: 25,
+		alignSelf: 'flex-end',
+		justifyContent: 'flex-start'
+	},
+	rightbuttonview: {
+		flexDirection:'row',
+		flexWrap:'nowrap',
+		justifyContent: 'flex-start'
+	},
+	edit: {
+		height: 40,
+    width: 40,
+		marginRight: 15
+	},
+	use: {
+		height: 40,
+    width: 40,
+	}
 });
 
 export default Entry;
