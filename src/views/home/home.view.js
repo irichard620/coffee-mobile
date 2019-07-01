@@ -8,6 +8,7 @@ import Sponsor from './sponsor';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import { fetchRecipes } from '../../actions/recipe-actions';
 import update from 'immutability-helper';
+import * as recipeModel from '../../storage/recipe';
 
 class HomePage extends Component {
 	constructor(props) {
@@ -137,7 +138,7 @@ class HomePage extends Component {
 			selected={selected}
 			vesselId={item.vesselId}
 			title={item.recipeName}
-			description={item.getDescription()}
+			description={recipeModel.getRecipeDescription(item)}
 			onEntryClick={this.onEntryClick}
 			onEditClick={this.onEditClick}
 			onGoClick={this.onGoClick}

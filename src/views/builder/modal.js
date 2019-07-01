@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Picker, Button } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Picker, Button, Image,
+  TouchableWithoutFeedback } from 'react-native';
 import Modal from "react-native-modal";
 import List from '../../components/list';
 import Close from '../../components/close';
@@ -70,7 +71,9 @@ class BuilderModal extends Component {
   }
 
 	render() {
-		const { visibleModal, modalType, modalText, modalSelect } = this.props;
+		const { visibleModal, modalType, modalText, modalSelect, onCloseClick } = this.props;
+
+    const baseButtonPath = "../../assets/buttons/";
 
     // Get list content
     isListModal = false
@@ -119,10 +122,9 @@ class BuilderModal extends Component {
       >
         <View style={styles.content}>
           <View style={styles.buttonsContainer}>
-            <Close
-              onCloseClick={this.props.onCloseClick}
-              style={styles.close}
-            />
+            <TouchableWithoutFeedback onPress = {onCloseClick}>
+              <Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
+            </TouchableWithoutFeedback>
             {!isListModal && <ButtonMini
   						onButtonClick={() => this.props.onModalSave(this.props.modalId)}
   						type={0}
@@ -189,6 +191,8 @@ const styles = StyleSheet.create({
 	close: {
 		marginTop: 15,
 		marginBottom: 15,
+    height: 25,
+    width: 25,
 	},
   picker: {
   },

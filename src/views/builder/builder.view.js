@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { connect } from 'react-redux'
+import { View, Text, ScrollView, StyleSheet, LayoutAnimation } from 'react-native';
 import uuidv4 from 'uuid/v4';
 import Modal from "react-native-modal";
 import Add from '../../components/add';
@@ -13,6 +14,22 @@ import BuilderModal from './modal';
 import StepList from './step-list';
 import update from 'immutability-helper';
 import Button from '../../components/button';
+import * as stepModel from '../../storage/step';
+import * as recipeModel from '../../storage/recipe';
+import { saveRecipe } from '../../actions/recipe-actions';
+
+const CustomLayoutSpring = {
+	duration: 400,
+	create: {
+		type: LayoutAnimation.Types.spring,
+		property: LayoutAnimation.Properties.scaleY,
+		springDamping: 0.7,
+	},
+	update: {
+		type: LayoutAnimation.Types.spring,
+		springDamping: 0.7,
+	},
+};
 
 class BuilderPage extends Component {
 	constructor(props) {
@@ -30,6 +47,8 @@ class BuilderPage extends Component {
 			orientation: "-",
 			totalWater: 0,
 			totalCoffee: 0,
+			grindSize: "",
+			waterTemp: "",
 			steps: [],
 			selected: []
 		}
@@ -72,12 +91,10 @@ class BuilderPage extends Component {
 			});
 		} else {
 			// Add new step
-			newStep = {
-				id: uuidv4(),
+			newStep = stepModel.Step({
 				type: id,
 				title: constants.stepLabels[id],
-				description: this.getDescription(id, "", ""),
-			}
+			});
 			this.setState({
 				visibleModal: false,
 				modalType: "",
@@ -114,25 +131,16 @@ class BuilderPage extends Component {
 				modalText: ""
 			});
 		} else if (id == '') {
+			// TODO: Update totalWater, totalCoffee, etc
 			// Get title label
-			titleLabel = '';
-			if (modalType.includes(constants.NEW_STEP_ELEM)) {
-				titleLabel = constants.stepLabels[modalType];
-			} else if (modalType.includes(constants.RECIPE_NAME_ELEM)) {
-				titleLabel = 'Recipe Name';
-			}
-
-			// Get description
-			description = this.getDescription(modalType, modalText, modalSelect)
+			titleLabel = constants.stepLabels[modalType];;
 
 			// Add new step and update state
-			newStep = {
-				id: uuidv4(),
+			newStep = stepModel.Step({
 				type: modalType,
 				title: titleLabel,
-				description: description,
-				properties: this.getProperties(modalType, modalText, modalSelect)
-			}
+				properties: stepModel.getStepProperties(modalType, modalText, modalSelect)
+			});
 			this.setState({
 				visibleModal: false,
 				modalType: "",
@@ -147,18 +155,9 @@ class BuilderPage extends Component {
 				]
 			})
 		} else if (id != '') {
-			// Get description
-			description = this.getDescription(modalType, modalText, modalSelect)
-
+			// TODO: Update totalWater, totalCoffee, etc
 			// Find index
-			var index = -1;
-			for (var i = 0; i < steps.length; i++) {
-		    // Check id
-				if (steps[i]['id'] == id) {
-					index = i;
-				}
-			}
-
+			var index = this.findIndexOfId(id, steps);
 			if (index !== -1) {
 				this.setState({
 					visibleModal: false,
@@ -166,26 +165,30 @@ class BuilderPage extends Component {
 					modalText: "",
 					modalId: "",
 					steps: update(steps, {[index]: {
-						description: {$set: description},
-						properties: {$set: this.getProperties(modalType, modalText, modalSelect)},
+						properties: {$set: stepModel.getStepProperties(modalType, modalText, modalSelect)},
 					}}),
 				})
 		  }
 		}
 	}
 
-	onStepClick = (id) => {
-		// Pull up modify menu
-		this.setState({ visibleModal: true, modalType: id })
+	onStepClick = (id, inList) => {
+		if (!inList) {
+			// Pull up modify menu
+			this.setState({ visibleModal: true, modalType: id })
+		} else {
+			// Update selected
+			const { selected } = this.state;
+			LayoutAnimation.configureNext(CustomLayoutSpring);
+			this.setState({selected: selected.map((val, i) => i === id ? !val : val)})
+		}
 	}
 
 	onPressEdit = (id, type) => {
 		this.setState({ visibleModal: true, modalType: type, modalId: id })
 	}
 
-	onPressDelete = (id) => {
-		// make a separate copy of the array
-		var array = [...this.state.steps];
+	findIndexOfId = (id, array) => {
 		// Find index
 		var index = -1;
 		for (var i = 0; i < array.length; i++) {
@@ -194,18 +197,65 @@ class BuilderPage extends Component {
 				index = i;
 			}
 		}
+		return index
+	}
+
+	onPressDelete = (id) => {
+		// make a separate copy of the array
+		var array = [...this.state.steps];
+		var newSelected = [...this.state.selected];
+		// Find index
+		var index = this.findIndexOfId(id, array);
 	  if (index !== -1) {
 	    array.splice(index, 1);
-	    this.setState({ steps: array });
+			newSelected.splice(index, 1);
+			LayoutAnimation.configureNext(CustomLayoutSpring);
+	    this.setState({
+				steps: array,
+				selected: newSelected,
+			});
 	  }
 	}
 
-	onPressUp = (id) => {
+	swapInArray = (array, idx1, idx2) => {
+		temp = array[idx2];
+		array[idx2] = array[idx1];
+		array[idx1] = temp;
+		return array;
+	}
 
+	onPressUp = (id) => {
+		// make a separate copy of the array
+		var array = [...this.state.steps];
+		var newSelected = [...this.state.selected];
+		// Find index
+		var index = this.findIndexOfId(id, array);
+		if (index !== -1) {
+			array = this.swapInArray(array, index - 1, index);
+			newSelected = this.swapInArray(newSelected, index - 1, index);
+			LayoutAnimation.configureNext(CustomLayoutSpring);
+	    this.setState({
+				steps: array,
+				selected: newSelected,
+			});
+	  }
 	}
 
 	onPressDown = (id) => {
-
+		// make a separate copy of the array
+		var array = [...this.state.steps];
+		var newSelected = [...this.state.selected];
+		// Find index
+		var index = this.findIndexOfId(id, array);
+		if (index !== -1) {
+			array = this.swapInArray(array, index, index + 1);
+			newSelected = this.swapInArray(newSelected, index, index + 1);
+			LayoutAnimation.configureNext(CustomLayoutSpring);
+			this.setState({
+				steps: array,
+				selected: newSelected,
+			});
+		}
 	}
 
 	onChangeText = (text) => {
@@ -221,59 +271,20 @@ class BuilderPage extends Component {
 
 	onRecipeSave = () => {
 		console.log('Save recipe');
-		const { recipeName, brewingVessel, filterType, orientation, totalWater, totalCoffee,
-			steps } = this.state;
-
-
-	}
-
-	getDescription(modalType, modalText, modalSelect) {
-		// Get description
-		description = '';
-		if (modalType == constants.STEP_HEAT_WATER) {
-			return 'Heat water to ' + modalText + 'F';
-		} else if (modalType == constants.STEP_GRIND_COFFEE) {
-			return modalText + ' grams of coffee ground ' + modalSelect;
-		} else if (modalType == constants.STEP_BLOOM_GROUNDS) {
-			return 'Bloom grounds with ' + modalText + ' of water';
-		} else if (modalType == constants.STEP_POUR_WATER) {
-			return 'Pour in ' + modalText + ' of water';
-		} else if (modalType == constants.STEP_WAIT ) {
-			return 'Wait ' + modalText + ' seconds';
-		} else if (modalType == constants.STEP_RINSE_FILTER) {
-			return 'Rinse paper filter with water. Discard water.';
-		} else if (modalType == constants.STEP_ADD_GROUNDS) {
-			return 'Add grounds to the brewing vessel.';
-		} else if (modalType == constants.STEP_SERVE ) {
-			return 'Pour and enjoy!';
+		objToUse = this.state;
+		// Need to add totalWater, totalCoffee, waterTemp, and grindSize
+		for (i = 0; i < objToUse.steps.length; i++) {
+			currentStep = objToUse.steps[i];
 		}
-	}
-
-	getProperties(modalType, modalText, modalSelect) {
-		// Get description
-		description = '';
-		if (modalType == constants.STEP_HEAT_WATER) {
-			return { waterTemp: modalText };
-		} else if (modalType == constants.STEP_GRIND_COFFEE) {
-			return { gramsCoffee: modalText, grindSize: modalSelect };
-		} else if (modalType == constants.STEP_BLOOM_GROUNDS) {
-			return { gramsWater: modalText };
-		} else if (modalType == constants.STEP_POUR_WATER) {
-			return { gramsWater: modalText };
-		} else if (modalType == constants.STEP_WAIT ) {
-			return { seconds: modalText };
-		} else if (modalType == constants.STEP_RINSE_FILTER) {
-			return {};
-		} else if (modalType == constants.STEP_ADD_GROUNDS) {
-			return {};
-		} else if (modalType == constants.STEP_SERVE ) {
-			return {};
-		}
+		newRecipe = recipeModel.Recipe(this.state);
+		this.props.saveRecipe(newRecipe);
 	}
 
 	render() {
 		const { recipeName, brewingVessel, filterType, orientation, modalId, modalType,
 			modalText, modalSelect, steps, vesselId, selected } = this.state;
+
+		const baseButtonPath = "../../assets/buttons/";
 
 		// Check if we should disable certain fields
 		var filterDisabled = (brewingVessel == '-');
@@ -324,14 +335,13 @@ class BuilderPage extends Component {
 					onPressDelete={this.onPressDelete}
 					onPressUp={this.onPressUp}
 					onPressDown={this.onPressDown}
+					onStepClick={this.onStepClick}
 					steps={steps}
 					selected={selected}
 				/>
 				<View style={styles.addandsave}>
 					<Add
 						onAddClick={this.onAddClick}
-						backgroundColor={'#1D5E9E'}
-						textColor={'#FFFFFF'}
 					/>
 					<Button
 						onButtonClick={this.onRecipeSave}
@@ -370,6 +380,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
 		marginBottom: 20,
     fontSize: 28,
+		fontWeight: "600",
     color: '#1D5E9E',
     alignSelf: 'flex-start',
   },
@@ -403,7 +414,15 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 		alignSelf: 'center',
 		alignItems: 'center',
-	}
+	},
 });
+
+const mapStateToProps = (state) => ({
+	recipes: state.recipesReducer.recipes
+});
+
+const mapDispatchToProps = { saveRecipe: saveRecipe }
+
+BuilderPage = connect(mapStateToProps,mapDispatchToProps)(BuilderPage)
 
 export default BuilderPage;

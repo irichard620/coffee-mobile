@@ -1,36 +1,26 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Image } from 'react-native';
 
 class Add extends Component {
 	constructor(props){
 		super(props);
   }
 	render() {
-    addBackgroundColor = {
-      backgroundColor: this.props.backgroundColor
-    }
-    addTextColor = {
-      color: this.props.textColor
-    }
+    const baseButtonPath = "../assets/buttons/";
+
 		return (
-			<TouchableHighlight style={[styles.add, addBackgroundColor]} onPress = { this.props.onAddClick }>
-				<View>
-					<Text style={[styles.title, addTextColor]}>+</Text>
-				</View>
-			</TouchableHighlight>
+      <TouchableWithoutFeedback onPress = {this.props.onAddClick}>
+        <Image style={styles.add} source={require(baseButtonPath + "Add_Button.png")} />
+      </TouchableWithoutFeedback>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	title: {
-    fontSize: 14,
-  },
 	add: {
 		width: 40,
 		height: 40,
-		borderRadius: 20,
 		alignItems: 'center',
     justifyContent: 'center',
 	}

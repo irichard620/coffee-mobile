@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 
 class Step extends Component {
 	render() {
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#1D5E9E',
     fontSize: 16,
+    fontWeight: '600',
   },
   description: {
     color: '#727272',
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
 		flexDirection:'column',
 	},
   buttonview: {
+    width: '100%',
 		marginTop: 20,
 		display: 'flex',
 		flexDirection:'row',

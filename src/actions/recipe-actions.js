@@ -57,7 +57,7 @@ export function saveRecipe(recipe) {
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
-        r.push(recipe.recipe);
+        r.push(recipe);
         AsyncStorage.setItem('recipes', JSON.stringify(r));
         dispatch(savedRecipe());
       });

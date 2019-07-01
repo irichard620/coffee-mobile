@@ -43,6 +43,7 @@ class Button extends Component {
 const styles = StyleSheet.create({
 	title: {
     fontSize: 14,
+    fontWeight: '600'
   },
 	button: {
 		height: 40,

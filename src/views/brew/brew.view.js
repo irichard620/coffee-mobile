@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { View, Text, ScrollView, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import Button from '../../components/button';
 import * as constants from '../builder/builder-constants';
+import * as recipeModel from '../../storage/recipe';
+import * as stepModel from '../../storage/recipe';
 
 class BrewPage extends Component {
 	constructor(props) {
@@ -103,9 +105,9 @@ class BrewPage extends Component {
     // Description
     description = ''
     if (step == -1) {
-      description = recipe.getDescription();
+      description = recipeModel.getRecipeDescription(recipe);
     } else if (step < recipe.steps.length) {
-      description = recipe.steps[step].getDescription();
+      description = stepModel.getStepDescription(recipe.steps[step]);
     } else {
       description = 'Enjoy your coffee!';
     }

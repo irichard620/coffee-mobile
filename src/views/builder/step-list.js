@@ -2,11 +2,12 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import * as constants from './builder-constants';
+import * as stepModel from '../../storage/step';
 import Step from './step';
 
 class StepList extends Component {
   renderItem = (step, idx) => {
-    const { onPressEdit, onPressDelete, onPressUp, onPressDown, steps, selected } = this.props
+    const { onPressEdit, onPressDelete, onPressUp, onPressDown, onStepClick, steps, selected } = this.props
 
     // Check if can edit
     var type = step['type']
@@ -28,9 +29,10 @@ class StepList extends Component {
     }
 
     return (<Step
+      key={step['id']}
       id={step['id']}
       title={step['title']}
-      description={step['description']}
+      description={stepModel.getStepShortDescription(step)}
       type={type}
       canEdit={canEdit}
       canGoUp={canGoUp}
@@ -40,8 +42,8 @@ class StepList extends Component {
       onPressDelete={() => onPressDelete(step['id'])}
       onPressUp={() => onPressUp(step['id'])}
       onPressDown={() => onPressDown(step['id'])}
-      onStepClick={() => onStepClick(idx)}
-      margin={[0, 0, 0, 15]}
+      onStepClick={() => onStepClick(idx, true)}
+      margin={[0, 15, 15, 15]}
     />);
   };
 

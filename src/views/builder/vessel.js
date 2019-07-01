@@ -1,17 +1,17 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 class Vessel extends Component {
 	render() {
 		return (
-      <TouchableHighlight style={styles.outline} onPress = { this.props.onStepClick }>
-        <React.Fragment>
+      <TouchableWithoutFeedback onPress = { this.props.onStepClick }>
+        <View style={styles.outline}>
           <View style={styles.circle}/>
           <Text style={styles.title}>{this.props.title}</Text>
           <Text style={styles.description}>{this.props.description}</Text>
-        </React.Fragment>
-      </TouchableHighlight>
+        </View>
+      </TouchableWithoutFeedback>
 		);
 	}
 }
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#1D5E9E',
     fontSize: 16,
+    fontWeight: '600',
   },
   description: {
     color: '#727272',

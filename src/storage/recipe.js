@@ -1,11 +1,12 @@
 import uuidv4 from 'uuid/v4';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as constants from '../views/builder/builder-constants';
+import * as stepModel from './step';
 
 export function Recipe(recipeObj) {
   recipe = {}
   // Get ID
-  if (!('id' in recipeObj)) {
+  if (!('id' in recipeObj) || recipeObj['id'] == '') {
     recipe.id = uuidv4();
   } else {
     recipe.id = recipeObj['id'];
@@ -17,34 +18,40 @@ export function Recipe(recipeObj) {
   recipe.brewingVessel = recipeObj['brewingVessel'];
   recipe.filterType = recipeObj['filterType'];
   recipe.orientation = recipeObj['orientation'];
+  if (recipe.orientation == '-') {
+    recipe.orientation = ''
+  }
   recipe.totalWater = recipeObj['totalWater'];
   recipe.totalCoffee = recipeObj['totalCoffee'];
   recipe.waterTemp = recipeObj['waterTemp'];
   recipe.grindSize = recipeObj['grindSize'];
   recipe.steps = recipeObj['steps'];
-  recipe.favorited = recipeObj['favorited'];
-
-  // Functions
-  recipe.getDescription = function() {
-    // Line 1
-    description = '';
-    if (this.orientation != '') {
-      description += this.orientation + " ";
-    }
-    description += this.brewingVessel;
-    description += ' with a ' + this.filterType + ' filter';
-    description += '\n';
-
-    // Line 2
-    description += this.totalCoffee + 'g coffee, ' + this.grindSize + " grind\n";
-
-    // Line 3
-    description += this.totalWater + 'g of water, ' + this.waterTemp + '\u2109';
-
-    return description
+  if (!('favorited' in recipeObj)) {
+    recipe.favorited = false
+  } else {
+    recipe.favorited = recipeObj['favorited'];
   }
 
   return recipe;
+}
+
+export function getRecipeDescription(recipe) {
+  // Line 1
+  description = '';
+  if (recipe.orientation != '') {
+    description += recipe.orientation + " ";
+  }
+  description += recipe.brewingVessel;
+  description += ' with a ' + recipe.filterType + ' filter';
+  description += '\n';
+
+  // Line 2
+  description += recipe.totalCoffee + 'g coffee, ' + recipe.grindSize + " grind\n";
+
+  // Line 3
+  description += recipe.totalWater + 'g of water, ' + recipe.waterTemp + '\u2109';
+
+  return description
 }
 
 export function defaultRecipes() {
@@ -63,7 +70,7 @@ export function defaultRecipes() {
     waterTemp: 205,
     grindSize: "Medium",
     steps: [
-      Step({
+      stepModel.Step({
         id: "0c47ceea-9aae-11e9-a2a3-2a2ae2dbcce4",
         type: constants.STEP_HEAT_WATER,
         title: constants.stepLabels[constants.STEP_HEAT_WATER],
@@ -92,47 +99,4 @@ export function defaultRecipes() {
   }));
 
   return defaultRecipes;
-}
-
-export function Step(stepObj) {
-  step = {}
-  // Get ID
-  if (!('id' in stepObj) || stepObj['id'] == '') {
-    step.id = uuidv4();
-  } else {
-    step.id = stepObj['id'];
-  }
-
-  // Assign other values
-  step.type = stepObj['type'];
-  step.title = stepObj['title'];
-  step.description = stepObj['description'];
-  step.properties = stepObj['properties'];
-
-  // Functions
-  step.getDescription = function() {
-    description = '';
-    if (this.type == constants.STEP_HEAT_WATER) {
-      description += 'Heat your water to ' + this.properties.waterTemp + '\u2109.';
-    } else if (this.type == constants.STEP_GRIND_COFFEE) {
-      description += 'Grind ' + this.properties.gramsCoffee +
-        ' grams of coffee to a ' + this.properties.grindSize + ' consistency.';
-    } else if (this.type == constants.STEP_RINSE_FILTER) {
-      description += 'Rinse the filter with some of your hot water, then discard the water. ' +
-        'This washes the filter and remove any paper taste.';
-    } else if (this.type == constants.STEP_ADD_GROUNDS) {
-      description += 'Add the ground coffee to the vessel.';
-    } else if (this.type == constants.STEP_BLOOM_GROUNDS) {
-      description += 'Pour ' + this.properties.gramsWater + ' grams of water on to ' +
-        'fully saturate your coffee grounds.';
-    } else if (this.type == constants.STEP_POUR_WATER) {
-      description += 'Add ' + this.properties.gramsWater + ' grams of water to the brew bed.';
-    } else if (this.type == constants.STEP_WAIT) {
-      description += 'Wait ' + this.properties.seconds + ' seconds';
-    }
-
-    return description
-  }
-
-  return step;
 }

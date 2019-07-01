@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 const MODAL_NEW_STEP = 'modal_new_step';
 const MODAL_BREW_VESSEL = 'modal_brew_vessel';
@@ -17,11 +17,11 @@ class ListItem extends Component {
 
   render() {
     return (
-      <TouchableOpacity style={styles.container} onPress={this.onPress}>
+      <TouchableWithoutFeedback style={styles.container} onPress={this.onPress}>
         <View style={styles.textcontainer}>
           <Text style={styles.listtitle}>{this.props.title}</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );
   }
 }
