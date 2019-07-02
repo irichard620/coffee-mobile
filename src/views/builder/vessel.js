@@ -1,15 +1,35 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Image } from 'react-native';
+import { vesselLabels, VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
+	VESSEL_POUROVER } from '../../constants';
 
 class Vessel extends Component {
 	render() {
+		const { vesselId, onStepClick } = this.props;
+
+		const basePath = "../../assets/mini-vessel-icons/";
+
+		var title = "-";
+		if (vesselId != "") {
+			title = vesselLabels[vesselId];
+		}
+
 		return (
-      <TouchableWithoutFeedback onPress = { this.props.onStepClick }>
+      <TouchableWithoutFeedback onPress = { onStepClick }>
         <View style={styles.outline}>
-          <View style={styles.circle}/>
-          <Text style={styles.title}>{this.props.title}</Text>
-          <Text style={styles.description}>{this.props.description}</Text>
+					<View style={styles.logoview}>
+						{vesselId == VESSEL_AEROPRESS &&
+							<Image style={styles.image} source={require(basePath + "Aeropress_Minicon.png")} />}
+						{vesselId == VESSEL_CHEMEX &&
+							<Image style={styles.image} source={require(basePath + "Chemex_Minicon.png")} />}
+						{vesselId == VESSEL_FRENCH_PRESS  &&
+							<Image style={styles.image} source={require(basePath + "FrenchPress_Minicon.png")} />}
+						{vesselId == VESSEL_POUROVER &&
+							<Image style={styles.image} source={require(basePath + "V60_Minicon.png")} />}
+					</View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{"Brewing Vessel"}</Text>
         </View>
       </TouchableWithoutFeedback>
 		);
@@ -39,13 +59,19 @@ const styles = StyleSheet.create({
     color: '#727272',
     fontSize: 14,
   },
-  circle: {
-    height: 56,
-    width: 56,
-    borderRadius: 28,
-    backgroundColor: '#1D5E9E',
-    marginBottom: 25
-  }
+	logoview: {
+		height: 55,
+    width: 55,
+    borderRadius: 20,
+    backgroundColor: '#F1F1F1',
+		justifyContent: 'center',
+    alignItems: 'center',
+		marginBottom: 25
+	},
+	image: {
+		height: 35,
+		resizeMode: 'contain',
+	},
 });
 
 export default Vessel;

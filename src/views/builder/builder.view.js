@@ -5,12 +5,13 @@ import { View, Text, ScrollView, StyleSheet, LayoutAnimation } from 'react-nativ
 import uuidv4 from 'uuid/v4';
 import Modal from "react-native-modal";
 import Add from '../../components/add';
+import Back from '../../components/back';
 import List from '../../components/list';
 import Close from '../../components/close';
 import Step from './step';
 import Vessel from './vessel';
-import * as constants from './builder-constants';
-import BuilderModal from './modal';
+import * as constants from '../../constants';
+import BuilderModal from './builder-modal';
 import StepList from './step-list';
 import update from 'immutability-helper';
 import Button from '../../components/button';
@@ -35,6 +36,7 @@ class BuilderPage extends Component {
 	constructor(props) {
     super(props);
 		this.state = {
+			id: "",
 			visibleModal: false,
 			modalId: "",
 			modalType: "",
@@ -53,6 +55,32 @@ class BuilderPage extends Component {
 			selected: []
 		}
   }
+
+	componentDidMount() {
+		const { navigation } = this.props;
+    const recipe = navigation.getParam('recipe', {});
+		if (Object.keys(recipe).length != 0) {
+			// Update params
+			selected = [];
+			for (step of recipe.steps) {
+				selected.push(false)
+			}
+			this.setState({
+				id: recipe.id,
+				recipeName: recipe.recipeName,
+				vesselId: recipe.vesselId,
+				brewingVessel: recipe.brewingVessel,
+				filterType: recipe.filterType,
+				orientation: recipe.orientation,
+				steps: recipe.steps,
+				selected: selected
+			})
+		}
+	}
+
+	onBackClick = () => {
+		this.props.navigation.goBack();
+	}
 
 	onAddClick = () => {
 		// Pull up add menu
@@ -180,7 +208,7 @@ class BuilderPage extends Component {
 			// Update selected
 			const { selected } = this.state;
 			LayoutAnimation.configureNext(CustomLayoutSpring);
-			this.setState({selected: selected.map((val, i) => i === id ? !val : val)})
+			this.setState({selected: selected.map((val, i) => i === id ? !val : false)})
 		}
 	}
 
@@ -275,8 +303,18 @@ class BuilderPage extends Component {
 		// Need to add totalWater, totalCoffee, waterTemp, and grindSize
 		for (i = 0; i < objToUse.steps.length; i++) {
 			currentStep = objToUse.steps[i];
+			if (currentStep.type == constants.STEP_GRIND_COFFEE) {
+				objToUse.grindSize = currentStep.properties.grindSize
+				objToUse.totalCoffee = currentStep.properties.gramsCoffee
+			} else if (currentStep.type == constants.STEP_HEAT_WATER) {
+				objToUse.waterTemp = currentStep.properties.waterTemp
+			} else if (currentStep.type == constants.STEP_POUR_WATER) {
+				objToUse.totalWater += currentStep.properties.gramsWater
+			} else if (currentStep.type == constants.STEP_BLOOM_GROUNDS) {
+				objToUse.totalWater = String(Number(currentStep.properties.gramsWater) + Number(objToUse.totalWater))
+			}
 		}
-		newRecipe = recipeModel.Recipe(this.state);
+		newRecipe = recipeModel.Recipe(objToUse);
 		this.props.saveRecipe(newRecipe);
 	}
 
@@ -295,6 +333,12 @@ class BuilderPage extends Component {
 
 		return (
 			<ScrollView style={styles.container}>
+				<View style={styles.backcontainer}>
+					<Back
+						onBackClick={this.onBackClick}
+						type={0}
+					/>
+				</View>
         <Text style={styles.title}>Recipe Builder</Text>
 				<Step
 					disabled={false}
@@ -307,8 +351,7 @@ class BuilderPage extends Component {
 					<View style={styles.vesselContainer}>
 						<Vessel
 							disabled={false}
-							title={brewingVessel}
-							description={'Brewing Vessel'}
+							vesselId={vesselId}
 							onStepClick={() => this.onStepClick(constants.VESSEL_ELEM)}
 						/>
 					</View>
@@ -353,7 +396,6 @@ class BuilderPage extends Component {
 				</View>
 				<BuilderModal
 					visibleModal={this.state.visibleModal}
-					onSwipeComplete={this.onCloseClick}
 					modalId={modalId}
 					modalType={modalType}
 					modalText={modalText}
@@ -375,8 +417,13 @@ const styles = StyleSheet.create({
 		flex: 1,
     backgroundColor: '#F4F4F4'
 	},
+	backcontainer: {
+		marginTop: 60,
+		marginLeft: 15,
+		alignItems: 'flex-start',
+	},
   title: {
-		marginTop: 70,
+		marginTop: 20,
     marginLeft: 15,
 		marginBottom: 20,
     fontSize: 28,

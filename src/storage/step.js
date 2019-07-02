@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import * as constants from '../views/builder/builder-constants';
+import * as constants from '../constants';
 
 export function Step(stepObj) {
   step = {}

@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
 import AsyncStorage from '@react-native-community/async-storage';
-import * as constants from '../views/builder/builder-constants';
+import * as constants from '../constants';
 import * as stepModel from './step';
 
 export function Recipe(recipeObj) {

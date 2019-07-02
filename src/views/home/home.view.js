@@ -6,9 +6,24 @@ import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import Sponsor from './sponsor';
 import { fetchSponsors } from '../../actions/sponsor-actions';
-import { fetchRecipes } from '../../actions/recipe-actions';
+import { fetchRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
 import update from 'immutability-helper';
 import * as recipeModel from '../../storage/recipe';
+import * as constants from '../../constants';
+import CustomModal from "../../components/modal";
+
+const CustomLayoutSpring = {
+	duration: 400,
+	create: {
+		type: LayoutAnimation.Types.spring,
+		property: LayoutAnimation.Properties.scaleY,
+		springDamping: 0.7,
+	},
+	update: {
+		type: LayoutAnimation.Types.spring,
+		springDamping: 0.7,
+	},
+};
 
 class HomePage extends Component {
 	constructor(props) {
@@ -19,6 +34,9 @@ class HomePage extends Component {
 			selectedCustoms: [],
 			favorites: [],
 			customs: [],
+			modalRecipeId: '',
+			modalRecipeIndex: -1,
+			visibleModal: false
 		};
   }
 
@@ -37,14 +55,14 @@ class HomePage extends Component {
 
 		if (recipes && !recipes.recipesIsFetching && recipes.recipes.length != 0) {
 			for (i = 0; i < recipes.recipes.length; i++) {
-				// Push to custom
-				newSelectedCustoms.push(false);
-				newCustoms.push(recipes.recipes[i]);
-
 				// Push to favorite
 				if (recipes.recipes[i].favorited) {
 					newSelectedFavorites.push(false);
 					newFavorites.push(recipes.recipes[i]);
+				} else {
+					// Push to custom
+					newSelectedCustoms.push(false);
+					newCustoms.push(recipes.recipes[i]);
 				}
 			}
 		}
@@ -88,28 +106,27 @@ class HomePage extends Component {
 
 	onEntryClick = (idx) => {
 		const { tab, selectedFavorites, selectedCustoms } = this.state;
-		var CustomLayoutSpring = {
-	    duration: 400,
-	    create: {
-	      type: LayoutAnimation.Types.spring,
-	      property: LayoutAnimation.Properties.scaleY,
-	      springDamping: 0.7,
-	    },
-	    update: {
-	      type: LayoutAnimation.Types.spring,
-	      springDamping: 0.7,
-	    },
-	  };
+
 		LayoutAnimation.configureNext(CustomLayoutSpring);
 		if (this.state.tab == 0) {
-			this.setState({selectedFavorites: selectedFavorites.map((val, i) => i === idx ? !val : val)})
+			this.setState({selectedFavorites: selectedFavorites.map((val, i) => i === idx ? !val : false)})
 		} else {
-			this.setState({selectedCustoms: selectedCustoms.map((val, i) => i === idx ? !val : val)})
+			this.setState({selectedCustoms: selectedCustoms.map((val, i) => i === idx ? !val : false)})
 		}
 	}
 
 	onEditClick = (idx) => {
-
+		var arrToUse = []
+		if (this.state.tab == 0) {
+			arrToUse = this.state.favorites;
+		} else {
+			arrToUse = this.state.customs;
+		}
+		this.setState({
+			visibleModal: true,
+			modalRecipeId: arrToUse[idx].id,
+			modalRecipeIndex: idx
+		});
 	}
 
 	onGoClick = (idx) => {
@@ -121,6 +138,79 @@ class HomePage extends Component {
 			this.props.navigation.navigate('Brew', {
 	      recipe: this.state.customs[idx]
 	    })
+		}
+	}
+
+	getModalOptions = () => {
+		const { favorites, customs, modalRecipeId, modalRecipeIndex } = this.state;
+
+		options = [{
+			id: constants.RECIPE_MENU_EDIT,
+			title: 'Edit recipe'
+		}];
+
+		var arrToSearch = []
+		if (this.state.tab == 0) {
+			arrToSearch = favorites
+		} else {
+			arrToSearch = customs
+		}
+		if (modalRecipeIndex != -1) {
+			var recipe = arrToSearch[modalRecipeIndex];
+			if (recipe.favorited) {
+				options.push({
+					id: constants.RECIPE_MENU_UNFAVORITE,
+					title: 'Unfavorite recipe'
+				});
+			} else {
+				options.push({
+					id: constants.RECIPE_MENU_FAVORITE,
+					title: 'Favorite recipe'
+				});
+			}
+		}
+		options.push({
+			id: constants.RECIPE_MENU_DELETE,
+			title: 'Delete'
+		});
+		return options
+	}
+
+	onCloseClick = () => {
+		// Close and clear modal
+		this.setState({
+			visibleModal: false,
+			modalRecipeId: "",
+			modalRecipeIndex: -1
+		});
+	}
+
+	onPressItem = (item) => {
+		const { tab, modalRecipeId, modalRecipeIndex, favorites, customs } = this.state;
+
+		if (item == constants.RECIPE_MENU_EDIT) {
+			// TODO: go to builder page and pass in this recipe
+			if (tab == 0) {
+				this.props.navigation.navigate('Builder', {
+		      recipe: favorites[modalRecipeIndex]
+		    })
+			} else {
+				this.props.navigation.navigate('Builder', {
+		      recipe: customs[modalRecipeIndex]
+		    })
+			}
+		} else if (item == constants.RECIPE_MENU_FAVORITE) {
+			// Call favorite recipe
+			this.props.favoriteRecipe(modalRecipeId);
+			// TODO: Update local object to favorited, move from customs to favorite
+		} else if (item == constants.RECIPE_MENU_UNFAVORITE) {
+			// Call unfavorite recipe
+			this.props.unfavoriteRecipe(modalRecipeId);
+			// TODO: Update local object to unfavorited, move from favorite to customs
+		} else if (item == constants.RECIPE_MENU_DELETE) {
+			// Call delete recipe
+			this.props.deleteRecipe(modalRecipeId);
+			// TODO: Delete local object from current array
 		}
 	}
 
@@ -146,8 +236,8 @@ class HomePage extends Component {
 	}
 
 	render() {
-		const { sponsors, recipes } = this.props
-		const { tab, customs, favorites, selectedFavorites, selectedCustoms } = this.state;
+		const { sponsors } = this.props
+		const { tab, customs, favorites, selectedFavorites, selectedCustoms, visibleModal } = this.state;
 
 		// Take care of sponsors
 		let sponsorID = ""
@@ -188,6 +278,15 @@ class HomePage extends Component {
 				{tab == 1 && customs.map((custom, idx) => (
 					this.renderEntry(idx, custom)
 				))}
+
+				<CustomModal
+					visibleModal={visibleModal}
+					onCloseClick={this.onCloseClick}
+		      onPressItem={this.onPressItem}
+					isListModal={true}
+		      isSelectInput={false}
+					options={this.getModalOptions()}
+				/>
 			</ScrollView>
 		);
 	}
@@ -214,7 +313,8 @@ const mapStateToProps = (state) => ({
 	recipes: state.recipesReducer.recipes
 });
 
-const mapDispatchToProps = { getSponsors: fetchSponsors, getRecipes: fetchRecipes }
+const mapDispatchToProps = { getSponsors: fetchSponsors, getRecipes: fetchRecipes,
+	favoriteRecipe: favoriteRecipe, unfavoriteRecipe: unfavoriteRecipe, deleteRecipe: deleteRecipe }
 
 HomePage = connect(mapStateToProps,mapDispatchToProps)(HomePage)
 

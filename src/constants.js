@@ -31,9 +31,8 @@ export const STEP_ADD_GROUNDS = 'step4';
 export const STEP_BLOOM_GROUNDS = 'step5';
 export const STEP_POUR_WATER = 'step6';
 export const STEP_WAIT = 'step7';
-export const STEP_SERVE = 'step8';
 
-// Element IDs
+// Modal IDs
 export const NEW_STEP_ELEM = 'step'
 export const RECIPE_NAME_ELEM = 'name'
 export const VESSEL_ELEM = 'vessel'
@@ -67,7 +66,6 @@ export const stepLabels = {
 	[STEP_BLOOM_GROUNDS]: 'Bloom Grounds',
 	[STEP_POUR_WATER]: 'Pour Water',
 	[STEP_WAIT]: 'Wait',
-	[STEP_SERVE]: 'Serve',
 }
 
 // Filters for each vessel
@@ -86,3 +84,10 @@ export const orientations = {
 
 // List of all grind sizes
 export const grindSizes = [GRIND_FINE, GRIND_MEDIUM_FINE, GRIND_MEDIUM, GRIND_MEDIUM_COARSE, GRIND_COARSE]
+
+// recipe menu options
+export const RECIPE_MENU_EDIT = 'recipe_menu1'
+export const RECIPE_MENU_FAVORITE = 'recipe_menu2'
+export const RECIPE_MENU_UNFAVORITE = 'recipe_menu3'
+export const RECIPE_MENU_DELETE = 'recipe_menu4'
+export const RECIPE_MENU_CANCEL = 'recipe_menu5'

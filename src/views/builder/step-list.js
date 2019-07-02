@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import * as constants from './builder-constants';
+import * as constants from '../../constants';
 import * as stepModel from '../../storage/step';
 import Step from './step';
 

@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { View, Text, ScrollView, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import Button from '../../components/button';
-import * as constants from '../builder/builder-constants';
+import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
-import * as stepModel from '../../storage/recipe';
+import * as stepModel from '../../storage/step';
 
 class BrewPage extends Component {
 	constructor(props) {
@@ -113,42 +113,50 @@ class BrewPage extends Component {
     }
 
 		return (
-			<View style={styles.container}>
-        <TouchableWithoutFeedback onPress = {this.onCloseClick}>
-          <Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
-        </TouchableWithoutFeedback>
-        <Text style={styles.title}>{recipe.recipeName}</Text>
-        <View style={styles.iconview}>
-          {this.getIcon(recipe)}
-        </View>
-        <Text style={styles.description}>{description}</Text>
-        <View style={styles.buttonview}>
-          {step != -1 && step != recipe.steps.length &&
-            <TouchableWithoutFeedback onPress = {this.onBackClick}>
-              <Image style={[styles.mini, backStyle]} source={require(baseButtonPath + "Go.png")} />
-            </TouchableWithoutFeedback>}
-          <Button
-            onButtonClick={this.onBrewClick}
-            type={0}
-            title={buttonTitle}
-            width={120}
-            margin={[0, buttonMarginRight, 0, 0]}
-          />
-          {step == -1 && <TouchableWithoutFeedback onPress = {this.onEditClick}>
-            <Image style={styles.mini} source={require(baseButtonPath + "Edit.png")} />
-          </TouchableWithoutFeedback>}
-        </View>
+			<View style={styles.transparentcontainer}>
+				<View style={styles.container}>
+	        <TouchableWithoutFeedback onPress = {this.onCloseClick}>
+	          <Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
+	        </TouchableWithoutFeedback>
+	        <Text style={styles.title}>{recipe.recipeName}</Text>
+	        <View style={styles.iconview}>
+	          {this.getIcon(recipe)}
+	        </View>
+	        <Text style={styles.description}>{description}</Text>
+	        <View style={styles.buttonview}>
+	          {step != -1 && step != recipe.steps.length &&
+	            <TouchableWithoutFeedback onPress = {this.onBackClick}>
+	              <Image style={[styles.mini, backStyle]} source={require(baseButtonPath + "Go.png")} />
+	            </TouchableWithoutFeedback>}
+	          <Button
+	            onButtonClick={this.onBrewClick}
+	            type={0}
+	            title={buttonTitle}
+	            width={120}
+	            margin={[0, buttonMarginRight, 0, 0]}
+	          />
+	          {step == -1 && <TouchableWithoutFeedback onPress = {this.onEditClick}>
+	            <Image style={styles.mini} source={require(baseButtonPath + "Edit.png")} />
+	          </TouchableWithoutFeedback>}
+	        </View>
+				</View>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
+	transparentcontainer: {
+		height: '100%',
+		backgroundColor: 'transparent'
+	},
 	container: {
 		flex: 1,
     backgroundColor: '#FFFFFF',
     padding: 15,
-    height: '100%',
+    marginTop: 50,
+		borderTopRightRadius: 20,
+		borderTopLeftRadius: 20,
 	},
   title: {
 		marginTop: 25,
@@ -159,7 +167,6 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
   },
   close: {
-    marginTop: 70,
     alignSelf: 'flex-start',
     height: 25,
     width: 25,

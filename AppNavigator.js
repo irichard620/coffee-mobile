@@ -43,7 +43,16 @@ const AppNavigator = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: "Main",
-    mode: 'modal'
+    mode: 'modal',
+    cardStyle: {
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      opacity: 1
+    },
+    transitionConfig: () => ({
+      containerStyle: {
+        backgroundColor: 'rgba(0, 0, 0, 0)'
+      }
+    })
   }
 );
 

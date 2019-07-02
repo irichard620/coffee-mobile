@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
-import * as constants from '../builder/builder-constants';
+import * as constants from '../../constants';
 
 class Entry extends Component {
 	render() {
