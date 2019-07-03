@@ -251,7 +251,7 @@ class HomePage extends Component {
 		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
 			sponsorTitle = sponsors.sponsors[0]["company"]
 			sponsorDescription = sponsors.sponsors[0]["description"]
-			sponsorID = sponsors.sponsors[0]["_id"]
+			sponsorID = sponsors.sponsors[0]["id"]
 			disabled = false
 		}
 
@@ -261,7 +261,7 @@ class HomePage extends Component {
 				<Sponsor
 					disabled={disabled}
 					onSponsorClick={this.onSponsorClick}
-					_id={sponsorID}
+					id={sponsorID}
 					title={sponsorTitle}
 					description={sponsorDescription}
 				/>

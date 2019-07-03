@@ -9,7 +9,7 @@ class Sponsor extends Component {
 	}
 
   onSponsorClick() {
-		this.props.onSponsorClick(this.props._id);
+		this.props.onSponsorClick(this.props.id);
 	}
 
 	render() {
