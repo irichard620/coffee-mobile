@@ -11,6 +11,9 @@ function requestSponsors() {
 
 export const RECEIVE_SPONSORS = 'RECEIVE_SPONSORS'
 function receiveSponsors(json) {
+  if (json) {
+    json = camelcaseKeys(json)
+  }
   return {
     type: RECEIVE_SPONSORS,
     sponsors: json,
@@ -28,7 +31,7 @@ export function fetchSponsors() {
         error => console.log('An error occurred.', error)
       )
       .then(json =>
-        dispatch(receiveSponsors(camelcaseKeys(json)))
+        dispatch(receiveSponsors(json))
       )
   }
 }
@@ -43,6 +46,9 @@ function requestSponsor(sponsorId) {
 
 export const RECEIVE_SPONSOR = 'RECEIVE_SPONSOR'
 function receiveSponsor(sponsorId, json) {
+  if (json) {
+    json = camelcaseKeys(json)
+  }
   return {
     type: RECEIVE_SPONSOR,
     sponsorId: sponsorId,
@@ -61,7 +67,7 @@ export function fetchSponsor(sponsorId) {
         error => console.log('An error occurred.', error)
       )
       .then(json =>
-        dispatch(receiveSponsor(sponsorId, camelcaseKeys(json)))
+        dispatch(receiveSponsor(sponsorId, json))
       )
   }
 }

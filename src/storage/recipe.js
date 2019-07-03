@@ -6,10 +6,10 @@ import * as stepModel from './step';
 export function Recipe(recipeObj) {
   recipe = {}
   // Get ID
-  if (!('id' in recipeObj) || recipeObj['id'] == '') {
-    recipe.id = uuidv4();
+  if (!('recipeId' in recipeObj) || recipeObj['recipeId'] == '') {
+    recipe.recipeId = uuidv4();
   } else {
-    recipe.id = recipeObj['id'];
+    recipe.recipeId = recipeObj['recipeId'];
   }
 
   // Assign other values
@@ -59,7 +59,7 @@ export function defaultRecipes() {
 
   // Intro to aeropress
   defaultRecipes.push(Recipe({
-    id: "a201b075-7b19-49f7-ba67-1a4a96acd5f4",
+    recipeId: "a201b075-7b19-49f7-ba67-1a4a96acd5f4",
     recipeName: "Intro to the AeroPress",
     vesselId: constants.VESSEL_AEROPRESS,
     brewingVessel: constants.vesselLabels[constants.VESSEL_AEROPRESS],
@@ -71,7 +71,7 @@ export function defaultRecipes() {
     grindSize: "Medium",
     steps: [
       stepModel.Step({
-        id: "0c47ceea-9aae-11e9-a2a3-2a2ae2dbcce4",
+        stepId: "0c47ceea-9aae-11e9-a2a3-2a2ae2dbcce4",
         type: constants.STEP_HEAT_WATER,
         title: constants.stepLabels[constants.STEP_HEAT_WATER],
         description: '',
@@ -84,7 +84,7 @@ export function defaultRecipes() {
   }));
 
   defaultRecipes.push(Recipe({
-    id: "aa5f349c-99be-11e9-a2a3-2a2ae2dbcce4",
+    recipeId: "aa5f349c-99be-11e9-a2a3-2a2ae2dbcce4",
     recipeName: "Intro to the Chemex",
     vesselId: constants.VESSEL_CHEMEX,
     brewingVessel: constants.vesselLabels[constants.VESSEL_CHEMEX],

@@ -1,12 +1,14 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { View, Text, ScrollView, StyleSheet, LayoutAnimation } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, LayoutAnimation, Linking } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
+import Back from '../../components/back';
 import Bean from './bean';
 import * as recipeModel from '../../storage/recipe';
 const camelcaseKeys = require('camelcase-keys');
+import { saveRecipe } from '../../actions/recipe-actions';
 
 const CustomLayoutSpring = {
 	duration: 400,
@@ -42,14 +44,16 @@ class SponsorPage extends Component {
 	componentWillReceiveProps(nextProps) {
 	  const sponsors = nextProps.sponsors;
 
-		newSelectedBeans = []
-		newSelectedRecipes = []
-		newBeans = []
-		newRecipes = []
+		if (sponsors && this.props.sponsors.sponsorIsFetching && !sponsors.sponsorIsFetching &&
+			Object.getOwnPropertyNames(sponsors.sponsor).length != 0) {
+			newSelectedBeans = []
+			newSelectedRecipes = []
+			newBeans = []
+			newRecipes = []
 
-		if (sponsors && !sponsors.sponsorIsFetching && Object.getOwnPropertyNames(sponsors.sponsor).length != 0) {
 			beans = sponsors.sponsor["beans"]
 			recipes = sponsors.sponsor["recipes"]
+
 			for (i = 0; i < beans.length; i++) {
 				// Push to beans
 				newSelectedBeans.push(false)
@@ -60,13 +64,17 @@ class SponsorPage extends Component {
 				newSelectedRecipes.push(false)
 				newRecipes.push(camelcaseKeys(recipes[i]))
 			}
+			this.setState({
+				selectedBeans: newSelectedBeans,
+				beans: newBeans,
+				selectedRecipes: newSelectedRecipes,
+				recipes: newRecipes,
+			});
 		}
-		this.setState({
-			selectedBeans: newSelectedBeans,
-			beans: newBeans,
-			selectedRecipes: newSelectedRecipes,
-			recipes: newRecipes,
-		});
+	}
+
+	onBackClick = () => {
+		this.props.navigation.goBack();
 	}
 
 	onBeanClick = (idx) => {
@@ -84,13 +92,33 @@ class SponsorPage extends Component {
 	}
 
 	onExploreClick = (idx) => {
+		// Open link
+		const { beans } = this.state;
 
+		// Get our specific bean link
+		const url = beans[idx].beanLink
+
+		// Open
+		Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+	}
+
+	onDownloadClick = (idx) => {
+		// Get our recipe
+		const recipe = this.state.recipes[idx]
+
+		this.props.saveRecipe(recipeModel.Recipe(recipe));
 	}
 
 	render() {
     const { sponsors } = this.props
 		const { beans, recipes, selectedBeans, selectedRecipes } = this.state;
-		
+
 		let sponsorTitle = "Loading Sponsor..."
 		let sponsorLocation = ""
     let sponsorBeans = []
@@ -106,9 +134,12 @@ class SponsorPage extends Component {
 		return (
 			<ScrollView style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.logo}>
-            <Text style={styles.title}>Logo here</Text>
-          </View>
+					<View style={styles.backcontainer}>
+						<Back
+							onBackClick={this.onBackClick}
+							type={1}
+						/>
+					</View>
           <View style={styles.about}>
             <Text style={styles.company}>{sponsorTitle}</Text>
             <Text style={styles.location}>{sponsorLocation}</Text>
@@ -116,7 +147,7 @@ class SponsorPage extends Component {
         </View>
         {beans.map((bean, idx) => <Bean
           title={bean.title}
-          key={bean._id}
+          key={bean.beanId}
           description={bean.description}
 					beanImageLink={bean.imageLink}
 					selected={selectedBeans[idx]}
@@ -125,14 +156,15 @@ class SponsorPage extends Component {
 					idx={idx}
         />)}
         {recipes.map((recipe, idx) => <Entry
-					key={recipe._id}
+					key={recipe.recipeId}
 					idx={idx}
 					selected={selectedRecipes[idx]}
 					vesselId={recipe.vesselId}
 					title={recipe.recipeName}
 					description={recipeModel.getRecipeDescription(recipe)}
 					onEntryClick={this.onEntryClick}
-					onGoClick={this.onGoClick}
+					isSponsor={true}
+					onDownloadClick={this.onDownloadClick}
 				/>)}
 			</ScrollView>
 		);
@@ -148,8 +180,15 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 352,
     backgroundColor: '#80694a',
-    marginBottom: 15
+    marginBottom: 15,
+		flexDirection: 'column',
+		justifyContent: 'space-between'
   },
+	backcontainer: {
+		marginTop: 60,
+		marginLeft: 15,
+		alignItems: 'flex-start',
+	},
   logo: {
     height: '80%',
   },
@@ -159,7 +198,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   about: {
-    flex: 1,
     marginLeft: 16,
     marginRight: 16,
     marginBottom: 16
@@ -178,9 +216,12 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => ({ sponsors: state.sponsorsReducer.sponsors })
+const mapStateToProps = (state) => ({
+	sponsors: state.sponsorsReducer.sponsors,
+	recipes: state.recipesReducer.recipes
+})
 
-const mapDispatchToProps = { getSponsor: fetchSponsor }
+const mapDispatchToProps = { getSponsor: fetchSponsor, saveRecipe: saveRecipe }
 
 SponsorPage = connect(mapStateToProps,mapDispatchToProps)(SponsorPage)
 

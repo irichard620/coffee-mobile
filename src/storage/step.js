@@ -4,10 +4,10 @@ import * as constants from '../constants';
 export function Step(stepObj) {
   step = {}
   // Get ID
-  if (!('id' in stepObj) || stepObj['id'] == '') {
-    step.id = uuidv4();
+  if (!('stepId' in stepObj) || stepObj['stepId'] == '') {
+    step.stepId = uuidv4();
   } else {
-    step.id = stepObj['id'];
+    step.stepId = stepObj['stepId'];
   }
 
   // Assign other values

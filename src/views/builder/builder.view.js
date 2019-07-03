@@ -36,7 +36,7 @@ class BuilderPage extends Component {
 	constructor(props) {
     super(props);
 		this.state = {
-			id: "",
+			recipeId: "",
 			visibleModal: false,
 			modalId: "",
 			modalType: "",
@@ -66,7 +66,7 @@ class BuilderPage extends Component {
 				selected.push(false)
 			}
 			this.setState({
-				id: recipe.id,
+				recipeId: recipe.recipeId,
 				recipeName: recipe.recipeName,
 				vesselId: recipe.vesselId,
 				brewingVessel: recipe.brewingVessel,
@@ -87,41 +87,41 @@ class BuilderPage extends Component {
 		this.setState({ visibleModal: true, modalType: constants.NEW_STEP_ELEM })
 	}
 
-	onPressItem = (id) => {
+	onPressItem = (item) => {
 		// Open modal if necessary or add step to screen
-		if (id == constants.STEP_HEAT_WATER || id == constants.STEP_GRIND_COFFEE
-		|| id == constants.STEP_BLOOM_GROUNDS || id == constants.STEP_POUR_WATER || id == constants.STEP_WAIT ) {
+		if (item == constants.STEP_HEAT_WATER || item == constants.STEP_GRIND_COFFEE
+		|| item == constants.STEP_BLOOM_GROUNDS || item == constants.STEP_POUR_WATER || item == constants.STEP_WAIT ) {
 			// These require text inputs - open up modal
-			this.setState({ visibleModal: true, modalType: id });
-		} else if (id.includes(constants.VESSEL_ELEM)) {
+			this.setState({ visibleModal: true, modalType: item });
+		} else if (item.includes(constants.VESSEL_ELEM)) {
 			// Update vessel
 			this.setState({
-				brewingVessel: constants.vesselLabels[id],
-				vesselId: id,
+				brewingVessel: constants.vesselLabels[item],
+				vesselId: item,
 				filterType: "-",
 				orientation: "-",
 				visibleModal: false,
 				modalType: ""
 			});
-		} else if (id.includes(constants.FILTER_ELEM)) {
+		} else if (item.includes(constants.FILTER_ELEM)) {
 			// Update filter
 			this.setState({
-				filterType: constants.filterLabels[id],
+				filterType: constants.filterLabels[item],
 				visibleModal: false,
 				modalType: ""
 			});
-		} else if (id.includes(constants.ORIENTATION_ELEM)) {
+		} else if (item.includes(constants.ORIENTATION_ELEM)) {
 			// Update orientation
 			this.setState({
-				orientation: constants.orientationLabels[id],
+				orientation: constants.orientationLabels[item],
 				visibleModal: false,
 				modalType: ""
 			});
 		} else {
 			// Add new step
 			newStep = stepModel.Step({
-				type: id,
-				title: constants.stepLabels[id],
+				type: item,
+				title: constants.stepLabels[item],
 			});
 			this.setState({
 				visibleModal: false,
@@ -147,7 +147,7 @@ class BuilderPage extends Component {
 		});
 	}
 
-	onModalSave = (id) => {
+	onModalSave = (stepId) => {
 		const { modalType, modalText, modalSelect, steps } = this.state
 
 		// If modal was for recipe name, just update that
@@ -158,10 +158,9 @@ class BuilderPage extends Component {
 				modalType: "",
 				modalText: ""
 			});
-		} else if (id == '') {
-			// TODO: Update totalWater, totalCoffee, etc
+		} else if (stepId == '') {
 			// Get title label
-			titleLabel = constants.stepLabels[modalType];;
+			titleLabel = constants.stepLabels[modalType];
 
 			// Add new step and update state
 			newStep = stepModel.Step({
@@ -182,10 +181,9 @@ class BuilderPage extends Component {
 					false
 				]
 			})
-		} else if (id != '') {
-			// TODO: Update totalWater, totalCoffee, etc
+		} else if (stepId != '') {
 			// Find index
-			var index = this.findIndexOfId(id, steps);
+			var index = this.findIndexOfId(stepId, steps);
 			if (index !== -1) {
 				this.setState({
 					visibleModal: false,
@@ -200,40 +198,40 @@ class BuilderPage extends Component {
 		}
 	}
 
-	onStepClick = (id, inList) => {
+	onStepClick = (stepId, inList) => {
 		if (!inList) {
 			// Pull up modify menu
-			this.setState({ visibleModal: true, modalType: id })
+			this.setState({ visibleModal: true, modalType: stepId })
 		} else {
 			// Update selected
 			const { selected } = this.state;
 			LayoutAnimation.configureNext(CustomLayoutSpring);
-			this.setState({selected: selected.map((val, i) => i === id ? !val : false)})
+			this.setState({selected: selected.map((val, i) => i === stepId ? !val : false)})
 		}
 	}
 
-	onPressEdit = (id, type) => {
-		this.setState({ visibleModal: true, modalType: type, modalId: id })
+	onPressEdit = (stepId, type) => {
+		this.setState({ visibleModal: true, modalType: type, modalId: stepId })
 	}
 
-	findIndexOfId = (id, array) => {
+	findIndexOfId = (stepId, array) => {
 		// Find index
 		var index = -1;
 		for (var i = 0; i < array.length; i++) {
 	    // Check id
-			if (array[i]['id'] == id) {
+			if (array[i]['stepId'] == stepId) {
 				index = i;
 			}
 		}
 		return index
 	}
 
-	onPressDelete = (id) => {
+	onPressDelete = (stepId) => {
 		// make a separate copy of the array
 		var array = [...this.state.steps];
 		var newSelected = [...this.state.selected];
 		// Find index
-		var index = this.findIndexOfId(id, array);
+		var index = this.findIndexOfId(stepId, array);
 	  if (index !== -1) {
 	    array.splice(index, 1);
 			newSelected.splice(index, 1);
@@ -252,12 +250,12 @@ class BuilderPage extends Component {
 		return array;
 	}
 
-	onPressUp = (id) => {
+	onPressUp = (stepId) => {
 		// make a separate copy of the array
 		var array = [...this.state.steps];
 		var newSelected = [...this.state.selected];
 		// Find index
-		var index = this.findIndexOfId(id, array);
+		var index = this.findIndexOfId(stepId, array);
 		if (index !== -1) {
 			array = this.swapInArray(array, index - 1, index);
 			newSelected = this.swapInArray(newSelected, index - 1, index);
@@ -269,12 +267,12 @@ class BuilderPage extends Component {
 	  }
 	}
 
-	onPressDown = (id) => {
+	onPressDown = (stepId) => {
 		// make a separate copy of the array
 		var array = [...this.state.steps];
 		var newSelected = [...this.state.selected];
 		// Find index
-		var index = this.findIndexOfId(id, array);
+		var index = this.findIndexOfId(stepId, array);
 		if (index !== -1) {
 			array = this.swapInArray(array, index, index + 1);
 			newSelected = this.swapInArray(newSelected, index, index + 1);
@@ -293,7 +291,6 @@ class BuilderPage extends Component {
 	}
 
 	onChangePicker = (val, idx) => {
-		console.log(val);
 		this.setState({ modalSelect: val })
 	}
 
@@ -316,6 +313,7 @@ class BuilderPage extends Component {
 		}
 		newRecipe = recipeModel.Recipe(objToUse);
 		this.props.saveRecipe(newRecipe);
+		this.props.navigation.goBack();
 	}
 
 	render() {

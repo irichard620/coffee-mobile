@@ -29,8 +29,8 @@ class StepList extends Component {
     }
 
     return (<Step
-      key={step['id']}
-      id={step['id']}
+      key={step['stepId']}
+      id={step['stepId']}
       title={step['title']}
       description={stepModel.getStepShortDescription(step)}
       type={type}
@@ -38,10 +38,10 @@ class StepList extends Component {
       canGoUp={canGoUp}
       canGoDown={canGoDown}
       selected={selected[idx]}
-      onPressEdit={() => onPressEdit(step['id'], type)}
-      onPressDelete={() => onPressDelete(step['id'])}
-      onPressUp={() => onPressUp(step['id'])}
-      onPressDown={() => onPressDown(step['id'])}
+      onPressEdit={() => onPressEdit(step['stepId'], type)}
+      onPressDelete={() => onPressDelete(step['stepId'])}
+      onPressUp={() => onPressUp(step['stepId'])}
+      onPressDown={() => onPressDown(step['stepId'])}
       onStepClick={() => onStepClick(idx, true)}
       margin={[0, 15, 15, 15]}
     />);

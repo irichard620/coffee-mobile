@@ -11,6 +11,7 @@ import update from 'immutability-helper';
 import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
 import CustomModal from "../../components/modal";
+import { withNavigationFocus } from "react-navigation";
 
 const CustomLayoutSpring = {
 	duration: 400,
@@ -43,6 +44,13 @@ class HomePage extends Component {
 	componentDidMount() {
 		this.props.getSponsors();
 		this.props.getRecipes();
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.isFocused && !prevProps.isFocused) {
+      // Use the `this.props.isFocused` boolean
+      this.props.getRecipes();
+    }
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -124,7 +132,7 @@ class HomePage extends Component {
 		}
 		this.setState({
 			visibleModal: true,
-			modalRecipeId: arrToUse[idx].id,
+			modalRecipeId: arrToUse[idx].recipeId,
 			modalRecipeIndex: idx
 		});
 	}
@@ -193,11 +201,11 @@ class HomePage extends Component {
 			if (tab == 0) {
 				this.props.navigation.navigate('Builder', {
 		      recipe: favorites[modalRecipeIndex]
-		    })
+				})
 			} else {
 				this.props.navigation.navigate('Builder', {
 		      recipe: customs[modalRecipeIndex]
-		    })
+				})
 			}
 		} else if (item == constants.RECIPE_MENU_FAVORITE) {
 			// Call favorite recipe
@@ -214,6 +222,48 @@ class HomePage extends Component {
 		}
 	}
 
+	// findIndexOfId = (recipeId, array) => {
+	// 	// Find index
+	// 	var index = -1;
+	// 	for (var i = 0; i < array.length; i++) {
+	//     // Check id
+	// 		if (array[i]['recipeId'] == recipeId) {
+	// 			index = i;
+	// 		}
+	// 	}
+	// 	return index
+	// }
+	//
+	// // Callbacks from other pages
+	// onBuilderRecipeSave(recipe) {
+	// 	console.log("On save")
+	// 	const { tab, favorites, customs } = this.state;
+	// 	found = false
+	// 	if (tab == 0) {
+	// 		index = this.findIndexOfId(recipe.recipeId, favorites)
+	// 		if (index != -1) {
+	// 			// replace new
+	// 			found = true
+	// 			this.setState({favorites: favorites.map((val, idx) => idx === index ? recipe : val)})
+	// 		}
+	// 	} else {
+	// 		index = this.findIndexOfId(recipe.recipeId, customs)
+	// 		console.log(index)
+	// 		if (index != -1) {
+	// 			// replace new
+	// 			found = true
+	// 			this.setState({customs: customs.map((val, idx) => idx === index ? recipe : val)})
+	// 		}
+	// 	}
+	// 	// Otherwise, add to customs
+	// 	if (!found) {
+	// 		this.setState({
+	// 			...customs,
+	// 			recipe
+	// 		})
+	// 	}
+	// }
+
 	renderEntry = (idx, item) => {
 		const { tab, selectedFavorites, selectedCustoms } = this.state;
 		var selected = false;
@@ -223,7 +273,7 @@ class HomePage extends Component {
 			selected = selectedCustoms[idx]
 		}
 		return (<Entry
-			key={item.id}
+			key={item.recipeId}
 			idx={idx}
 			selected={selected}
 			vesselId={item.vesselId}
@@ -251,7 +301,7 @@ class HomePage extends Component {
 		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
 			sponsorTitle = sponsors.sponsors[0]["company"]
 			sponsorDescription = sponsors.sponsors[0]["description"]
-			sponsorID = sponsors.sponsors[0]["id"]
+			sponsorID = sponsors.sponsors[0].sponsorId
 			disabled = false
 		}
 
@@ -318,4 +368,4 @@ const mapDispatchToProps = { getSponsors: fetchSponsors, getRecipes: fetchRecipe
 
 HomePage = connect(mapStateToProps,mapDispatchToProps)(HomePage)
 
-export default HomePage;
+export default withNavigationFocus(HomePage);

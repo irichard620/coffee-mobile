@@ -6,23 +6,31 @@ import Button from '../../components/button';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import * as stepModel from '../../storage/step';
+import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
+import CustomModal from "../../components/modal";
 
 class BrewPage extends Component {
 	constructor(props) {
     super(props);
     this.state = {
-      step: -1
+      step: -1,
+			recipe: {},
+			visibleModal: false
     };
   }
+
+	componentDidMount() {
+		const { navigation } = this.props;
+		const recipe = navigation.getParam('recipe', {});
+		this.setState({ recipe: recipe })
+	}
 
   onCloseClick = () => {
     this.props.navigation.goBack();
   }
 
   onBrewClick = () => {
-    const { navigation } = this.props;
-    const { step } = this.state;
-    const recipe = navigation.getParam('recipe', {});
+    const { step, recipe } = this.state;
 
     if (step != recipe.steps.length) {
       this.setState({
@@ -34,7 +42,9 @@ class BrewPage extends Component {
   }
 
   onEditClick = () => {
-
+		this.setState({
+			visibleModal: true
+		});
   }
 
   onBackClick = () => {
@@ -42,6 +52,64 @@ class BrewPage extends Component {
       step: this.state.step - 1
     })
   }
+
+	onCloseModalClick = () => {
+		// Close and clear modal
+		this.setState({
+			visibleModal: false
+		});
+	}
+
+	onPressItem = (item) => {
+		const { recipe } = this.state;
+
+		if (item == constants.RECIPE_MENU_EDIT) {
+			this.props.navigation.navigate('Builder', {
+				recipe: recipe
+			})
+		} else if (item == constants.RECIPE_MENU_FAVORITE) {
+			// Call favorite recipe
+			this.props.favoriteRecipe(recipe.recipeId);
+			// Update local state recipe
+			this.setState({ recipe: { ...recipe, favorited: true } });
+		} else if (item == constants.RECIPE_MENU_UNFAVORITE) {
+			// Call unfavorite recipe
+			this.props.unfavoriteRecipe(recipe.recipeId);
+			// Update local state recipe
+			this.setState({ recipe: { ...recipe, favorited: false } });
+		} else if (item == constants.RECIPE_MENU_DELETE) {
+			// Call delete recipe
+			this.props.deleteRecipe(recipe.recipeId);
+			// Go back in navigation
+			this.props.navigation.goBack();
+		}
+	}
+
+	getModalOptions = () => {
+		const { recipe } = this.state;
+
+		options = [{
+			id: constants.RECIPE_MENU_EDIT,
+			title: 'Edit recipe'
+		}];
+
+		if (recipe.favorited) {
+			options.push({
+				id: constants.RECIPE_MENU_UNFAVORITE,
+				title: 'Unfavorite recipe'
+			});
+		} else {
+			options.push({
+				id: constants.RECIPE_MENU_FAVORITE,
+				title: 'Favorite recipe'
+			});
+		}
+		options.push({
+			id: constants.RECIPE_MENU_DELETE,
+			title: 'Delete'
+		});
+		return options
+	}
 
   getVesselIcon = (vesselId) => {
     const baseBrewPath = "../../assets/brew/";
@@ -81,9 +149,7 @@ class BrewPage extends Component {
   }
 
 	render() {
-    const { navigation } = this.props;
-    const { step } = this.state;
-    const recipe = navigation.getParam('recipe', {});
+    const { step, visibleModal, recipe } = this.state;
 
     const baseButtonPath = "../../assets/buttons/";
     const baseBrewPath = "../../assets/brew/";
@@ -91,7 +157,9 @@ class BrewPage extends Component {
     // Button styles
     buttonMarginRight = 15;
     buttonTitle = 'Brew'
-    if (step >= 0 && step < recipe.steps.length) {
+		if (!('steps' in recipe)) {
+			buttonTitle = 'Loading...'
+		} else if (step >= 0 && step < recipe.steps.length) {
       buttonMarginRight = 0
       buttonTitle = 'Next';
     } else if (step == recipe.steps.length) {
@@ -140,6 +208,14 @@ class BrewPage extends Component {
 	          </TouchableWithoutFeedback>}
 	        </View>
 				</View>
+				<CustomModal
+					visibleModal={visibleModal}
+					onCloseClick={this.onCloseModalClick}
+		      onPressItem={this.onPressItem}
+					isListModal={true}
+		      isSelectInput={false}
+					options={this.getModalOptions()}
+				/>
 			</View>
 		);
 	}
@@ -154,7 +230,7 @@ const styles = StyleSheet.create({
 		flex: 1,
     backgroundColor: '#FFFFFF',
     padding: 15,
-    marginTop: 50,
+		marginTop: 50,
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
 	},
@@ -200,9 +276,10 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = (state) => ({ });
+const mapStateToProps = (state) => ({ recipes: state.recipesReducer.recipes });
 
-const mapDispatchToProps = { }
+const mapDispatchToProps = { favoriteRecipe: favoriteRecipe, unfavoriteRecipe: unfavoriteRecipe,
+	deleteRecipe: deleteRecipe }
 
 BrewPage = connect(mapStateToProps,mapDispatchToProps)(BrewPage)
 

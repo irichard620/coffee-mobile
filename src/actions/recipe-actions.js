@@ -29,7 +29,7 @@ export function fetchRecipes() {
           // Create objects and add to result
           result.push(Recipe(recipe));
         }
-        result = result.concat(defaultRecipes());
+        // result = result.concat(defaultRecipes());
         dispatch(receiveRecipes(result))
       });
   }
@@ -59,7 +59,7 @@ export function saveRecipe(recipeToSave) {
         const r = recipes ? JSON.parse(recipes) : [];
         var found = false;
         for (i = 0; i < r.length; i++) {
-          if (r[i].id == recipeToSave.id) {
+          if (r[i].recipeId == recipeToSave.recipeId) {
             r[i] = recipeToSave;
             found = true;
           }
@@ -96,7 +96,7 @@ export function favoriteRecipe(id) {
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
         for (recipe of r) {
-          if (recipe.id == id) {
+          if (recipe.recipeId == id) {
             recipe.favorited = true;
           }
         }
@@ -129,7 +129,7 @@ export function unfavoriteRecipe(id) {
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
         for (recipe of r) {
-          if (recipe.id == id) {
+          if (recipe.recipeId == id) {
             recipe.favorited = false;
           }
         }
@@ -163,7 +163,7 @@ export function deleteRecipe(id) {
         const r = recipes ? JSON.parse(recipes) : [];
         for (i = 0; i < r.length; i++) {
           recipe = r[i]
-          if (recipe.id == id) {
+          if (recipe.recipeId == id) {
             r.splice(i, 1)
           }
         }

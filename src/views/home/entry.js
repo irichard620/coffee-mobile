@@ -5,7 +5,8 @@ import * as constants from '../../constants';
 
 class Entry extends Component {
 	render() {
-		const { title, description, vesselId, selected, onEntryClick, onEditClick, onGoClick, idx } = this.props
+		const { title, description, vesselId, selected, onEntryClick, onEditClick,
+			onGoClick, idx, isSponsor, onDownloadClick } = this.props
 
 		const basePath = "../../assets/mini-vessel-icons/";
 		const baseButtonPath = "../../assets/buttons/";
@@ -47,12 +48,15 @@ class Entry extends Component {
 					{selected && <View style={styles.buttonview}>
 						<Image style={styles.close} source={require(baseButtonPath + "Close.png")} />
 						<View style={styles.rightbuttonview}>
-							<TouchableWithoutFeedback onPress = {() => onEditClick(idx)}>
+							{!isSponsor && <TouchableWithoutFeedback onPress = {() => onEditClick(idx)}>
 								<Image style={styles.edit} source={require(baseButtonPath + "Edit.png")} />
-							</TouchableWithoutFeedback>
-							<TouchableWithoutFeedback onPress = {() => onGoClick(idx)}>
+							</TouchableWithoutFeedback>}
+							{!isSponsor && <TouchableWithoutFeedback onPress = {() => onGoClick(idx)}>
 								<Image style={styles.use} source={require(baseButtonPath + "Go.png")} />
-							</TouchableWithoutFeedback>
+							</TouchableWithoutFeedback>}
+							{isSponsor && <TouchableWithoutFeedback onPress = {() => onDownloadClick(idx)}>
+								<Image style={styles.use} source={require(baseButtonPath + "Move_Down.png")} />
+							</TouchableWithoutFeedback>}
 						</View>
 					</View>}
 				</View>
