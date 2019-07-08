@@ -25,6 +25,21 @@ class BrewPage extends Component {
 		this.setState({ recipe: recipe })
 	}
 
+	componentWillReceiveProps(nextProps) {
+		const { recipe } = this.state;
+	  const recipes = nextProps.recipes;
+
+		if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving &&
+			!recipes.recipeIsDeleting && recipes.recipes.length != 0) {
+			for (i = 0; i < recipes.recipes.length; i++) {
+				// Check IDs and
+				if (recipes.recipes[i].recipeId == recipe.recipeId) {
+					this.setState({ recipe: recipes.recipes[i] })
+				}
+			}
+		}
+	}
+
   onCloseClick = () => {
     this.props.navigation.goBack();
   }
@@ -70,13 +85,9 @@ class BrewPage extends Component {
 		} else if (item == constants.RECIPE_MENU_FAVORITE) {
 			// Call favorite recipe
 			this.props.favoriteRecipe(recipe.recipeId);
-			// Update local state recipe
-			this.setState({ recipe: { ...recipe, favorited: true } });
 		} else if (item == constants.RECIPE_MENU_UNFAVORITE) {
 			// Call unfavorite recipe
 			this.props.unfavoriteRecipe(recipe.recipeId);
-			// Update local state recipe
-			this.setState({ recipe: { ...recipe, favorited: false } });
 		} else if (item == constants.RECIPE_MENU_DELETE) {
 			// Call delete recipe
 			this.props.deleteRecipe(recipe.recipeId);

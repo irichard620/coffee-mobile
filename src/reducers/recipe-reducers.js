@@ -4,6 +4,12 @@ import {
   RECEIVE_RECIPES,
   SAVING_RECIPE,
   SAVED_RECIPE,
+  FAVORITING_RECIPE,
+  FAVORITED_RECIPE,
+  UNFAVORITING_RECIPE,
+  UNFAVORITED_RECIPE,
+  DELETING_RECIPE,
+  DELETED_RECIPE,
 } from '../actions/recipe-actions'
 
 function recipes(
@@ -30,8 +36,38 @@ function recipes(
         recipeIsSaving: true,
       })
     case SAVED_RECIPE:
+      // In case of saved recipe, edit recipes array
+      var found = false;
+      for (i = 0; i < state.recipes.length; i++) {
+        if (state.recipes[i].recipeId == action.recipe.recipeId) {
+          state.recipes[i] = action.recipe;
+          found = true;
+          break
+        }
+      }
+      if (!found) {
+        state.recipes.push(action.recipe);
+      }
       return Object.assign({}, state, {
         recipeIsSaving: false,
+        recipes: state.recipes,
+        lastUpdated: action.receivedAt
+      })
+    case DELETING_RECIPE:
+      return Object.assign({}, state, {
+        recipeIsDeleting: true,
+      })
+    case DELETED_RECIPE:
+      // In case of deleted recipe, edit recipes array
+      for (i = 0; i < state.recipes.length; i++) {
+        if (state.recipes[i].recipeId == action.recipeId) {
+          state.recipes.splice(i, 1)
+          break
+        }
+      }
+      return Object.assign({}, state, {
+        recipeIsDeleting: false,
+        recipes: state.recipes,
         lastUpdated: action.receivedAt
       })
     default:
@@ -45,6 +81,8 @@ function recipesReducer(state = {}, action) {
     case REQUEST_RECIPES:
     case SAVED_RECIPE:
     case SAVING_RECIPE:
+    case DELETING_RECIPE:
+    case DELETED_RECIPE:
       return Object.assign({}, state, {
         ["recipes"]: recipes(state["recipes"], action)
       })

@@ -46,22 +46,16 @@ class HomePage extends Component {
 		this.props.getRecipes();
 	}
 
-	componentDidUpdate(prevProps) {
-		if (this.props.isFocused && !prevProps.isFocused) {
-      // Use the `this.props.isFocused` boolean
-      this.props.getRecipes();
-    }
-	}
-
 	componentWillReceiveProps(nextProps) {
 	  const recipes = nextProps.recipes;
 
-		newSelectedFavorites = []
-		newSelectedCustoms = []
-		newFavorites = []
-		newCustoms = []
+		if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving &&
+			!recipes.recipeIsDeleting && recipes.recipes.length != 0) {
+			newSelectedFavorites = []
+			newSelectedCustoms = []
+			newFavorites = []
+			newCustoms = []
 
-		if (recipes && !recipes.recipesIsFetching && recipes.recipes.length != 0) {
 			for (i = 0; i < recipes.recipes.length; i++) {
 				// Push to favorite
 				if (recipes.recipes[i].favorited) {
@@ -73,13 +67,17 @@ class HomePage extends Component {
 					newCustoms.push(recipes.recipes[i]);
 				}
 			}
+
+			this.setState({
+				modalRecipeId: '',
+				modalRecipeIndex: -1,
+				visibleModal: false,
+				selectedFavorites: newSelectedFavorites,
+				favorites: newFavorites,
+				selectedCustoms: newSelectedCustoms,
+				customs: newCustoms,
+			});
 		}
-		this.setState({
-			selectedFavorites: newSelectedFavorites,
-			favorites: newFavorites,
-			selectedCustoms: newSelectedCustoms,
-			customs: newCustoms,
-		});
 	}
 
 	onFavoritesClick = () => {
@@ -221,48 +219,6 @@ class HomePage extends Component {
 			// TODO: Delete local object from current array
 		}
 	}
-
-	// findIndexOfId = (recipeId, array) => {
-	// 	// Find index
-	// 	var index = -1;
-	// 	for (var i = 0; i < array.length; i++) {
-	//     // Check id
-	// 		if (array[i]['recipeId'] == recipeId) {
-	// 			index = i;
-	// 		}
-	// 	}
-	// 	return index
-	// }
-	//
-	// // Callbacks from other pages
-	// onBuilderRecipeSave(recipe) {
-	// 	console.log("On save")
-	// 	const { tab, favorites, customs } = this.state;
-	// 	found = false
-	// 	if (tab == 0) {
-	// 		index = this.findIndexOfId(recipe.recipeId, favorites)
-	// 		if (index != -1) {
-	// 			// replace new
-	// 			found = true
-	// 			this.setState({favorites: favorites.map((val, idx) => idx === index ? recipe : val)})
-	// 		}
-	// 	} else {
-	// 		index = this.findIndexOfId(recipe.recipeId, customs)
-	// 		console.log(index)
-	// 		if (index != -1) {
-	// 			// replace new
-	// 			found = true
-	// 			this.setState({customs: customs.map((val, idx) => idx === index ? recipe : val)})
-	// 		}
-	// 	}
-	// 	// Otherwise, add to customs
-	// 	if (!found) {
-	// 		this.setState({
-	// 			...customs,
-	// 			recipe
-	// 		})
-	// 	}
-	// }
 
 	renderEntry = (idx, item) => {
 		const { tab, selectedFavorites, selectedCustoms } = this.state;
