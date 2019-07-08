@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { View, Text, ScrollView, StyleSheet, LayoutAnimation, Linking } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, LayoutAnimation, Linking,
+	ImageBackground, Image } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
@@ -123,6 +124,8 @@ class SponsorPage extends Component {
 		let sponsorLocation = ""
     let sponsorBeans = []
     let sponsorRecipes = []
+		let sponsorBackImage = ""
+		let sponsorLogoImage = ""
 		if (sponsors && !sponsors.sponsorIsFetching && Object.getOwnPropertyNames(sponsors.sponsor).length == 0) {
 			sponsorDescription = "No Sponsors to show"
 		} else if (sponsors && !sponsors.sponsorIsFetching && Object.getOwnPropertyNames(sponsors.sponsor).length != 0) {
@@ -130,21 +133,24 @@ class SponsorPage extends Component {
 			sponsorLocation = sponsors.sponsor["location"]
       sponsorBeans = sponsors.sponsor["beans"]
 			sponsorRecipes = sponsors.sponsor["recipes"]
+			sponsorBackImage = sponsors.sponsor["backgroundLink"]
+			sponsorLogoImage = sponsors.sponsor["logoLink"]
 		}
 		return (
 			<ScrollView style={styles.container}>
-        <View style={styles.header}>
+				<ImageBackground source={{uri: sponsorBackImage}} style={styles.header}>
 					<View style={styles.backcontainer}>
 						<Back
 							onBackClick={this.onBackClick}
 							type={1}
 						/>
 					</View>
-          <View style={styles.about}>
-            <Text style={styles.company}>{sponsorTitle}</Text>
-            <Text style={styles.location}>{sponsorLocation}</Text>
-          </View>
-        </View>
+					<Image style={styles.logo} source={{uri: sponsorLogoImage}} />
+					<View style={styles.about}>
+						<Text style={styles.company}>{sponsorTitle}</Text>
+						<Text style={styles.location}>{sponsorLocation}</Text>
+					</View>
+				</ImageBackground>
         {beans.map((bean, idx) => <Bean
           title={bean.title}
           key={bean.beanId}
@@ -179,7 +185,7 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     height: 352,
-    backgroundColor: '#80694a',
+		width: '100%',
     marginBottom: 15,
 		flexDirection: 'column',
 		justifyContent: 'space-between'
@@ -190,7 +196,11 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-start',
 	},
   logo: {
-    height: '80%',
+    height: 85,
+		width: '75%',
+		resizeMode: 'contain',
+		alignSelf: 'center',
+		justifyContent: 'center'
   },
   title: {
     color: '#FFFFFF',

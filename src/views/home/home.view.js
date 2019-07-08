@@ -105,6 +105,7 @@ class HomePage extends Component {
 
 	onSponsorClick = (sponsorId) => {
 		// Pull up sponsor page
+		console.log("sponsor click " + sponsorId)
 		this.props.navigation.navigate('Sponsor', {
       sponsorId: sponsorId
     })
@@ -245,31 +246,12 @@ class HomePage extends Component {
 		const { sponsors } = this.props
 		const { tab, customs, favorites, selectedFavorites, selectedCustoms, visibleModal } = this.state;
 
-		// Take care of sponsors
-		let sponsorID = ""
-		let sponsorTitle = ""
-		let sponsorDescription = "Loading Sponsors..."
-		let disabled = true
-		if (!sponsors || !sponsors.sponsors) {
-			sponsorDescription = "Could not load sponsors"
-		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length == 0) {
-			sponsorDescription = "No Sponsors to show"
-		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
-			sponsorTitle = sponsors.sponsors[0]["company"]
-			sponsorDescription = sponsors.sponsors[0]["description"]
-			sponsorID = sponsors.sponsors[0].sponsorId
-			disabled = false
-		}
-
 		return (
 			<ScrollView style={styles.container}>
         <Text style={styles.title}>Good Morning, Emile.</Text>
 				<Sponsor
-					disabled={disabled}
 					onSponsorClick={this.onSponsorClick}
-					id={sponsorID}
-					title={sponsorTitle}
-					description={sponsorDescription}
+					sponsors={sponsors}
 				/>
 				<MenuButtons
 					onFavoritesClick={this.onFavoritesClick}

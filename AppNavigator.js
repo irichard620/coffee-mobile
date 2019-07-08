@@ -14,6 +14,25 @@ import SponsorPage from './src/views/sponsor/sponsor.view';
 import BrewPage from './src/views/brew/brew.view';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
+const fade = (props) => {
+    const {position, scene} = props
+
+    const index = scene.index
+
+    const translateX = 0
+    const translateY = 0
+
+    const opacity = position.interpolate({
+        inputRange: [index - 0.7, index, index + 0.7],
+        outputRange: [0.3, 1, 0.3]
+    })
+
+    return {
+        opacity,
+        transform: [{translateX}, {translateY}]
+    }
+}
+
 const MainStack = createStackNavigator(
   {
     Home: {
@@ -26,6 +45,14 @@ const MainStack = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: "Home",
+    transitionSpec: {
+      duration: 100,
+    },
+    transitionConfig: () => ({
+        screenInterpolator: (props) => {
+            return fade(props)
+        }
+    })
   }
 );
 const AppNavigator = createStackNavigator(

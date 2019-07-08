@@ -28,7 +28,7 @@ class Bean extends Component {
 		return (
 			<TouchableWithoutFeedback onPress = {() => onBeanClick(idx)}>
 				<View style={styles.outline}>
-					<Image style={styles.image} source={require(basePath + "Aeropress_Minicon.png")} />
+					<Image style={styles.image} source={{uri: beanImageLink}} />
 	        <View style={textviewDynamic}>
 	          <Text key={idx} style={[styles.title, titleAdditional]}>{title}</Text>
 						{selected && <Text style={styles.description}>{description}</Text>}
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		height: 150,
+		width: 150,
 		resizeMode: 'contain',
     alignSelf: 'center',
 	},

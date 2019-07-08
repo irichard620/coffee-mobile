@@ -1,55 +1,77 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Image } from 'react-native';
 
 class Sponsor extends Component {
   constructor(props){
 		super(props);
-		this.onSponsorClick = this.onSponsorClick.bind(this);
-	}
-
-  onSponsorClick() {
-		this.props.onSponsorClick(this.props.id);
 	}
 
 	render() {
-    const { sponsor } = this.props
+    const { sponsors, onSponsorClick } = this.props
+
+    // Take care of sponsors
+		let sponsorId = ""
+		let sponsorTitle = ""
+		let sponsorDescription = "Loading Sponsors..."
+    let sponsorBackImage = ""
+		let sponsorLogoImage = ""
+		let disabled = true
+		if (!sponsors || !sponsors.sponsors) {
+			sponsorDescription = "Could not load sponsors"
+		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length == 0) {
+			sponsorDescription = "No Sponsors to show"
+		} else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length != 0) {
+			sponsorTitle = sponsors.sponsors[0]["company"]
+			sponsorDescription = sponsors.sponsors[0]["description"]
+			sponsorId = sponsors.sponsors[0]["sponsorId"]
+      sponsorBackImage = sponsors.sponsors[0]["backgroundLink"]
+			sponsorLogoImage = sponsors.sponsors[0]["logoLink"]
+			disabled = false
+		}
+
 		return (
-      <TouchableHighlight disabled={this.props.disabled} style={styles.outline} onPress = { this.onSponsorClick }>
-  			<View>
-          <View style={styles.logo}>
-            <Text style={styles.title}>{this.props.title}</Text>
-          </View>
-          <Text style={styles.description}>{this.props.description}</Text>
-  			</View>
-      </TouchableHighlight>
+      <TouchableWithoutFeedback disabled={disabled} style={styles.touch} onPress = {() => onSponsorClick(sponsorId) }>
+        <View>
+          <ImageBackground source={{uri: sponsorBackImage}} style={styles.outline} imageStyle={{ borderRadius: 20 }}>
+            <View style={styles.logocontainer}>
+              <Image style={styles.logo} source={{uri: sponsorLogoImage}} />
+            </View>
+            <Text style={styles.description}>{sponsorDescription}</Text>
+          </ImageBackground>
+        </View>
+      </TouchableWithoutFeedback>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
 	outline: {
-    borderRadius: 20,
     marginLeft: 15,
 		marginRight: 15,
 		marginBottom: 15,
-    backgroundColor: '#FFFFFF',
     padding: 15,
-    width: '90%'
+    height: 220,
+    resizeMode: 'contain',
+    justifyContent: 'space-between'
 	},
-  logo: {
-    marginBottom: 65,
-    marginTop: 65
+  logocontainer: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 150,
+    width: '100%'
   },
-  title: {
-    color: '#1D5E9E',
-    fontSize: 20,
-    alignSelf: 'center'
+  logo: {
+    height: 85,
+		width: '51%',
+		resizeMode: 'contain',
   },
   description: {
-    color: '#727272',
+    color: '#FFFFFF',
     fontSize: 16,
-    alignSelf: 'flex-start'
+    fontWeight: '600',
+    alignSelf: 'flex-start',
   }
 });
 

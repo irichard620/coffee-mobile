@@ -43,6 +43,7 @@ class BuilderPage extends Component {
 			modalText: "",
 			modalSelect: constants.GRIND_MEDIUM,
 			recipeName: "New Recipe",
+			favorited: false,
 			vesselId: "",
 			brewingVessel: "-",
 			filterType: "-",
@@ -68,6 +69,7 @@ class BuilderPage extends Component {
 			this.setState({
 				recipeId: recipe.recipeId,
 				recipeName: recipe.recipeName,
+				favorited: recipe.favorited,
 				vesselId: recipe.vesselId,
 				brewingVessel: recipe.brewingVessel,
 				filterType: recipe.filterType,

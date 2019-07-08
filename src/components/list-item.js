@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   },
   listtitle: {
     fontSize: 16,
+		fontWeight: '500',
     color: '#1D5E9E',
     alignSelf: 'flex-start',
   },
