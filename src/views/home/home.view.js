@@ -37,7 +37,8 @@ class HomePage extends Component {
 			customs: [],
 			modalRecipeId: '',
 			modalRecipeIndex: -1,
-			visibleModal: false
+			visibleModal: false,
+			deleteModal: false
 		};
   }
 
@@ -50,7 +51,7 @@ class HomePage extends Component {
 	  const recipes = nextProps.recipes;
 
 		if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving &&
-			!recipes.recipeIsDeleting && recipes.recipes.length != 0) {
+			!recipes.recipeIsDeleting) {
 			newSelectedFavorites = []
 			newSelectedCustoms = []
 			newFavorites = []
@@ -72,6 +73,7 @@ class HomePage extends Component {
 				modalRecipeId: '',
 				modalRecipeIndex: -1,
 				visibleModal: false,
+				deleteModal: false,
 				selectedFavorites: newSelectedFavorites,
 				favorites: newFavorites,
 				selectedCustoms: newSelectedCustoms,
@@ -132,7 +134,8 @@ class HomePage extends Component {
 		this.setState({
 			visibleModal: true,
 			modalRecipeId: arrToUse[idx].recipeId,
-			modalRecipeIndex: idx
+			modalRecipeIndex: idx,
+			deleteModal: false
 		});
 	}
 
@@ -149,7 +152,20 @@ class HomePage extends Component {
 	}
 
 	getModalOptions = () => {
-		const { favorites, customs, modalRecipeId, modalRecipeIndex } = this.state;
+		const { favorites, customs, deleteModal, modalRecipeId, modalRecipeIndex } = this.state;
+
+		if (deleteModal) {
+			return [
+				{
+					id: constants.RECIPE_MENU_CANCEL,
+					title: 'Cancel'
+				},
+				{
+					id: constants.RECIPE_MENU_DELETE,
+					title: 'Delete'
+				},
+			]
+		}
 
 		options = [{
 			id: constants.RECIPE_MENU_EDIT,
@@ -188,12 +204,12 @@ class HomePage extends Component {
 		this.setState({
 			visibleModal: false,
 			modalRecipeId: "",
-			modalRecipeIndex: -1
+			modalRecipeIndex: -1,
 		});
 	}
 
 	onPressItem = (item) => {
-		const { tab, modalRecipeId, modalRecipeIndex, favorites, customs } = this.state;
+		const { tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites, customs } = this.state;
 
 		if (item == constants.RECIPE_MENU_EDIT) {
 			// TODO: go to builder page and pass in this recipe
@@ -209,15 +225,21 @@ class HomePage extends Component {
 		} else if (item == constants.RECIPE_MENU_FAVORITE) {
 			// Call favorite recipe
 			this.props.favoriteRecipe(modalRecipeId);
-			// TODO: Update local object to favorited, move from customs to favorite
 		} else if (item == constants.RECIPE_MENU_UNFAVORITE) {
 			// Call unfavorite recipe
 			this.props.unfavoriteRecipe(modalRecipeId);
-			// TODO: Update local object to unfavorited, move from favorite to customs
 		} else if (item == constants.RECIPE_MENU_DELETE) {
 			// Call delete recipe
-			this.props.deleteRecipe(modalRecipeId);
-			// TODO: Delete local object from current array
+			if (!deleteModal) {
+				this.setState({
+					deleteModal: true
+				});
+			} else {
+				this.props.deleteRecipe(modalRecipeId);
+			}
+		} else if (item == constants.RECIPE_MENU_CANCEL) {
+			// Call clear
+			this.onCloseClick();
 		}
 	}
 
@@ -244,7 +266,12 @@ class HomePage extends Component {
 
 	render() {
 		const { sponsors } = this.props
-		const { tab, customs, favorites, selectedFavorites, selectedCustoms, visibleModal } = this.state;
+		const { tab, customs, favorites, selectedFavorites, selectedCustoms, visibleModal, deleteModal } = this.state;
+
+		var modalTitle = ""
+		if (deleteModal) {
+			modalTitle = "Delete this recipe?"
+		}
 
 		return (
 			<ScrollView style={styles.container}>
@@ -269,6 +296,7 @@ class HomePage extends Component {
 
 				<CustomModal
 					visibleModal={visibleModal}
+					title={modalTitle}
 					onCloseClick={this.onCloseClick}
 		      onPressItem={this.onPressItem}
 					isListModal={true}

@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux'
 import {
+  REQUEST_DEFAULT_RECIPES,
+  RECEIVE_DEFAULT_RECIPES,
   REQUEST_RECIPES,
   RECEIVE_RECIPES,
   SAVING_RECIPE,
@@ -17,10 +19,21 @@ function recipes(
     recipesIsFetching: false,
     recipes: [],
     recipeIsSaving: false,
+    defaultRecipes: []
   },
   action
 ) {
   switch (action.type) {
+    case REQUEST_DEFAULT_RECIPES:
+      return Object.assign({}, state, {
+        recipesIsFetching: true,
+      })
+    case RECEIVE_DEFAULT_RECIPES:
+      return Object.assign({}, state, {
+        recipesIsFetching: false,
+        defaultRecipes: action.defaultRecipes,
+        lastUpdated: action.receivedAt
+      })
     case REQUEST_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: true,
@@ -77,6 +90,8 @@ function recipes(
 
 function recipesReducer(state = {}, action) {
   switch (action.type) {
+    case RECEIVE_DEFAULT_RECIPES:
+    case REQUEST_DEFAULT_RECIPES:
     case RECEIVE_RECIPES:
     case REQUEST_RECIPES:
     case SAVED_RECIPE:

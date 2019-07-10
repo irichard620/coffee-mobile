@@ -18,6 +18,7 @@ class CustomModal extends Component {
 
     // Elems with atleast one text
     isTextInput = !isListModal
+    isTitle = title != ""
 
 		return (
       <Modal
@@ -39,7 +40,7 @@ class CustomModal extends Component {
   						margin={[0, 0, 0, 0]}
   					/>}
           </View>
-          {isTextInput && <Text style={styles.title}>{title}</Text>}
+          {isTitle && <Text style={styles.title}>{title}</Text>}
           {isTextInput && <TextInput
             onChangeText={(text) => onChangeText(text)}
             value={modalText}
@@ -79,12 +80,13 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection:'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   saveButton: {
   },
   title: {
-		marginTop: 15,
 		marginBottom: 20,
     fontSize: 20,
     fontWeight: '600',
@@ -96,8 +98,6 @@ const styles = StyleSheet.create({
     margin: 0,
   },
 	close: {
-		marginTop: 15,
-		marginBottom: 15,
     height: 25,
     width: 25,
 	},

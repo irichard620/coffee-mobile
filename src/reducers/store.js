@@ -3,12 +3,14 @@ import { createLogger } from 'redux-logger'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import sponsorsReducer from './sponsor-reducers'
 import recipesReducer from './recipe-reducers'
+import userReducer from './user-reducers'
 
 const loggerMiddleware = createLogger()
 
 const rootReducer = combineReducers({
   sponsorsReducer,
-  recipesReducer
+  recipesReducer,
+  userReducer
 })
 
 const store = createStore(

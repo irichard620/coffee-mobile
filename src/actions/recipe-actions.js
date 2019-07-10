@@ -1,5 +1,43 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import fetch from 'cross-fetch'
+import Config from 'react-native-config'
+const camelcaseKeys = require('camelcase-keys');
+
 import { Recipe, defaultRecipes } from '../storage/recipe';
+
+export const REQUEST_DEFAULT_RECIPES = 'REQUEST_DEFAULT_RECIPES'
+function requestDefaultRecipes() {
+  return {
+    type: REQUEST_DEFAULT_RECIPES
+  }
+}
+
+export const RECEIVE_DEFAULT_RECIPES = 'RECEIVE_DEFAULT_RECIPES'
+function receiveDefaultRecipes(json) {
+  if (json) {
+    json = camelcaseKeys(json)
+  }
+  return {
+    type: RECEIVE_DEFAULT_RECIPES,
+    defaultRecipes: json,
+    receivedAt: Date.now()
+  }
+}
+
+export function fetchDefaultRecipes() {
+  return function(dispatch) {
+    console.log("fetching default recipes")
+    dispatch(requestDefaultRecipes())
+    return fetch(`${Config.API_URL}/recipes`)
+      .then(
+        response => response.json(),
+        error => console.log('An error occurred.', error)
+      )
+      .then(json =>
+        dispatch(receiveDefaultRecipes(json))
+      )
+  }
+}
 
 export const REQUEST_RECIPES = 'REQUEST_RECIPES'
 function requestRecipes() {
