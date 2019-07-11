@@ -13,29 +13,43 @@ function requestDefaultRecipes() {
 }
 
 export const RECEIVE_DEFAULT_RECIPES = 'RECEIVE_DEFAULT_RECIPES'
-function receiveDefaultRecipes(json) {
-  if (json) {
-    json = camelcaseKeys(json)
-  }
+function receiveDefaultRecipes() {
   return {
     type: RECEIVE_DEFAULT_RECIPES,
-    defaultRecipes: json,
     receivedAt: Date.now()
   }
 }
 
 export function fetchDefaultRecipes() {
   return function(dispatch) {
-    console.log("fetching default recipes")
+    console.log("fetching and saving default recipes")
     dispatch(requestDefaultRecipes())
     return fetch(`${Config.API_URL}/recipes`)
       .then(
         response => response.json(),
         error => console.log('An error occurred.', error)
       )
-      .then(json =>
-        dispatch(receiveDefaultRecipes(json))
-      )
+      .then((json) => {
+        AsyncStorage.getItem('recipes')
+          .then((recipes) => {
+            const r = recipes ? JSON.parse(recipes) : [];
+            for (i = 0; i < json.length; i++) {
+              defaultRecipe = camelcaseKeys(json[i])
+              var found = false;
+              for (j = 0; j < r.length; j++) {
+                if (r[j].recipeId == defaultRecipe.recipeId) {
+                  found = true;
+                  break
+                }
+              }
+              if (!found) {
+                r.push(defaultRecipe);
+              }
+            }
+            AsyncStorage.setItem('recipes', JSON.stringify(r));
+            dispatch(receiveDefaultRecipes());
+          });
+      })
   }
 }
 

@@ -8,7 +8,7 @@ class Button extends Component {
 	}
 
 	render() {
-    const { onButtonClick, type, title, width, margin } = this.props
+    const { onButtonClick, type, title, width, margin, disabled } = this.props
 
 		backgroundStyle = {
       marginTop: margin[0],
@@ -31,7 +31,7 @@ class Button extends Component {
     }
 
 		return (
-			<TouchableHighlight style={[styles.button, backgroundStyle]} onPress = { onButtonClick }>
+			<TouchableHighlight style={[styles.button, backgroundStyle]} onPress = { onButtonClick } disabled={disabled}>
 				<View>
 					<Text style={[styles.title, titleStyle]}>{title}</Text>
 				</View>

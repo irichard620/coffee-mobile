@@ -1,18 +1,14 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import { createStackNavigator, createAppContainer } from "react-navigation";
+
 import HomePage from './src/views/home/home.view';
 import BuilderPage from './src/views/builder/builder.view';
 import SponsorPage from './src/views/sponsor/sponsor.view';
 import BrewPage from './src/views/brew/brew.view';
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import SplashPage from './src/views/splash/splash.view';
+import WelcomePage from './src/views/welcome/welcome.view';
+import TutorialPage from './src/views/tutorial/tutorial.view';
 
 const fade = (props) => {
     const {position, scene} = props
@@ -35,6 +31,15 @@ const fade = (props) => {
 
 const MainStack = createStackNavigator(
   {
+    Splash: {
+      screen: SplashPage,
+    },
+    Welcome: {
+      screen: WelcomePage,
+    },
+    Tutorial: {
+      screen: TutorialPage,
+    },
     Home: {
       screen: HomePage,
     },
@@ -44,7 +49,7 @@ const MainStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: "Home",
+    initialRouteName: "Splash",
     transitionSpec: {
       duration: 100,
     },

@@ -10,7 +10,7 @@ class Add extends Component {
     const baseButtonPath = "../assets/buttons/";
 
 		return (
-      <TouchableWithoutFeedback onPress = {this.props.onAddClick}>
+      <TouchableWithoutFeedback onPress = {this.props.onAddClick} disabled={this.props.disabled}>
         <Image style={styles.add} source={require(baseButtonPath + "Add_Button.png")} />
       </TouchableWithoutFeedback>
 		);
