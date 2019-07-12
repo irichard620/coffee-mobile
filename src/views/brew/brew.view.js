@@ -155,7 +155,8 @@ class BrewPage extends Component {
         return this.getVesselIcon(recipe.vesselId);
       }
     } else {
-      // TODO: End image
+      // End image 
+			return (<Image style={styles.icon} source={require(baseBrewPath + "Mug_DoneBrewing.png")} />);
     }
   }
 

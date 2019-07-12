@@ -36,8 +36,7 @@ class MenuButtons extends Component {
 				/>
 				<Add
 					onAddClick={this.props.onAddClick}
-					backgroundColor={'#FFFFFF'}
-					textColor={'#1D5E9E'}
+					type={1}
 				/>
 			</View>
 		);

@@ -385,6 +385,7 @@ class BuilderPage extends Component {
 				<View style={styles.addandsave}>
 					<Add
 						onAddClick={this.onAddClick}
+						type={0}
 					/>
 					<Button
 						onButtonClick={this.onRecipeSave}

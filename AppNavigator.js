@@ -1,39 +1,32 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 import HomePage from './src/views/home/home.view';
 import BuilderPage from './src/views/builder/builder.view';
 import SponsorPage from './src/views/sponsor/sponsor.view';
 import BrewPage from './src/views/brew/brew.view';
-import SplashPage from './src/views/splash/splash.view';
 import WelcomePage from './src/views/welcome/welcome.view';
 import TutorialPage from './src/views/tutorial/tutorial.view';
 
 const fade = (props) => {
-    const {position, scene} = props
+  const { position, scene } = props;
+  const { index } = scene;
 
-    const index = scene.index
+  const translateX = 0;
+  const translateY = 0;
 
-    const translateX = 0
-    const translateY = 0
+  const opacity = position.interpolate({
+    inputRange: [index - 0.7, index, index + 0.7],
+    outputRange: [0.3, 1, 0.3]
+  });
 
-    const opacity = position.interpolate({
-        inputRange: [index - 0.7, index, index + 0.7],
-        outputRange: [0.3, 1, 0.3]
-    })
-
-    return {
-        opacity,
-        transform: [{translateX}, {translateY}]
-    }
-}
+  return {
+    opacity,
+    transform: [{ translateX }, { translateY }]
+  };
+};
 
 const MainStack = createStackNavigator(
   {
-    Splash: {
-      screen: SplashPage,
-    },
     Welcome: {
       screen: WelcomePage,
     },
@@ -49,14 +42,14 @@ const MainStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: "Splash",
+    initialRouteName: 'Welcome',
     transitionSpec: {
       duration: 100,
     },
     transitionConfig: () => ({
-        screenInterpolator: (props) => {
-            return fade(props)
-        }
+      screenInterpolator: (props) => {
+        return fade(props)
+      }
     })
   }
 );
@@ -74,7 +67,7 @@ const AppNavigator = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: "Main",
+    initialRouteName: 'Main',
     mode: 'modal',
     cardStyle: {
       backgroundColor: 'rgba(0, 0, 0, 0)',

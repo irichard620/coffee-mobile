@@ -78,8 +78,7 @@ class WelcomePage extends Component {
               disabled={true}
             />
             <Add
-              backgroundColor={'#FFFFFF'}
-              textColor={'#1D5E9E'}
+              type={1}
               disabled={true}
             />
           </View>}

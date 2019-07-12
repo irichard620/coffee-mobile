@@ -2,33 +2,68 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback,
-  TextInput } from 'react-native';
+  TextInput, LayoutAnimation } from 'react-native';
 
 import Button from '../../components/button';
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
-import { saveUsername } from '../../actions/user-actions';
+import { saveUsername, fetchUser } from '../../actions/user-actions';
+
+const CustomLayoutSpring = {
+	duration: 400,
+	create: {
+		type: LayoutAnimation.Types.spring,
+		property: LayoutAnimation.Properties.scaleY,
+		springDamping: 0.7,
+	},
+	update: {
+		type: LayoutAnimation.Types.spring,
+		springDamping: 0.7,
+	},
+};
 
 class WelcomePage extends Component {
 	constructor(props) {
     super(props);
     this.state = {
-      step: 0,
+      step: -1,
       name: "",
     };
   }
 
+  componentDidMount() {
+		this.props.fetchUser();
+	}
+
 	componentWillReceiveProps(nextProps) {
     const { user, recipes } = this.props
+    const { step } = this.state
 
 	  const nextUser = nextProps.user;
     const nextRecipes = nextProps.recipes;
 
-    if (user && user.userIsSaving && !nextUser.userIsSaving) {
+    if (user && user.userIsFetching && !nextUser.userIsFetching) {
+      // If finished fetching, check if we should go to welcome page
+      if (Object.keys(nextUser.user).length == 0 || nextUser.user.name == "" || nextUser.user.name != "") {
+        // Go to welcome page
+        LayoutAnimation.configureNext(CustomLayoutSpring);
+        this.setState({
+          step: 0
+        });
+      } else {
+        // Do default recipes if user there
+        this.props.fetchDefaultRecipes();
+      }
+    } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
       // If finished saving, save default recipes
       this.props.fetchDefaultRecipes();
     } else if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
-      // Go to home - means recipes there
-      this.props.navigation.navigate('Tutorial');
+      if (step == 2) {
+        // Go to tutorial - we were in welcome
+        this.props.navigation.navigate('Tutorial');
+      } else {
+        // Go to home - means user there
+        this.props.navigation.navigate('Home');
+      }
     }
 	}
 
@@ -58,12 +93,16 @@ class WelcomePage extends Component {
 	render() {
     const { step, name } = this.state;
 
-    const baseBrewPath = "../../assets/brew/";
+    const basePath = "../../assets/splash/";
     const baseButtonPath = "../../assets/buttons/";
 
     var {height, width} = Dimensions.get('window');
+    var multiplier = 0.16
+    if (step == -1) {
+      multiplier = 0.35
+    }
     imageContainerMargin = {
-      marginTop: height * 0.16
+      marginTop: height * multiplier
     }
 
     var title = ""
@@ -71,14 +110,14 @@ class WelcomePage extends Component {
       title = "Welcome to Drippy!"
     } else if (step == 1) {
       title = "What's your first name?"
-    } else {
+    } else if (step == 2) {
       title = "Great! Let's get brewing..."
     }
 
 		return (
 			<View style={styles.container}>
-        <Image style={[styles.logo, imageContainerMargin]} source={require(baseBrewPath + "Aeropress_Vessel.png")} />
-        <Text style={styles.title}>{title}</Text>
+        <Image style={[styles.logo, imageContainerMargin]} source={require(basePath + "Splash_Logo.png")} />
+        {step != -1 && <Text style={styles.title}>{title}</Text>}
         {step == 1 && <TextInput
           onChangeText={(text) => this.onChangeText(text)}
           value={name}
@@ -87,7 +126,7 @@ class WelcomePage extends Component {
           style={styles.textinput}
         />}
         <View style={styles.buttonview}>
-          {step != 2 &&
+          {(step == 0 || step == 1) &&
             <TouchableWithoutFeedback onPress = {this.onNextClick}>
               <Image style={[styles.mini]} source={require(baseButtonPath + "Go.png")} />
             </TouchableWithoutFeedback>}
@@ -136,7 +175,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({ user: state.userReducer.user,
   recipes: state.recipesReducer.recipes });
 
-const mapDispatchToProps = { saveUsername: saveUsername, fetchDefaultRecipes: fetchDefaultRecipes }
+const mapDispatchToProps = { fetchUser: fetchUser, saveUsername: saveUsername,
+  fetchDefaultRecipes: fetchDefaultRecipes }
 
 WelcomePage = connect(mapStateToProps,mapDispatchToProps)(WelcomePage)
 
