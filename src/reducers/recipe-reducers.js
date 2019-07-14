@@ -1,6 +1,7 @@
 import {
   REQUEST_DEFAULT_RECIPES,
   RECEIVE_DEFAULT_RECIPES,
+  ERROR_DEFAULT_RECIPES,
   REQUEST_RECIPES,
   RECEIVE_RECIPES,
   SAVING_RECIPE,
@@ -14,7 +15,8 @@ function recipes(
     recipesIsFetching: false,
     recipes: [],
     recipeIsSaving: false,
-    defaultRecipes: []
+    defaultRecipes: [],
+    error: ''
   },
   action
 ) {
@@ -27,6 +29,13 @@ function recipes(
       return Object.assign({}, state, {
         recipesIsFetching: false,
         defaultRecipes: action.defaultRecipes,
+        error: '',
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_DEFAULT_RECIPES:
+      return Object.assign({}, state, {
+        recipesIsFetching: false,
+        error: action.error,
         lastUpdated: action.receivedAt
       });
     case REQUEST_RECIPES:
@@ -37,6 +46,7 @@ function recipes(
       return Object.assign({}, state, {
         recipesIsFetching: false,
         recipes: action.recipes,
+        error: '',
         lastUpdated: action.receivedAt
       });
     case SAVING_RECIPE:
@@ -60,6 +70,7 @@ function recipes(
       return Object.assign({}, state, {
         recipeIsSaving: false,
         recipes: recipesCopy,
+        error: '',
         lastUpdated: action.receivedAt
       });
     }
@@ -78,6 +89,7 @@ function recipes(
       return Object.assign({}, state, {
         recipeIsDeleting: false,
         recipes: state.recipes,
+        error: '',
         lastUpdated: action.receivedAt
       });
     default:
@@ -89,6 +101,7 @@ function recipesReducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_DEFAULT_RECIPES:
     case REQUEST_DEFAULT_RECIPES:
+    case ERROR_DEFAULT_RECIPES:
     case RECEIVE_RECIPES:
     case REQUEST_RECIPES:
     case SAVED_RECIPE:

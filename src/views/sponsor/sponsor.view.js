@@ -56,8 +56,7 @@ class SponsorPage extends Component {
       const newBeans = [];
       const newRecipes = [];
 
-      const { beans } = sponsors.sponsor;
-      const { recipes } = sponsors.sponsor;
+      const { beans, recipes } = nextSponsors.sponsor;
 
       for (let i = 0; i < beans.length; i += 1) {
         // Push to beans
@@ -115,11 +114,12 @@ class SponsorPage extends Component {
   }
 
   onDownloadClick = (idx) => {
+    const { persistRecipe } = this.props;
     const { recipes } = this.state;
     // Get our recipe
     const recipe = recipes[idx];
 
-    saveRecipe(recipeModel.Recipe(recipe));
+    persistRecipe(recipeModel.Recipe(recipe));
   }
 
   render() {
@@ -241,6 +241,6 @@ const mapStateToProps = state => ({
   recipes: state.recipesReducer.recipes
 });
 
-const mapDispatchToProps = { getSponsor: fetchSponsor, saveRecipe };
+const mapDispatchToProps = { getSponsor: fetchSponsor, persistRecipe: saveRecipe };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SponsorPage);

@@ -23,13 +23,22 @@ function receiveSponsors(json) {
   };
 }
 
+export const ERROR_SPONSORS = 'ERROR_SPONSORS';
+function errorSponsors(err) {
+  return {
+    type: ERROR_SPONSORS,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
 export function fetchSponsors() {
   return function (dispatch) {
     dispatch(requestSponsors());
     return fetch(`${Config.API_URL}/sponsors`)
       .then(
         response => response.json(),
-        error => console.log('An error occurred.', error)
+        error => dispatch(errorSponsors(error))
       )
       .then(json => dispatch(receiveSponsors(json)));
   };
@@ -57,13 +66,22 @@ function receiveSponsor(sponsorId, json) {
   };
 }
 
+export const ERROR_SPONSOR = 'ERROR_SPONSOR';
+function errorSponsor(err) {
+  return {
+    type: ERROR_SPONSOR,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
 export function fetchSponsor(sponsorId) {
   return function (dispatch) {
     dispatch(requestSponsor(sponsorId));
     return fetch(`${Config.API_URL}/sponsors/${sponsorId}`)
       .then(
         response => response.json(),
-        error => console.log('An error occurred.', error)
+        error => dispatch(errorSponsor(error))
       )
       .then(json => dispatch(receiveSponsor(sponsorId, json)));
   };

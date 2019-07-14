@@ -21,13 +21,22 @@ function receiveDefaultRecipes() {
   };
 }
 
+export const ERROR_DEFAULT_RECIPES = 'ERROR_DEFAULT_RECIPES';
+function errorDefaultRecipes(err) {
+  return {
+    type: ERROR_DEFAULT_RECIPES,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
 export function fetchDefaultRecipes() {
   return function (dispatch) {
     dispatch(requestDefaultRecipes());
     return fetch(`${Config.API_URL}/recipes`)
       .then(
         response => response.json(),
-        error => console.log('An error occurred.', error)
+        error => dispatch(errorDefaultRecipes(error))
       )
       .then((json) => {
         AsyncStorage.getItem('recipes')

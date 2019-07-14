@@ -1,8 +1,10 @@
 import {
   REQUEST_SPONSORS,
   RECEIVE_SPONSORS,
+  ERROR_SPONSORS,
   REQUEST_SPONSOR,
   RECEIVE_SPONSOR,
+  ERROR_SPONSOR,
 } from '../actions/sponsor-actions';
 
 function sponsors(
@@ -23,6 +25,13 @@ function sponsors(
       return Object.assign({}, state, {
         sponsorsIsFetching: false,
         sponsors: action.sponsors,
+        error: '',
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_SPONSORS:
+      return Object.assign({}, state, {
+        sponsorsIsFetching: false,
+        error: action.error,
         lastUpdated: action.receivedAt
       });
     case REQUEST_SPONSOR:
@@ -35,6 +44,14 @@ function sponsors(
         sponsorIsFetching: false,
         sponsor: action.sponsor,
         sponsorId: action.sponsorId,
+        error: '',
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_SPONSOR:
+      return Object.assign({}, state, {
+        sponsorIsFetching: false,
+        sponsorId: action.sponsorId,
+        error: action.error,
         lastUpdated: action.receivedAt
       });
     default:

@@ -308,7 +308,7 @@ class BuilderPage extends Component {
   }
 
   onRecipeSave = () => {
-    const { navigation } = this.props;
+    const { navigation, persistRecipe } = this.props;
     const objToUse = this.state;
     // Need to add totalWater, totalCoffee, waterTemp, and grindSize
     for (let i = 0; i < objToUse.steps.length; i += 1) {
@@ -326,7 +326,7 @@ class BuilderPage extends Component {
       }
     }
     const newRecipe = recipeModel.Recipe(objToUse);
-    saveRecipe(newRecipe);
+    persistRecipe(newRecipe);
     navigation.goBack();
   }
 
@@ -481,6 +481,6 @@ const mapStateToProps = state => ({
   recipes: state.recipesReducer.recipes
 });
 
-const mapDispatchToProps = { saveRecipe };
+const mapDispatchToProps = { persistRecipe: saveRecipe };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuilderPage);

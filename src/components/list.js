@@ -8,7 +8,7 @@ import ListItem from './list-item';
 class List extends Component {
   keyExtractor = item => item.id;
 
-  renderItem = (item) => {
+  renderItem = ({ item }) => {
     const { onPressItem } = this.props;
     return (
       <ListItem

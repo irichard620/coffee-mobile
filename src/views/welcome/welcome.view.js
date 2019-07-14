@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback,
-  TextInput, LayoutAnimation
+  TextInput, LayoutAnimation, Alert
 } from 'react-native';
 
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
@@ -32,12 +32,13 @@ class WelcomePage extends Component {
   }
 
   componentDidMount() {
-    fetchUser();
+    const { getUser } = this.props;
+    getUser();
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      user, recipes, navigation
+      user, recipes, navigation, getDefaultRecipes
     } = this.props;
     const { step } = this.state;
 
@@ -46,7 +47,7 @@ class WelcomePage extends Component {
 
     if (user && user.userIsFetching && !nextUser.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
-      if (Object.keys(nextUser.user).length === 0 || nextUser.user.name === '' || nextUser.user.name !== '') {
+      if (Object.keys(nextUser.user).length === 0 || nextUser.user.name === '') {
         // Go to welcome page
         LayoutAnimation.configureNext(CustomLayoutSpring);
         this.setState({
@@ -54,13 +55,33 @@ class WelcomePage extends Component {
         });
       } else {
         // Do default recipes if user there
-        fetchDefaultRecipes();
+        getDefaultRecipes();
       }
     } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
       // If finished saving, save default recipes
-      fetchDefaultRecipes();
+      getDefaultRecipes();
     } else if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
-      if (step === 2) {
+      if (nextRecipes.error !== '') {
+        // Show alert
+        Alert.alert(
+          'Error occurred',
+          `Could not fetch new recipes from server. Error: ${nextRecipes.error}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                if (step === 2) {
+                  // Go to tutorial - we were in welcome
+                  navigation.navigate('Tutorial');
+                } else {
+                  // Go to home - means user there
+                  navigation.navigate('Home');
+                }
+              }
+            },
+          ],
+        );
+      } else if (step === 2) {
         // Go to tutorial - we were in welcome
         navigation.navigate('Tutorial');
       } else {
@@ -71,7 +92,7 @@ class WelcomePage extends Component {
   }
 
   onNextClick = () => {
-    const { navigation } = this.props;
+    const { navigation, persistUsername } = this.props;
     const { step, name } = this.state;
 
     if (step === 0) {
@@ -79,7 +100,7 @@ class WelcomePage extends Component {
         step: 1
       });
     } else if (step === 1) {
-      saveUsername(name);
+      persistUsername(name);
       this.setState({
         step: 2
       });
@@ -186,9 +207,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetchUser,
-  saveUsername,
-  fetchDefaultRecipes
+  getUser: fetchUser,
+  persistUsername: saveUsername,
+  getDefaultRecipes: fetchDefaultRecipes
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(WelcomePage);

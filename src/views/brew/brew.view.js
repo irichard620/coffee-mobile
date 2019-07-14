@@ -82,7 +82,9 @@ class BrewPage extends Component {
   }
 
   onPressItem = (item) => {
-    const { navigation } = this.props;
+    const {
+      navigation, favRecipe, unfavRecipe, delRecipe
+    } = this.props;
     const { recipe } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
@@ -91,13 +93,13 @@ class BrewPage extends Component {
       });
     } else if (item === constants.RECIPE_MENU_FAVORITE) {
       // Call favorite recipe
-      favoriteRecipe(recipe.recipeId);
+      favRecipe(recipe.recipeId);
     } else if (item === constants.RECIPE_MENU_UNFAVORITE) {
       // Call unfavorite recipe
-      unfavoriteRecipe(recipe.recipeId);
+      unfavRecipe(recipe.recipeId);
     } else if (item === constants.RECIPE_MENU_DELETE) {
       // Call delete recipe
-      deleteRecipe(recipe.recipeId);
+      delRecipe(recipe.recipeId);
       // Go back in navigation
       navigation.goBack();
     }
@@ -302,9 +304,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({ recipes: state.recipesReducer.recipes });
 
 const mapDispatchToProps = {
-  favoriteRecipe,
-  unfavoriteRecipe,
-  deleteRecipe
+  favRecipe: favoriteRecipe,
+  unfavRecipe: unfavoriteRecipe,
+  delRecipe: deleteRecipe
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrewPage);

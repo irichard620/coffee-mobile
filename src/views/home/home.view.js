@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Text, ScrollView, StyleSheet, LayoutAnimation
+  ScrollView, StyleSheet, LayoutAnimation
 } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
@@ -224,13 +224,14 @@ class HomePage extends Component {
   }
 
   onPressItem = (item) => {
-    const { navigation } = this.props;
+    const {
+      navigation, favRecipe, unfavRecipe, delRecipe
+    } = this.props;
     const {
       tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites, customs
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
-      // TODO: go to builder page and pass in this recipe
       if (tab === 0) {
         navigation.navigate('Builder', {
           recipe: favorites[modalRecipeIndex]
@@ -242,10 +243,10 @@ class HomePage extends Component {
       }
     } else if (item === constants.RECIPE_MENU_FAVORITE) {
       // Call favorite recipe
-      favoriteRecipe(modalRecipeId);
+      favRecipe(modalRecipeId);
     } else if (item === constants.RECIPE_MENU_UNFAVORITE) {
       // Call unfavorite recipe
-      unfavoriteRecipe(modalRecipeId);
+      unfavRecipe(modalRecipeId);
     } else if (item === constants.RECIPE_MENU_DELETE) {
       // Call delete recipe
       if (!deleteModal) {
@@ -253,7 +254,7 @@ class HomePage extends Component {
           deleteModal: true
         });
       } else {
-        deleteRecipe(modalRecipeId);
+        delRecipe(modalRecipeId);
       }
     } else if (item === constants.RECIPE_MENU_CANCEL) {
       // Call clear
@@ -297,7 +298,6 @@ class HomePage extends Component {
 
     return (
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>Good Morning, Emile.</Text>
         <Sponsor
           onSponsorClick={this.onSponsorClick}
           sponsors={sponsors}
@@ -333,17 +333,9 @@ class HomePage extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4'
+    backgroundColor: '#F4F4F4',
+    paddingTop: 70,
   },
-  title: {
-    marginTop: 70,
-    marginLeft: 15,
-    marginBottom: 20,
-    fontSize: 28,
-    color: '#1D5E9E',
-    alignSelf: 'flex-start',
-    fontWeight: '600',
-  }
 });
 
 const mapStateToProps = state => ({
@@ -354,9 +346,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getSponsors: fetchSponsors,
   getRecipes: fetchRecipes,
-  favoriteRecipe,
-  unfavoriteRecipe,
-  deleteRecipe
+  favRecipe: favoriteRecipe,
+  unfavRecipe: unfavoriteRecipe,
+  delRecipe: deleteRecipe
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
