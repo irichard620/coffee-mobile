@@ -47,9 +47,7 @@ const MainStack = createStackNavigator(
       duration: 100,
     },
     transitionConfig: () => ({
-      screenInterpolator: (props) => {
-        return fade(props)
-      }
+      screenInterpolator: (props) => { fade(props); }
     })
   }
 );

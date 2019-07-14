@@ -1,28 +1,28 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import fetch from 'cross-fetch'
-import Config from 'react-native-config'
+import fetch from 'cross-fetch';
+import Config from 'react-native-config';
+
+import { Recipe } from '../storage/recipe';
+
 const camelcaseKeys = require('camelcase-keys');
 
-import { Recipe, defaultRecipes } from '../storage/recipe';
-
-export const REQUEST_DEFAULT_RECIPES = 'REQUEST_DEFAULT_RECIPES'
+export const REQUEST_DEFAULT_RECIPES = 'REQUEST_DEFAULT_RECIPES';
 function requestDefaultRecipes() {
   return {
     type: REQUEST_DEFAULT_RECIPES
-  }
+  };
 }
 
-export const RECEIVE_DEFAULT_RECIPES = 'RECEIVE_DEFAULT_RECIPES'
+export const RECEIVE_DEFAULT_RECIPES = 'RECEIVE_DEFAULT_RECIPES';
 function receiveDefaultRecipes() {
   return {
     type: RECEIVE_DEFAULT_RECIPES,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function fetchDefaultRecipes() {
-  return function(dispatch) {
-    console.log("fetching and saving default recipes")
+  return function (dispatch) {
     dispatch(requestDefaultRecipes())
     return fetch(`${Config.API_URL}/recipes`)
       .then(
@@ -33,13 +33,13 @@ export function fetchDefaultRecipes() {
         AsyncStorage.getItem('recipes')
           .then((recipes) => {
             const r = recipes ? JSON.parse(recipes) : [];
-            for (i = 0; i < json.length; i++) {
+            for (var i = 0; i < json.length; i += 1) {
               defaultRecipe = camelcaseKeys(json[i])
               var found = false;
-              for (j = 0; j < r.length; j++) {
+              for (var j = 0; j < r.length; j += 1 ) {
                 if (r[j].recipeId == defaultRecipe.recipeId) {
                   found = true;
-                  break
+                  break;
                 }
               }
               if (!found) {
@@ -53,54 +53,52 @@ export function fetchDefaultRecipes() {
   }
 }
 
-export const REQUEST_RECIPES = 'REQUEST_RECIPES'
+export const REQUEST_RECIPES = 'REQUEST_RECIPES';
 function requestRecipes() {
   return {
     type: REQUEST_RECIPES
-  }
+  };
 }
 
-export const RECEIVE_RECIPES = 'RECEIVE_RECIPES'
+export const RECEIVE_RECIPES = 'RECEIVE_RECIPES';
 function receiveRecipes(json) {
   return {
     type: RECEIVE_RECIPES,
     recipes: json,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function fetchRecipes() {
   return function(dispatch) {
-    console.log("fetching recipes")
     dispatch(requestRecipes())
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
-        var result = []
+        var result = [];
         const r = recipes ? JSON.parse(recipes) : [];
         for (recipe of r) {
           // Create objects and add to result
           result.push(Recipe(recipe));
         }
-        // result = result.concat(defaultRecipes());
-        dispatch(receiveRecipes(result))
+        dispatch(receiveRecipes(result));
       });
   }
 }
 
-export const SAVING_RECIPE = 'SAVING_RECIPE'
+export const SAVING_RECIPE = 'SAVING_RECIPE';
 function savingRecipe() {
   return {
     type: SAVING_RECIPE
-  }
+  };
 }
 
-export const SAVED_RECIPE = 'SAVED_RECIPE'
+export const SAVED_RECIPE = 'SAVED_RECIPE';
 function savedRecipe(recipe) {
   return {
     type: SAVED_RECIPE,
     recipe: recipe,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function saveRecipe(recipeToSave) {
