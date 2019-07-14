@@ -119,27 +119,27 @@ class WelcomePage extends Component {
     }
 
     return (
-    <View style={styles.container}>
-      <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
-      {step !== -1 && <Text style={styles.title}>{title}</Text>}
-      {step === 1 && (
-      <TextInput
-        onChangeText={text => this.onChangeText(text)}
-        value={name}
-        placeholder="First Name"
-        placeholderTextColor="#b7b3b3"
-        style={styles.textinput}
-      />
+      <View style={styles.container}>
+        <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
+        {step !== -1 && <Text style={styles.title}>{title}</Text>}
+        {step === 1 && (
+        <TextInput
+          onChangeText={text => this.onChangeText(text)}
+          value={name}
+          placeholder="First Name"
+          placeholderTextColor="#b7b3b3"
+          style={styles.textinput}
+        />
         )}
-      <View style={styles.buttonview}>
-        {(step === 0 || step === 1)
-            && (
-              <TouchableWithoutFeedback onPress={this.onNextClick}>
-              <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
-              </TouchableWithoutFeedback>
-            )}
+        <View style={styles.buttonview}>
+          {(step === 0 || step === 1)
+              && (
+                <TouchableWithoutFeedback onPress={this.onNextClick}>
+                  <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
+                </TouchableWithoutFeedback>
+              )}
+        </View>
       </View>
-    </View>
     );
   }
 }

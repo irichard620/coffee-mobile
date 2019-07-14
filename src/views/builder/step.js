@@ -28,7 +28,7 @@ export default function Step(props) {
           <Text style={styles.description}>
             {description}
           </Text>
-        	)}
+          )}
         </View>
         {selected && (
         <View style={styles.buttonview}>

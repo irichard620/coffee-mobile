@@ -6,32 +6,32 @@ import {
 import ListItem from './list-item';
 
 class List extends Component {
-	keyExtractor = item => item.id;
+  keyExtractor = item => item.id;
 
-	renderItem = (item) => {
-	  const { onPressItem } = this.props;
-	  return (
-  <ListItem
-    id={item.id}
-    onPressItem={onPressItem}
-    title={item.title}
-  />
-	  );
-	}
+  renderItem = (item) => {
+    const { onPressItem } = this.props;
+    return (
+      <ListItem
+        id={item.id}
+        onPressItem={onPressItem}
+        title={item.title}
+      />
+    );
+  }
 
   renderSeparator = () => (<View style={styles.line} />)
 
   render() {
-  	const { options } = this.props;
-  	return (
-    <FlatList
-      data={options}
-      keyExtractor={this.keyExtractor}
-      renderItem={this.renderItem}
-      style={styles.list}
-      ItemSeparatorComponent={this.renderSeparator}
-  		/>
-  	);
+    const { options } = this.props;
+    return (
+      <FlatList
+        data={options}
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        style={styles.list}
+        ItemSeparatorComponent={this.renderSeparator}
+      />
+    );
   }
 }
 

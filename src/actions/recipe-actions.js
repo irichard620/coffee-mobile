@@ -76,9 +76,9 @@ export function fetchRecipes() {
       .then((recipes) => {
         const result = [];
         const r = recipes ? JSON.parse(recipes) : [];
-        for (const recipe of r) {
+        for (let i = 0; i < r.length; i += 1) {
           // Create objects and add to result
-          result.push(Recipe(recipe));
+          result.push(Recipe(r[i]));
         }
         dispatch(receiveRecipes(result));
       });

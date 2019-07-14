@@ -12,6 +12,7 @@ module.exports = {
     'import/no-dynamic-require': 'off',
     'global-require': 'off',
     'func-names': 'off',
+    'react/no-unused-state': 'off'
   },
   'globals': {
     "fetch": false

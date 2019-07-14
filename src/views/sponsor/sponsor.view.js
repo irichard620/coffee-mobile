@@ -50,7 +50,7 @@ class SponsorPage extends Component {
     const nextSponsors = nextProps.sponsors;
 
     if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching
-			&& Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
+      && Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
       const newSelectedBeans = [];
       const newSelectedRecipes = [];
       const newBeans = [];
@@ -78,113 +78,113 @@ class SponsorPage extends Component {
     }
   }
 
-	onBackClick = () => {
-	  const { navigation } = this.props;
-	  navigation.goBack();
-	}
+  onBackClick = () => {
+    const { navigation } = this.props;
+    navigation.goBack();
+  }
 
-	onBeanClick = (idx) => {
-	  const { selectedBeans } = this.state;
+  onBeanClick = (idx) => {
+    const { selectedBeans } = this.state;
 
-	  LayoutAnimation.configureNext(CustomLayoutSpring);
-	  this.setState({ selectedBeans: selectedBeans.map((val, i) => (i === idx ? !val : false)) });
-	}
+    LayoutAnimation.configureNext(CustomLayoutSpring);
+    this.setState({ selectedBeans: selectedBeans.map((val, i) => (i === idx ? !val : false)) });
+  }
 
-	onEntryClick = (idx) => {
-	  const { selectedRecipes } = this.state;
+  onEntryClick = (idx) => {
+    const { selectedRecipes } = this.state;
 
-	  LayoutAnimation.configureNext(CustomLayoutSpring);
-	  this.setState({ selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false)) });
-	}
+    LayoutAnimation.configureNext(CustomLayoutSpring);
+    this.setState({ selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false)) });
+  }
 
-	onExploreClick = (idx) => {
-	  // Open link
-	  const { beans } = this.state;
+  onExploreClick = (idx) => {
+    // Open link
+    const { beans } = this.state;
 
-	  // Get our specific bean link
-	  const url = beans[idx].beanLink;
+    // Get our specific bean link
+    const url = beans[idx].beanLink;
 
-	  // Open
-	  Linking.canOpenURL(url).then((supported) => {
-	    if (supported) {
-	      Linking.openURL(url);
-	    } else {
-	      // TODO: Open error alert
-	    }
-	  });
-	}
+    // Open
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        // TODO: Open error alert
+      }
+    });
+  }
 
-	onDownloadClick = (idx) => {
-	  const { recipes } = this.state;
-	  // Get our recipe
-	  const recipe = recipes[idx];
+  onDownloadClick = (idx) => {
+    const { recipes } = this.state;
+    // Get our recipe
+    const recipe = recipes[idx];
 
-	  saveRecipe(recipeModel.Recipe(recipe));
-	}
+    saveRecipe(recipeModel.Recipe(recipe));
+  }
 
-	render() {
-	  const { sponsors } = this.props;
-	  const {
-	    beans, recipes, selectedBeans, selectedRecipes
-	  } = this.state;
+  render() {
+    const { sponsors } = this.props;
+    const {
+      beans, recipes, selectedBeans, selectedRecipes
+    } = this.state;
 
-	  let sponsorTitle = 'Loading Sponsor...';
-	  let sponsorLocation = '';
-	  let sponsorBackImage = '';
-	  let sponsorLogoImage = '';
-	  if (sponsors && !sponsors.sponsorIsFetching
-			&& Object.getOwnPropertyNames(sponsors.sponsor).length === 0) {
-	    sponsorTitle = 'No Sponsors to show';
-	  } else if (sponsors && !sponsors.sponsorIsFetching
-			&& Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
-	    sponsorTitle = sponsors.sponsor.company;
-	    sponsorLocation = sponsors.sponsor.location;
-	    sponsorBackImage = sponsors.sponsor.backgroundLink;
-	    sponsorLogoImage = sponsors.sponsor.logoLink;
-	  }
-	  return (
-  <ScrollView style={styles.container}>
-    <ImageBackground source={{ uri: sponsorBackImage }} style={styles.header}>
-      <View style={styles.backcontainer}>
-        <Back
-          onBackClick={this.onBackClick}
-          type={1}
-        />
-      </View>
-      <Image style={styles.logo} source={{ uri: sponsorLogoImage }} />
-      <View style={styles.about}>
-        <Text style={styles.company}>{sponsorTitle}</Text>
-        <Text style={styles.location}>{sponsorLocation}</Text>
-      </View>
-    </ImageBackground>
-    {beans.map((bean, idx) => (
-      <Bean
-        title={bean.title}
-        key={bean.beanId}
-        description={bean.description}
-        beanImageLink={bean.imageLink}
-        selected={selectedBeans[idx]}
-        onBeanClick={this.onBeanClick}
-        onExploreClick={this.onExploreClick}
-        idx={idx}
-      />
-    ))}
-    {recipes.map((recipe, idx) => (
-      <Entry
-        key={recipe.recipeId}
-        idx={idx}
-        selected={selectedRecipes[idx]}
-        vesselId={recipe.vesselId}
-        title={recipe.recipeName}
-        description={recipeModel.getRecipeDescription(recipe)}
-        onEntryClick={this.onEntryClick}
-        isSponsor
-        onDownloadClick={this.onDownloadClick}
-      />
-    ))}
-  </ScrollView>
-	  );
-	}
+    let sponsorTitle = 'Loading Sponsor...';
+    let sponsorLocation = '';
+    let sponsorBackImage = '';
+    let sponsorLogoImage = '';
+    if (sponsors && !sponsors.sponsorIsFetching
+      && Object.getOwnPropertyNames(sponsors.sponsor).length === 0) {
+      sponsorTitle = 'No Sponsors to show';
+    } else if (sponsors && !sponsors.sponsorIsFetching
+      && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
+      sponsorTitle = sponsors.sponsor.company;
+      sponsorLocation = sponsors.sponsor.location;
+      sponsorBackImage = sponsors.sponsor.backgroundLink;
+      sponsorLogoImage = sponsors.sponsor.logoLink;
+    }
+    return (
+      <ScrollView style={styles.container}>
+        <ImageBackground source={{ uri: sponsorBackImage }} style={styles.header}>
+          <View style={styles.backcontainer}>
+            <Back
+              onBackClick={this.onBackClick}
+              type={1}
+            />
+          </View>
+          <Image style={styles.logo} source={{ uri: sponsorLogoImage }} />
+          <View style={styles.about}>
+            <Text style={styles.company}>{sponsorTitle}</Text>
+            <Text style={styles.location}>{sponsorLocation}</Text>
+          </View>
+        </ImageBackground>
+        {beans.map((bean, idx) => (
+          <Bean
+            title={bean.title}
+            key={bean.beanId}
+            description={bean.description}
+            beanImageLink={bean.imageLink}
+            selected={selectedBeans[idx]}
+            onBeanClick={this.onBeanClick}
+            onExploreClick={this.onExploreClick}
+            idx={idx}
+          />
+        ))}
+        {recipes.map((recipe, idx) => (
+          <Entry
+            key={recipe.recipeId}
+            idx={idx}
+            selected={selectedRecipes[idx]}
+            vesselId={recipe.vesselId}
+            title={recipe.recipeName}
+            description={recipeModel.getRecipeDescription(recipe)}
+            onEntryClick={this.onEntryClick}
+            isSponsor
+            onDownloadClick={this.onDownloadClick}
+          />
+        ))}
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

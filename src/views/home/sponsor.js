@@ -8,7 +8,7 @@ export default function Sponsor(props) {
   const { sponsors, onSponsorClick } = props;
 
   // Take care of sponsors
-  let sponsorId = '';
+  let sponsorIdToUse = '';
   let sponsorDescription = 'Loading Sponsors...';
   let sponsorBackImage = '';
   let sponsorLogoImage = '';
@@ -18,17 +18,20 @@ export default function Sponsor(props) {
   } else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length === 0) {
     sponsorDescription = 'No Sponsors to show';
   } else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length !== 0) {
-    sponsorDescription = sponsors.sponsors[0].description;
-    sponsorId = sponsors.sponsors[0].sponsorId;
-    sponsorBackImage = sponsors.sponsors[0].backgroundLink;
-    sponsorLogoImage = sponsors.sponsors[0].logoLink;
+    const {
+      description, sponsorId, backgroundLink, logoLink
+    } = sponsors.sponsors[0];
+    sponsorDescription = description;
+    sponsorIdToUse = sponsorId;
+    sponsorBackImage = backgroundLink;
+    sponsorLogoImage = logoLink;
     disabled = false;
   }
   return (
     <TouchableWithoutFeedback
       disabled={disabled}
       style={styles.touch}
-      onPress={() => onSponsorClick(sponsorId)}
+      onPress={() => onSponsorClick(sponsorIdToUse)}
     >
       <View>
         <ImageBackground

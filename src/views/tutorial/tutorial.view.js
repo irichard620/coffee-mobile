@@ -18,90 +18,90 @@ class TutorialPage extends Component {
   }
 
   onNextClick = () => {
-  	const { navigation } = this.props;
-  	const { step } = this.state;
+    const { navigation } = this.props;
+    const { step } = this.state;
 
-  	if (step < 4) {
-  		this.setState({
-  			step: step + 1
-  		});
-  	} else {
-  		navigation.navigate('Home');
-  	}
+    if (step < 4) {
+      this.setState({
+        step: step + 1
+      });
+    } else {
+      navigation.navigate('Home');
+    }
   }
 
   render() {
-  	const { step } = this.state;
+    const { step } = this.state;
 
-  	const baseButtonPath = '../../assets/buttons/';
+    const baseButtonPath = '../../assets/buttons/';
 
-  	let title = '';
-  	if (step === 0) {
-  		title = 'Drippy makes great coffee easy. Let’s show you how…';
-  	} else if (step === 1) {
-  		title = 'View all custom recipes, or just your favorites. When you feel ready, make your own— just tap the plus!';
-  	} else if (step === 2) {
-  		title = 'Each recipe has its own card.';
-  	} else if (step === 3) {
-  		title = 'Tap to expand. You can start the recipe… or tap more to edit, unfavorite, or delete it.';
-  	} else {
-  		title = 'Download cafe recipes, try new beans, and more. Now let’s get to it!';
-  	}
+    let title = '';
+    if (step === 0) {
+      title = 'Drippy makes great coffee easy. Let’s show you how…';
+    } else if (step === 1) {
+      title = 'View all custom recipes, or just your favorites. When you feel ready, make your own— just tap the plus!';
+    } else if (step === 2) {
+      title = 'Each recipe has its own card.';
+    } else if (step === 3) {
+      title = 'Tap to expand. You can start the recipe… or tap more to edit, unfavorite, or delete it.';
+    } else {
+      title = 'Download cafe recipes, try new beans, and more. Now let’s get to it!';
+    }
 
-  	const recipeDescription = 'Inverted with a paper filter\n17g coffee, medium grind\n230g of water, 205°F';
-  	let entrySelected = false;
-  	if (step === 3) {
-  		entrySelected = true;
-  	}
+    const recipeDescription = 'Inverted with a paper filter\n17g coffee, medium grind\n230g of water, 205°F';
+    let entrySelected = false;
+    if (step === 3) {
+      entrySelected = true;
+    }
 
-  	return (
-    <View style={styles.container}>
-      {step === 1
-          && (
-          	<View style={styles.showview}>
-            <Button
-              type={1}
-              title="Favorites"
-              width="39%"
-              margin={[0, 0, 10, 0]}
-              disabled
-          		/>
-            <Button
-              type={1}
-              title="Custom"
-              width="39%"
-              margin={[0, 0, 10, 0]}
-              disabled
-          		/>
-            <Add
-              type={1}
-              disabled
-          		/>
-          	</View>
-          )}
-      {(step === 2 || step === 3)
-          && (
-          	<View style={styles.showview}>
-            <Entry
-              disabled
-              idx={0}
-              selected={entrySelected}
-              vesselId={constants.VESSEL_AEROPRESS}
-              title="Intro to the Aeropress"
-              description={recipeDescription}
-          		/>
-          	</View>
-          )}
-      <View style={styles.textview}>
-        <Text style={styles.title}>{title}</Text>
+    return (
+      <View style={styles.container}>
+        {step === 1
+            && (
+              <View style={styles.showview}>
+                <Button
+                  type={1}
+                  title="Favorites"
+                  width="39%"
+                  margin={[0, 0, 10, 0]}
+                  disabled
+                />
+                <Button
+                  type={1}
+                  title="Custom"
+                  width="39%"
+                  margin={[0, 0, 10, 0]}
+                  disabled
+                />
+                <Add
+                  type={1}
+                  disabled
+                />
+              </View>
+            )}
+        {(step === 2 || step === 3)
+            && (
+              <View style={styles.showview}>
+                <Entry
+                  disabled
+                  idx={0}
+                  selected={entrySelected}
+                  vesselId={constants.VESSEL_AEROPRESS}
+                  title="Intro to the Aeropress"
+                  description={recipeDescription}
+                />
+              </View>
+            )}
+        <View style={styles.textview}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        <View style={styles.buttonview}>
+          <TouchableWithoutFeedback onPress={this.onNextClick}>
+            <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
+          </TouchableWithoutFeedback>
+        </View>
       </View>
-      <View style={styles.buttonview}>
-        <TouchableWithoutFeedback onPress={this.onNextClick}>
-          <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
-        </TouchableWithoutFeedback>
-      </View>
-    </View>
-  	);
+    );
   }
 }
 

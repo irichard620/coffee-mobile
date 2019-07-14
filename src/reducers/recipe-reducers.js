@@ -43,24 +43,26 @@ function recipes(
       return Object.assign({}, state, {
         recipeIsSaving: true,
       });
-    case SAVED_RECIPE:
+    case SAVED_RECIPE: {
       // In case of saved recipe, edit recipes array
+      const recipesCopy = [...state.recipes];
       let found = false;
-      for (let i = 0; i < state.recipes.length; i += 1) {
-        if (state.recipes[i].recipeId === action.recipe.recipeId) {
-          state.recipes[i] = action.recipe;
+      for (let i = 0; i < recipesCopy.length; i += 1) {
+        if (recipesCopy[i].recipeId === action.recipe.recipeId) {
+          recipesCopy[i] = action.recipe;
           found = true;
           break;
         }
       }
       if (!found) {
-        state.recipes.push(action.recipe);
+        recipesCopy.push(action.recipe);
       }
       return Object.assign({}, state, {
         recipeIsSaving: false,
-        recipes: state.recipes,
+        recipes: recipesCopy,
         lastUpdated: action.receivedAt
       });
+    }
     case DELETING_RECIPE:
       return Object.assign({}, state, {
         recipeIsDeleting: true,

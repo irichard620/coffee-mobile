@@ -27,7 +27,7 @@ const fade = (props) => {
 
 const MainStack = createStackNavigator(
   {
-	  Welcome: {
+    Welcome: {
       screen: WelcomePage,
     },
     Tutorial: {

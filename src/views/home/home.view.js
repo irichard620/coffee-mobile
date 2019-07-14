@@ -23,8 +23,8 @@ const CustomLayoutSpring = {
     springDamping: 0.7,
   },
   update: {
-  	type: LayoutAnimation.Types.spring,
-  	springDamping: 0.7,
+    type: LayoutAnimation.Types.spring,
+    springDamping: 0.7,
   },
 };
 
@@ -51,16 +51,16 @@ class HomePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-	  const { recipes } = nextProps;
+    const { recipes } = nextProps;
 
     if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving
-			&& !recipes.recipeIsDeleting) {
+      && !recipes.recipeIsDeleting) {
       const newSelectedFavorites = [];
       const newSelectedCustoms = [];
       const newFavorites = [];
       const newCustoms = [];
 
-      for (let i = 0; i < recipes.recipes.length; i++) {
+      for (let i = 0; i < recipes.recipes.length; i += 1) {
         // Push to favorite
         if (recipes.recipes[i].favorited) {
           newSelectedFavorites.push(false);
@@ -85,249 +85,249 @@ class HomePage extends Component {
     }
   }
 
-	onFavoritesClick = () => {
-	  // Switch to favorites tab if not there
-	  const { tab } = this.state;
-	  if (tab !== 0) {
-	    this.setState({
-	      tab: 0
-	    });
-	  }
-	}
+  onFavoritesClick = () => {
+    // Switch to favorites tab if not there
+    const { tab } = this.state;
+    if (tab !== 0) {
+      this.setState({
+        tab: 0
+      });
+    }
+  }
 
-	onCustomClick = () => {
-	  // Switch to custom tab if not there
-	  const { tab } = this.state;
-	  if (tab !== 1) {
-	    this.setState({
-	      tab: 1
-	    });
-	  }
-	}
+  onCustomClick = () => {
+    // Switch to custom tab if not there
+    const { tab } = this.state;
+    if (tab !== 1) {
+      this.setState({
+        tab: 1
+      });
+    }
+  }
 
-	onAddClick = () => {
-	  // Pull up add menu
-	  const { navigation } = this.props;
-	  navigation.navigate('Builder');
-	}
+  onAddClick = () => {
+    // Pull up add menu
+    const { navigation } = this.props;
+    navigation.navigate('Builder');
+  }
 
-	onSponsorClick = (sponsorId) => {
-	  // Pull up sponsor page
-	  const { navigation } = this.props;
-	  navigation.navigate('Sponsor', {
-	    sponsorId
-	  });
-	}
+  onSponsorClick = (sponsorId) => {
+    // Pull up sponsor page
+    const { navigation } = this.props;
+    navigation.navigate('Sponsor', {
+      sponsorId
+    });
+  }
 
-	onEntryClick = (idx) => {
-	  const { tab, selectedFavorites, selectedCustoms } = this.state;
+  onEntryClick = (idx) => {
+    const { tab, selectedFavorites, selectedCustoms } = this.state;
 
-	  LayoutAnimation.configureNext(CustomLayoutSpring);
-	  if (tab === 0) {
-	    this.setState({
-	      selectedFavorites: selectedFavorites.map((val, i) => (i === idx ? !val : false))
-	    });
-	  } else {
-	    this.setState({
-	      selectedCustoms: selectedCustoms.map((val, i) => (i === idx ? !val : false))
-	    });
-	  }
-	}
+    LayoutAnimation.configureNext(CustomLayoutSpring);
+    if (tab === 0) {
+      this.setState({
+        selectedFavorites: selectedFavorites.map((val, i) => (i === idx ? !val : false))
+      });
+    } else {
+      this.setState({
+        selectedCustoms: selectedCustoms.map((val, i) => (i === idx ? !val : false))
+      });
+    }
+  }
 
-	onEditClick = (idx) => {
-	  const { tab, favorites, customs } = this.state;
-	  let arrToUse = [];
-	  if (tab === 0) {
-	    arrToUse = favorites;
-	  } else {
-	    arrToUse = customs;
-	  }
-	  this.setState({
-	    visibleModal: true,
-	    modalRecipeId: arrToUse[idx].recipeId,
-	    modalRecipeIndex: idx,
-	    deleteModal: false
-	  });
-	}
+  onEditClick = (idx) => {
+    const { tab, favorites, customs } = this.state;
+    let arrToUse = [];
+    if (tab === 0) {
+      arrToUse = favorites;
+    } else {
+      arrToUse = customs;
+    }
+    this.setState({
+      visibleModal: true,
+      modalRecipeId: arrToUse[idx].recipeId,
+      modalRecipeIndex: idx,
+      deleteModal: false
+    });
+  }
 
-	onGoClick = (idx) => {
-	  const { navigation } = this.props;
-	  const { tab, favorites, customs } = this.state;
-	  if (tab === 0) {
-	    navigation.navigate('Brew', {
-	      recipe: favorites[idx]
-	    });
-	  } else {
-	    navigation.navigate('Brew', {
-	      recipe: customs[idx]
-	    });
-	  }
-	}
+  onGoClick = (idx) => {
+    const { navigation } = this.props;
+    const { tab, favorites, customs } = this.state;
+    if (tab === 0) {
+      navigation.navigate('Brew', {
+        recipe: favorites[idx]
+      });
+    } else {
+      navigation.navigate('Brew', {
+        recipe: customs[idx]
+      });
+    }
+  }
 
-	getModalOptions = () => {
-	  const {
-	    tab, favorites, customs, deleteModal, modalRecipeIndex
-	  } = this.state;
+  getModalOptions = () => {
+    const {
+      tab, favorites, customs, deleteModal, modalRecipeIndex
+    } = this.state;
 
-	  if (deleteModal) {
-	    return [
-	      {
-	        id: constants.RECIPE_MENU_CANCEL,
-	        title: 'Cancel'
-	      },
-	      {
-	        id: constants.RECIPE_MENU_DELETE,
-	        title: 'Delete'
-	      },
-	    ];
-	  }
+    if (deleteModal) {
+      return [
+        {
+          id: constants.RECIPE_MENU_CANCEL,
+          title: 'Cancel'
+        },
+        {
+          id: constants.RECIPE_MENU_DELETE,
+          title: 'Delete'
+        },
+      ];
+    }
 
-	  const options = [{
-	    id: constants.RECIPE_MENU_EDIT,
-	    title: 'Edit recipe'
-	  }];
+    const options = [{
+      id: constants.RECIPE_MENU_EDIT,
+      title: 'Edit recipe'
+    }];
 
-	  let arrToSearch = [];
-	  if (tab === 0) {
-	    arrToSearch = favorites;
-	  } else {
-	    arrToSearch = customs;
-	  }
-	  if (modalRecipeIndex !== -1) {
-	    const recipe = arrToSearch[modalRecipeIndex];
-	    if (recipe.favorited) {
-	      options.push({
-	        id: constants.RECIPE_MENU_UNFAVORITE,
-	        title: 'Unfavorite recipe'
-	      });
-	    } else {
-	      options.push({
-	        id: constants.RECIPE_MENU_FAVORITE,
-	        title: 'Favorite recipe'
-	      });
-	    }
-	  }
-	  options.push({
-	    id: constants.RECIPE_MENU_DELETE,
-	    title: 'Delete'
-	  });
-	  return options;
-	}
+    let arrToSearch = [];
+    if (tab === 0) {
+      arrToSearch = favorites;
+    } else {
+      arrToSearch = customs;
+    }
+    if (modalRecipeIndex !== -1) {
+      const recipe = arrToSearch[modalRecipeIndex];
+      if (recipe.favorited) {
+        options.push({
+          id: constants.RECIPE_MENU_UNFAVORITE,
+          title: 'Unfavorite recipe'
+        });
+      } else {
+        options.push({
+          id: constants.RECIPE_MENU_FAVORITE,
+          title: 'Favorite recipe'
+        });
+      }
+    }
+    options.push({
+      id: constants.RECIPE_MENU_DELETE,
+      title: 'Delete'
+    });
+    return options;
+  }
 
-	onCloseClick = () => {
-	  // Close and clear modal
-	  this.setState({
-	    visibleModal: false,
-	    modalRecipeId: '',
-	    modalRecipeIndex: -1,
-	  });
-	}
+  onCloseClick = () => {
+    // Close and clear modal
+    this.setState({
+      visibleModal: false,
+      modalRecipeId: '',
+      modalRecipeIndex: -1,
+    });
+  }
 
-	onPressItem = (item) => {
-	  const { navigation } = this.props;
-	  const {
-	    tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites, customs
-	  } = this.state;
+  onPressItem = (item) => {
+    const { navigation } = this.props;
+    const {
+      tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites, customs
+    } = this.state;
 
-	  if (item === constants.RECIPE_MENU_EDIT) {
-	    // TODO: go to builder page and pass in this recipe
-	    if (tab === 0) {
-	      navigation.navigate('Builder', {
-		      recipe: favorites[modalRecipeIndex]
-	      });
-	    } else {
-	      navigation.navigate('Builder', {
-		      recipe: customs[modalRecipeIndex]
-	      });
-	    }
-	  } else if (item === constants.RECIPE_MENU_FAVORITE) {
-	    // Call favorite recipe
-	    favoriteRecipe(modalRecipeId);
-	  } else if (item === constants.RECIPE_MENU_UNFAVORITE) {
-	    // Call unfavorite recipe
-	    unfavoriteRecipe(modalRecipeId);
-	  } else if (item === constants.RECIPE_MENU_DELETE) {
-	    // Call delete recipe
-	    if (!deleteModal) {
-	      this.setState({
-	        deleteModal: true
-	      });
-	    } else {
-	      deleteRecipe(modalRecipeId);
-	    }
-	  } else if (item === constants.RECIPE_MENU_CANCEL) {
-	    // Call clear
-	    this.onCloseClick();
-	  }
-	}
+    if (item === constants.RECIPE_MENU_EDIT) {
+      // TODO: go to builder page and pass in this recipe
+      if (tab === 0) {
+        navigation.navigate('Builder', {
+          recipe: favorites[modalRecipeIndex]
+        });
+      } else {
+        navigation.navigate('Builder', {
+          recipe: customs[modalRecipeIndex]
+        });
+      }
+    } else if (item === constants.RECIPE_MENU_FAVORITE) {
+      // Call favorite recipe
+      favoriteRecipe(modalRecipeId);
+    } else if (item === constants.RECIPE_MENU_UNFAVORITE) {
+      // Call unfavorite recipe
+      unfavoriteRecipe(modalRecipeId);
+    } else if (item === constants.RECIPE_MENU_DELETE) {
+      // Call delete recipe
+      if (!deleteModal) {
+        this.setState({
+          deleteModal: true
+        });
+      } else {
+        deleteRecipe(modalRecipeId);
+      }
+    } else if (item === constants.RECIPE_MENU_CANCEL) {
+      // Call clear
+      this.onCloseClick();
+    }
+  }
 
-	renderEntry = (idx, item) => {
-	  const { tab, selectedFavorites, selectedCustoms } = this.state;
-	  let selected = false;
-	  if (tab === 0) {
-	    selected = selectedFavorites[idx];
-	  } else {
-	    selected = selectedCustoms[idx];
-	  }
-	  return (
-  <Entry
-    key={item.recipeId}
-    idx={idx}
-    selected={selected}
-    vesselId={item.vesselId}
-    title={item.recipeName}
-    description={recipeModel.getRecipeDescription(item)}
-    onEntryClick={this.onEntryClick}
-    onEditClick={this.onEditClick}
-    onGoClick={this.onGoClick}
-  />
-	  );
-	}
+  renderEntry = (idx, item) => {
+    const { tab, selectedFavorites, selectedCustoms } = this.state;
+    let selected = false;
+    if (tab === 0) {
+      selected = selectedFavorites[idx];
+    } else {
+      selected = selectedCustoms[idx];
+    }
+    return (
+      <Entry
+        key={item.recipeId}
+        idx={idx}
+        selected={selected}
+        vesselId={item.vesselId}
+        title={item.recipeName}
+        description={recipeModel.getRecipeDescription(item)}
+        onEntryClick={this.onEntryClick}
+        onEditClick={this.onEditClick}
+        onGoClick={this.onGoClick}
+      />
+    );
+  }
 
-	render() {
-	  const { sponsors } = this.props;
-	  const {
-	    tab, customs, favorites, visibleModal, deleteModal
-	  } = this.state;
+  render() {
+    const { sponsors } = this.props;
+    const {
+      tab, customs, favorites, visibleModal, deleteModal
+    } = this.state;
 
-	  let modalTitle = '';
-	  if (deleteModal) {
-	    modalTitle = 'Delete this recipe?';
-	  }
+    let modalTitle = '';
+    if (deleteModal) {
+      modalTitle = 'Delete this recipe?';
+    }
 
-	  return (
-  <ScrollView style={styles.container}>
-    <Text style={styles.title}>Good Morning, Emile.</Text>
-    <Sponsor
-      onSponsorClick={this.onSponsorClick}
-      sponsors={sponsors}
-    />
-    <MenuButtons
-      onFavoritesClick={this.onFavoritesClick}
-      onCustomClick={this.onCustomClick}
-      onAddClick={this.onAddClick}
-      selected={tab}
-    />
+    return (
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Good Morning, Emile.</Text>
+        <Sponsor
+          onSponsorClick={this.onSponsorClick}
+          sponsors={sponsors}
+        />
+        <MenuButtons
+          onFavoritesClick={this.onFavoritesClick}
+          onCustomClick={this.onCustomClick}
+          onAddClick={this.onAddClick}
+          selected={tab}
+        />
 
-    {tab === 0 && favorites.map((favorite, idx) => (
-						  this.renderEntry(idx, favorite)
-		    ))}
-    {tab === 1 && customs.map((custom, idx) => (
-						  this.renderEntry(idx, custom)
-		    ))}
+        {tab === 0 && favorites.map((favorite, idx) => (
+          this.renderEntry(idx, favorite)
+        ))}
+        {tab === 1 && customs.map((custom, idx) => (
+          this.renderEntry(idx, custom)
+        ))}
 
-    <CustomModal
-      visibleModal={visibleModal}
-      title={modalTitle}
-      onCloseClick={this.onCloseClick}
-      onPressItem={this.onPressItem}
-      isListModal
-      isSelectInput={false}
-      options={this.getModalOptions()}
-    />
-  </ScrollView>
-	  );
-	}
+        <CustomModal
+          visibleModal={visibleModal}
+          title={modalTitle}
+          onCloseClick={this.onCloseClick}
+          onPressItem={this.onPressItem}
+          isListModal
+          isSelectInput={false}
+          options={this.getModalOptions()}
+        />
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
