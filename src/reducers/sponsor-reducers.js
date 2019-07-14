@@ -3,7 +3,7 @@ import {
   RECEIVE_SPONSORS,
   REQUEST_SPONSOR,
   RECEIVE_SPONSOR,
-} from '../actions/sponsor-actions'
+} from '../actions/sponsor-actions';
 
 function sponsors(
   state = {
@@ -18,27 +18,27 @@ function sponsors(
     case REQUEST_SPONSORS:
       return Object.assign({}, state, {
         sponsorsIsFetching: true,
-      })
+      });
     case RECEIVE_SPONSORS:
       return Object.assign({}, state, {
         sponsorsIsFetching: false,
         sponsors: action.sponsors,
         lastUpdated: action.receivedAt
-      })
+      });
     case REQUEST_SPONSOR:
       return Object.assign({}, state, {
         sponsorId: action.sponsorId,
         sponsorIsFetching: true,
-      })
+      });
     case RECEIVE_SPONSOR:
       return Object.assign({}, state, {
         sponsorIsFetching: false,
         sponsor: action.sponsor,
         sponsorId: action.sponsorId,
         lastUpdated: action.receivedAt
-      })
+      });
     default:
-      return state
+      return state;
   }
 }
 
@@ -49,11 +49,11 @@ function sponsorsReducer(state = {}, action) {
     case RECEIVE_SPONSOR:
     case REQUEST_SPONSOR:
       return Object.assign({}, state, {
-        ["sponsors"]: sponsors(state["sponsors"], action)
-      })
+        sponsors: sponsors(state.sponsors, action)
+      });
     default:
-      return state
+      return state;
   }
 }
 
-export default sponsorsReducer
+export default sponsorsReducer;

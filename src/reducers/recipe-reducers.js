@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux'
 import {
   REQUEST_DEFAULT_RECIPES,
   RECEIVE_DEFAULT_RECIPES,
@@ -6,13 +5,9 @@ import {
   RECEIVE_RECIPES,
   SAVING_RECIPE,
   SAVED_RECIPE,
-  FAVORITING_RECIPE,
-  FAVORITED_RECIPE,
-  UNFAVORITING_RECIPE,
-  UNFAVORITED_RECIPE,
   DELETING_RECIPE,
   DELETED_RECIPE,
-} from '../actions/recipe-actions'
+} from '../actions/recipe-actions';
 
 function recipes(
   state = {
@@ -27,35 +22,35 @@ function recipes(
     case REQUEST_DEFAULT_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: true,
-      })
+      });
     case RECEIVE_DEFAULT_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: false,
         defaultRecipes: action.defaultRecipes,
         lastUpdated: action.receivedAt
-      })
+      });
     case REQUEST_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: true,
-      })
+      });
     case RECEIVE_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: false,
         recipes: action.recipes,
         lastUpdated: action.receivedAt
-      })
+      });
     case SAVING_RECIPE:
       return Object.assign({}, state, {
         recipeIsSaving: true,
-      })
+      });
     case SAVED_RECIPE:
       // In case of saved recipe, edit recipes array
-      var found = false;
-      for (i = 0; i < state.recipes.length; i++) {
-        if (state.recipes[i].recipeId == action.recipe.recipeId) {
+      let found = false;
+      for (let i = 0; i < state.recipes.length; i += 1) {
+        if (state.recipes[i].recipeId === action.recipe.recipeId) {
           state.recipes[i] = action.recipe;
           found = true;
-          break
+          break;
         }
       }
       if (!found) {
@@ -65,26 +60,26 @@ function recipes(
         recipeIsSaving: false,
         recipes: state.recipes,
         lastUpdated: action.receivedAt
-      })
+      });
     case DELETING_RECIPE:
       return Object.assign({}, state, {
         recipeIsDeleting: true,
-      })
+      });
     case DELETED_RECIPE:
       // In case of deleted recipe, edit recipes array
-      for (i = 0; i < state.recipes.length; i++) {
-        if (state.recipes[i].recipeId == action.recipeId) {
-          state.recipes.splice(i, 1)
-          break
+      for (let i = 0; i < state.recipes.length; i += 1) {
+        if (state.recipes[i].recipeId === action.recipeId) {
+          state.recipes.splice(i, 1);
+          break;
         }
       }
       return Object.assign({}, state, {
         recipeIsDeleting: false,
         recipes: state.recipes,
         lastUpdated: action.receivedAt
-      })
+      });
     default:
-      return state
+      return state;
   }
 }
 
@@ -99,11 +94,11 @@ function recipesReducer(state = {}, action) {
     case DELETING_RECIPE:
     case DELETED_RECIPE:
       return Object.assign({}, state, {
-        ["recipes"]: recipes(state["recipes"], action)
-      })
+        recipes: recipes(state.recipes, action)
+      });
     default:
-      return state
+      return state;
   }
 }
 
-export default recipesReducer
+export default recipesReducer;

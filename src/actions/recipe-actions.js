@@ -23,7 +23,7 @@ function receiveDefaultRecipes() {
 
 export function fetchDefaultRecipes() {
   return function (dispatch) {
-    dispatch(requestDefaultRecipes())
+    dispatch(requestDefaultRecipes());
     return fetch(`${Config.API_URL}/recipes`)
       .then(
         response => response.json(),
@@ -33,11 +33,11 @@ export function fetchDefaultRecipes() {
         AsyncStorage.getItem('recipes')
           .then((recipes) => {
             const r = recipes ? JSON.parse(recipes) : [];
-            for (var i = 0; i < json.length; i += 1) {
-              defaultRecipe = camelcaseKeys(json[i])
-              var found = false;
-              for (var j = 0; j < r.length; j += 1 ) {
-                if (r[j].recipeId == defaultRecipe.recipeId) {
+            for (let i = 0; i < json.length; i += 1) {
+              const defaultRecipe = camelcaseKeys(json[i]);
+              let found = false;
+              for (let j = 0; j < r.length; j += 1) {
+                if (r[j].recipeId === defaultRecipe.recipeId) {
                   found = true;
                   break;
                 }
@@ -49,8 +49,8 @@ export function fetchDefaultRecipes() {
             AsyncStorage.setItem('recipes', JSON.stringify(r));
             dispatch(receiveDefaultRecipes());
           });
-      })
-  }
+      });
+  };
 }
 
 export const REQUEST_RECIPES = 'REQUEST_RECIPES';
@@ -70,19 +70,19 @@ function receiveRecipes(json) {
 }
 
 export function fetchRecipes() {
-  return function(dispatch) {
-    dispatch(requestRecipes())
+  return function (dispatch) {
+    dispatch(requestRecipes());
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
-        var result = [];
+        const result = [];
         const r = recipes ? JSON.parse(recipes) : [];
-        for (recipe of r) {
+        for (const recipe of r) {
           // Create objects and add to result
           result.push(Recipe(recipe));
         }
         dispatch(receiveRecipes(result));
       });
-  }
+  };
 }
 
 export const SAVING_RECIPE = 'SAVING_RECIPE';
@@ -96,24 +96,23 @@ export const SAVED_RECIPE = 'SAVED_RECIPE';
 function savedRecipe(recipe) {
   return {
     type: SAVED_RECIPE,
-    recipe: recipe,
+    recipe,
     receivedAt: Date.now()
   };
 }
 
 export function saveRecipe(recipeToSave) {
-  return function(dispatch) {
-    console.log("saving recipe")
-    dispatch(savingRecipe())
+  return function (dispatch) {
+    dispatch(savingRecipe());
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
-        var found = false;
-        for (i = 0; i < r.length; i++) {
-          if (r[i].recipeId == recipeToSave.recipeId) {
+        let found = false;
+        for (let i = 0; i < r.length; i += 1) {
+          if (r[i].recipeId === recipeToSave.recipeId) {
             r[i] = recipeToSave;
             found = true;
-            break
+            break;
           }
         }
         if (!found) {
@@ -122,79 +121,80 @@ export function saveRecipe(recipeToSave) {
         AsyncStorage.setItem('recipes', JSON.stringify(r));
         dispatch(savedRecipe(recipeToSave));
       });
-  }
+  };
 }
 
 export function favoriteRecipe(id) {
-  return function(dispatch) {
-    console.log("favoriting recipe")
-    dispatch(savingRecipe())
+  return function (dispatch) {
+    dispatch(savingRecipe());
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
-        for (recipe of r) {
-          if (recipe.recipeId == id) {
-            recipe.favorited = true;
-            break
+        let recipeToUse = {};
+        for (let i = 0; i < r.length; i += 1) {
+          if (r[i].recipeId === id) {
+            r[i].favorited = true;
+            recipeToUse = r[i];
+            break;
           }
         }
         AsyncStorage.setItem('recipes', JSON.stringify(r));
-        dispatch(savedRecipe(recipe));
+        dispatch(savedRecipe(recipeToUse));
       });
-  }
+  };
 }
 
 export function unfavoriteRecipe(id) {
-  return function(dispatch) {
-    console.log("unfavoriting recipe")
-    dispatch(savingRecipe())
+  return function (dispatch) {
+    dispatch(savingRecipe());
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
-        for (recipe of r) {
-          if (recipe.recipeId == id) {
-            recipe.favorited = false;
-            break
+        let recipeToUse = {};
+        for (let i = 0; i < r.length; i += 1) {
+          if (r[i].recipeId === id) {
+            r[i].favorited = false;
+            recipeToUse = r[i];
+            break;
           }
         }
         AsyncStorage.setItem('recipes', JSON.stringify(r));
-        dispatch(savedRecipe(recipe));
+        dispatch(savedRecipe(recipeToUse));
       });
-  }
+  };
 }
 
-export const DELETING_RECIPE = 'DELETING_RECIPE'
+export const DELETING_RECIPE = 'DELETING_RECIPE';
 function deletingRecipe() {
   return {
     type: DELETING_RECIPE
-  }
+  };
 }
 
-export const DELETED_RECIPE = 'DELETED_RECIPE'
+export const DELETED_RECIPE = 'DELETED_RECIPE';
 function deletedRecipe(id) {
   return {
     type: DELETED_RECIPE,
     recipeId: id,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function deleteRecipe(id) {
-  return function(dispatch) {
-    console.log("deleting recipe")
-    dispatch(deletingRecipe())
+  return function (dispatch) {
+    dispatch(deletingRecipe());
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
-        for (i = 0; i < r.length; i++) {
-          recipe = r[i]
-          if (recipe.recipeId == id) {
-            r.splice(i, 1)
-            break
+        for (let i = 0; i < r.length; i += 1) {
+          const recipe = r[i];
+          if (recipe.recipeId === id) {
+            r.splice(i, 1);
+            break;
           }
         }
         AsyncStorage.setItem('recipes', JSON.stringify(r));
         dispatch(deletedRecipe(id));
       });
-  }
+  };
 }

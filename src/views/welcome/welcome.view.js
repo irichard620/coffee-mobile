@@ -1,49 +1,52 @@
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
-import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback,
-  TextInput, LayoutAnimation } from 'react-native';
+import { connect } from 'react-redux';
+import {
+  View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback,
+  TextInput, LayoutAnimation
+} from 'react-native';
 
-import Button from '../../components/button';
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
 import { saveUsername, fetchUser } from '../../actions/user-actions';
 
 const CustomLayoutSpring = {
-	duration: 400,
-	create: {
-		type: LayoutAnimation.Types.spring,
-		property: LayoutAnimation.Properties.scaleY,
-		springDamping: 0.7,
-	},
-	update: {
-		type: LayoutAnimation.Types.spring,
-		springDamping: 0.7,
-	},
+  duration: 400,
+  create: {
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.scaleY,
+    springDamping: 0.7,
+  },
+  update: {
+    type: LayoutAnimation.Types.spring,
+    springDamping: 0.7,
+  },
 };
 
 class WelcomePage extends Component {
-	constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       step: -1,
-      name: "",
+      name: '',
     };
   }
 
   componentDidMount() {
-		this.props.fetchUser();
-	}
+    fetchUser();
+  }
 
-	componentWillReceiveProps(nextProps) {
-    const { user, recipes } = this.props
-    const { step } = this.state
+  componentWillReceiveProps(nextProps) {
+    const {
+      user, recipes, navigation
+    } = this.props;
+    const { step } = this.state;
 
-	  const nextUser = nextProps.user;
+    const nextUser = nextProps.user;
     const nextRecipes = nextProps.recipes;
 
     if (user && user.userIsFetching && !nextUser.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
-      if (Object.keys(nextUser.user).length == 0 || nextUser.user.name == "" || nextUser.user.name != "") {
+      if (Object.keys(nextUser.user).length === 0 || nextUser.user.name === '' || nextUser.user.name !== '') {
         // Go to welcome page
         LayoutAnimation.configureNext(CustomLayoutSpring);
         this.setState({
@@ -51,89 +54,94 @@ class WelcomePage extends Component {
         });
       } else {
         // Do default recipes if user there
-        this.props.fetchDefaultRecipes();
+        fetchDefaultRecipes();
       }
     } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
       // If finished saving, save default recipes
-      this.props.fetchDefaultRecipes();
+      fetchDefaultRecipes();
     } else if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
-      if (step == 2) {
+      if (step === 2) {
         // Go to tutorial - we were in welcome
-        this.props.navigation.navigate('Tutorial');
+        navigation.navigate('Tutorial');
       } else {
         // Go to home - means user there
-        this.props.navigation.navigate('Home');
+        navigation.navigate('Home');
       }
     }
-	}
+  }
 
   onNextClick = () => {
+    const { navigation } = this.props;
     const { step, name } = this.state;
 
-    if (step == 0) {
+    if (step === 0) {
       this.setState({
         step: 1
-      })
-    } else if (step == 1) {
-      this.props.saveUsername(name)
+      });
+    } else if (step === 1) {
+      saveUsername(name);
       this.setState({
         step: 2
-      })
+      });
     } else {
-      this.props.navigation.goBack();
+      navigation.goBack();
     }
   }
 
   onChangeText = (text) => {
     this.setState({
       name: text
-    })
+    });
   }
 
-	render() {
+  render() {
     const { step, name } = this.state;
 
-    const basePath = "../../assets/splash/";
-    const baseButtonPath = "../../assets/buttons/";
+    const basePath = '../../assets/splash/';
+    const baseButtonPath = '../../assets/buttons/';
 
-    var {height, width} = Dimensions.get('window');
-    var multiplier = 0.16
-    if (step == -1) {
-      multiplier = 0.35
+    const { height } = Dimensions.get('window');
+    let multiplier = 0.16;
+    if (step === -1) {
+      multiplier = 0.35;
     }
-    imageContainerMargin = {
+    const imageContainerMargin = {
       marginTop: height * multiplier
+    };
+
+    let title = '';
+    if (step === 0) {
+      title = 'Welcome to Drippy!';
+    } else if (step === 1) {
+      title = "What's your first name?";
+    } else if (step === 2) {
+      title = "Great! Let's get brewing...";
     }
 
-    var title = ""
-    if (step == 0) {
-      title = "Welcome to Drippy!"
-    } else if (step == 1) {
-      title = "What's your first name?"
-    } else if (step == 2) {
-      title = "Great! Let's get brewing..."
-    }
-
-		return (
-			<View style={styles.container}>
-        <Image style={[styles.logo, imageContainerMargin]} source={require(basePath + "Splash_Logo.png")} />
-        {step != -1 && <Text style={styles.title}>{title}</Text>}
-        {step == 1 && <TextInput
-          onChangeText={(text) => this.onChangeText(text)}
-          value={name}
-          placeholder={"First Name"}
-          placeholderTextColor='#b7b3b3'
-          style={styles.textinput}
-        />}
-        <View style={styles.buttonview}>
-          {(step == 0 || step == 1) &&
-            <TouchableWithoutFeedback onPress = {this.onNextClick}>
-              <Image style={[styles.mini]} source={require(baseButtonPath + "Go.png")} />
-            </TouchableWithoutFeedback>}
-        </View>
-			</View>
-		);
-	}
+    return (
+    <View style={styles.container}>
+      <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
+      {step !== -1 && <Text style={styles.title}>{title}</Text>}
+      {step === 1 && (
+      <TextInput
+        onChangeText={text => this.onChangeText(text)}
+        value={name}
+        placeholder="First Name"
+        placeholderTextColor="#b7b3b3"
+        style={styles.textinput}
+      />
+        )}
+      <View style={styles.buttonview}>
+        {(step === 0 || step === 1)
+            && (
+              <TouchableWithoutFeedback onPress={this.onNextClick}>
+              <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
+              </TouchableWithoutFeedback>
+            )}
+      </View>
+    </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -167,17 +175,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1'
   },
   mini: {
-		height: 40,
+    height: 40,
     width: 40
-	}
+  }
 });
 
-const mapStateToProps = (state) => ({ user: state.userReducer.user,
-  recipes: state.recipesReducer.recipes });
+const mapStateToProps = state => ({
+  user: state.userReducer.user,
+  recipes: state.recipesReducer.recipes
+});
 
-const mapDispatchToProps = { fetchUser: fetchUser, saveUsername: saveUsername,
-  fetchDefaultRecipes: fetchDefaultRecipes }
+const mapDispatchToProps = {
+  fetchUser,
+  saveUsername,
+  fetchDefaultRecipes
+};
 
-WelcomePage = connect(mapStateToProps,mapDispatchToProps)(WelcomePage)
-
-export default WelcomePage;
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomePage);

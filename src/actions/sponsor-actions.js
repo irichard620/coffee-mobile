@@ -1,73 +1,70 @@
-import fetch from 'cross-fetch'
-import Config from 'react-native-config'
+import fetch from 'cross-fetch';
+import Config from 'react-native-config';
+
 const camelcaseKeys = require('camelcase-keys');
 
-export const REQUEST_SPONSORS = 'REQUEST_SPONSORS'
+export const REQUEST_SPONSORS = 'REQUEST_SPONSORS';
 function requestSponsors() {
   return {
     type: REQUEST_SPONSORS
-  }
+  };
 }
 
-export const RECEIVE_SPONSORS = 'RECEIVE_SPONSORS'
+export const RECEIVE_SPONSORS = 'RECEIVE_SPONSORS';
 function receiveSponsors(json) {
+  let jsonToUse = [];
   if (json) {
-    json = camelcaseKeys(json)
+    jsonToUse = camelcaseKeys(json);
   }
   return {
     type: RECEIVE_SPONSORS,
-    sponsors: json,
+    sponsors: jsonToUse,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function fetchSponsors() {
-  return function(dispatch) {
-    console.log("fetching sponsors")
-    dispatch(requestSponsors())
+  return function (dispatch) {
+    dispatch(requestSponsors());
     return fetch(`${Config.API_URL}/sponsors`)
       .then(
         response => response.json(),
         error => console.log('An error occurred.', error)
       )
-      .then(json =>
-        dispatch(receiveSponsors(json))
-      )
-  }
+      .then(json => dispatch(receiveSponsors(json)));
+  };
 }
 
-export const REQUEST_SPONSOR = 'REQUEST_SPONSOR'
+export const REQUEST_SPONSOR = 'REQUEST_SPONSOR';
 function requestSponsor(sponsorId) {
   return {
     type: REQUEST_SPONSOR,
-    sponsorId: sponsorId
-  }
+    sponsorId
+  };
 }
 
-export const RECEIVE_SPONSOR = 'RECEIVE_SPONSOR'
+export const RECEIVE_SPONSOR = 'RECEIVE_SPONSOR';
 function receiveSponsor(sponsorId, json) {
+  let jsonToUse = {};
   if (json) {
-    json = camelcaseKeys(json)
+    jsonToUse = camelcaseKeys(json);
   }
   return {
     type: RECEIVE_SPONSOR,
-    sponsorId: sponsorId,
-    sponsor: json,
+    sponsorId,
+    sponsor: jsonToUse,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export function fetchSponsor(sponsorId) {
-  return function(dispatch) {
-    console.log("fetching sponsor with ID " + sponsorId)
-    dispatch(requestSponsor(sponsorId))
+  return function (dispatch) {
+    dispatch(requestSponsor(sponsorId));
     return fetch(`${Config.API_URL}/sponsors/${sponsorId}`)
       .then(
         response => response.json(),
         error => console.log('An error occurred.', error)
       )
-      .then(json =>
-        dispatch(receiveSponsor(sponsorId, json))
-      )
-  }
+      .then(json => dispatch(receiveSponsor(sponsorId, json)));
+  };
 }

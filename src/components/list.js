@@ -1,38 +1,38 @@
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import {
+  View, StyleSheet, FlatList
+} from 'react-native';
 import ListItem from './list-item';
 
 class List extends Component {
-	constructor(props) {
-    super(props);
-  }
+	keyExtractor = item => item.id;
 
-  keyExtractor = (item, index) => item.id;
-
-	renderItem = ({item}) => (
-    <ListItem
-      id={item.id}
-      onPressItem={this.props.onPressItem}
-      title={item.title}
-    />
-  );
-
-  renderSeparator = () => {
-    return (<View style={styles.line}/>);
-  }
-
-	render() {
-		return (
-      <FlatList
-  			data={this.props.options}
-        keyExtractor={this.keyExtractor}
-  			renderItem={this.renderItem}
-        style={styles.list}
-        ItemSeparatorComponent={this.renderSeparator}
-  		/>
-		);
+	renderItem = (item) => {
+	  const { onPressItem } = this.props;
+	  return (
+  <ListItem
+    id={item.id}
+    onPressItem={onPressItem}
+    title={item.title}
+  />
+	  );
 	}
+
+  renderSeparator = () => (<View style={styles.line} />)
+
+  render() {
+  	const { options } = this.props;
+  	return (
+    <FlatList
+      data={options}
+      keyExtractor={this.keyExtractor}
+      renderItem={this.renderItem}
+      style={styles.list}
+      ItemSeparatorComponent={this.renderSeparator}
+  		/>
+  	);
+  }
 }
 
 const styles = StyleSheet.create({
