@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableHighlight
+  View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
 
 export default function Close(props) {
@@ -13,11 +13,11 @@ export default function Close(props) {
     color: '#FFFFFF'
   };
   return (
-    <TouchableHighlight style={[styles.close, closeBackgroundColor]} onPress={onCloseClick}>
+    <TouchableOpacity style={[styles.close, closeBackgroundColor]} onPress={onCloseClick}>
       <View>
         <Text style={[styles.title, closeTextColor]}>x</Text>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 }
 

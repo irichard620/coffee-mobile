@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableWithoutFeedback, Image
+  View, Text, StyleSheet, TouchableOpacity, Image
 } from 'react-native';
 import {
   vesselLabels, VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
@@ -19,7 +19,7 @@ export default function Vessel(props) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={onStepClick}>
+    <TouchableOpacity onPress={onStepClick}>
       <View style={styles.outline}>
         <View style={styles.logoview}>
           {vesselId === VESSEL_AEROPRESS
@@ -34,7 +34,7 @@ export default function Vessel(props) {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>Brewing Vessel</Text>
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 }
 

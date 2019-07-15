@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableHighlight
+  View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
 
 export default function ButtonMini(props) {
@@ -29,11 +29,11 @@ export default function ButtonMini(props) {
     };
   }
   return (
-    <TouchableHighlight style={[styles.button, backgroundStyle]} onPress={onButtonClick}>
+    <TouchableOpacity style={[styles.button, backgroundStyle]} onPress={onButtonClick}>
       <View>
         <Text style={[styles.title, titleStyle]}>{title}</Text>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 }
 

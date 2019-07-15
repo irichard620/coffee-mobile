@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Image
+  View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Image, Dimensions
 } from 'react-native';
 
 export default function Sponsor(props) {
@@ -27,6 +27,12 @@ export default function Sponsor(props) {
     sponsorLogoImage = logoLink;
     disabled = false;
   }
+
+  const { height } = Dimensions.get('window');
+  const outlineHeight = {
+    height: height * 0.24
+  }
+
   return (
     <TouchableWithoutFeedback
       disabled={disabled}
@@ -36,7 +42,7 @@ export default function Sponsor(props) {
       <View>
         <ImageBackground
           source={{ uri: sponsorBackImage }}
-          style={styles.outline}
+          style={[styles.outline, outlineHeight]}
           imageStyle={{ borderRadius: 20 }}
         >
           <View style={styles.logocontainer}>
@@ -55,7 +61,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     marginBottom: 15,
     padding: 15,
-    height: 220,
     resizeMode: 'contain',
     justifyContent: 'space-between'
   },
@@ -63,11 +68,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 150,
+    height: '68%',
     width: '100%'
   },
   logo: {
-    height: 85,
+    height: '57%',
     width: '51%',
     resizeMode: 'contain',
   },

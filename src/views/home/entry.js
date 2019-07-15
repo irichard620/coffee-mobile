@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, Image, TouchableWithoutFeedback
+  View, Text, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
 import * as constants from '../../constants';
 
@@ -53,19 +53,19 @@ export default function Entry(props) {
           <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
           <View style={styles.rightbuttonview}>
             {!isSponsor && (
-            <TouchableWithoutFeedback onPress={() => onEditClick(idx)} disabled={disabled}>
+            <TouchableOpacity onPress={() => onEditClick(idx)} disabled={disabled}>
               <Image style={styles.edit} source={require(`${baseButtonPath}Edit.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
             {!isSponsor && (
-            <TouchableWithoutFeedback onPress={() => onGoClick(idx)} disabled={disabled}>
+            <TouchableOpacity onPress={() => onGoClick(idx)} disabled={disabled}>
               <Image style={styles.use} source={require(`${baseButtonPath}Go.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
             {isSponsor && (
-            <TouchableWithoutFeedback onPress={() => onDownloadClick(idx)} disabled={disabled}>
+            <TouchableOpacity onPress={() => onDownloadClick(idx)} disabled={disabled}>
               <Image style={styles.use} source={require(`${baseButtonPath}Move_Down.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
           </View>
         </View>

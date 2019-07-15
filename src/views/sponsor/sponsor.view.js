@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, Text, ScrollView, StyleSheet, LayoutAnimation, Linking,
-  ImageBackground, Image
+  ImageBackground, Image, Dimensions, Alert
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
@@ -46,8 +46,9 @@ class SponsorPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { sponsors } = this.props;
+    const { sponsors, recipes } = this.props;
     const nextSponsors = nextProps.sponsors;
+    const nextRecipes = nextProps.recipes;
 
     if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching
       && Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
@@ -74,6 +75,18 @@ class SponsorPage extends Component {
         selectedRecipes: newSelectedRecipes,
         recipes: newRecipes,
       });
+    } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
+      // Tell user it was saved
+      Alert.alert(
+        'Recipe saved',
+        `Recipe was successfully downloaded to your device.
+        Go back to home page to use it`,
+        [
+          {
+            text: 'OK'
+          },
+        ],
+      );
     }
   }
 
@@ -101,6 +114,8 @@ class SponsorPage extends Component {
     const { beans } = this.state;
 
     // Get our specific bean link
+    console.log(beans);
+    console.log(beans[idx]);
     const url = beans[idx].beanLink;
 
     // Open
@@ -108,7 +123,16 @@ class SponsorPage extends Component {
       if (supported) {
         Linking.openURL(url);
       } else {
-        // TODO: Open error alert
+        // Open error alert
+        Alert.alert(
+          'Error occurred',
+          `Could not open url`,
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
       }
     });
   }
@@ -142,9 +166,15 @@ class SponsorPage extends Component {
       sponsorBackImage = sponsors.sponsor.backgroundLink;
       sponsorLogoImage = sponsors.sponsor.logoLink;
     }
+
+    const { height } = Dimensions.get('window');
+    const headerHeight = {
+      height: height * 0.38
+    }
+
     return (
       <ScrollView style={styles.container}>
-        <ImageBackground source={{ uri: sponsorBackImage }} style={styles.header}>
+        <ImageBackground source={{ uri: sponsorBackImage }} style={[styles.header, headerHeight]}>
           <View style={styles.backcontainer}>
             <Back
               onBackClick={this.onBackClick}
@@ -206,7 +236,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   logo: {
-    height: 85,
+    height: '24%',
     width: '75%',
     resizeMode: 'contain',
     alignSelf: 'center',

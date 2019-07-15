@@ -1,6 +1,7 @@
 import {
   REQUEST_USER,
   RECEIVE_USER,
+  ERROR_USER,
   SAVING_USERNAME,
   SAVED_USERNAME,
 } from '../actions/user-actions';
@@ -10,6 +11,7 @@ function user(
     userIsFetching: false,
     user: {},
     userIsSaving: false,
+    error: '',
   },
   action
 ) {
@@ -22,6 +24,13 @@ function user(
       return Object.assign({}, state, {
         userIsFetching: false,
         user: action.user,
+        error: '',
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_USER:
+      return Object.assign({}, state, {
+        userIsFetching: false,
+        error: action.error,
         lastUpdated: action.receivedAt
       });
     case SAVING_USERNAME:
@@ -31,6 +40,7 @@ function user(
     case SAVED_USERNAME:
       return Object.assign({}, state, {
         userIsSaving: false,
+        error: '',
         lastUpdated: action.receivedAt
       });
     default:
@@ -42,6 +52,7 @@ function userReducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_USER:
     case REQUEST_USER:
+    case ERROR_USER:
     case SAVED_USERNAME:
     case SAVING_USERNAME:
       return Object.assign({}, state, {

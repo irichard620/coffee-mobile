@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, StyleSheet, Image, TouchableWithoutFeedback
+  View, Text, StyleSheet, Image, TouchableOpacity
 } from 'react-native';
 
 import Button from '../../components/button';
@@ -96,9 +96,9 @@ class TutorialPage extends Component {
           <Text style={styles.title}>{title}</Text>
         </View>
         <View style={styles.buttonview}>
-          <TouchableWithoutFeedback onPress={this.onNextClick}>
+          <TouchableOpacity onPress={this.onNextClick}>
             <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         </View>
       </View>
     );

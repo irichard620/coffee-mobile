@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableHighlight
+  View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
 
 export default function Button(props) {
@@ -29,7 +29,7 @@ export default function Button(props) {
     };
   }
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       style={[styles.button, backgroundStyle]}
       onPress={onButtonClick}
       disabled={disabled}
@@ -37,7 +37,7 @@ export default function Button(props) {
       <View>
         <Text style={[styles.title, titleStyle]}>{title}</Text>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 }
 

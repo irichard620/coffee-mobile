@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback,
+  View, Text, Dimensions, StyleSheet, Image, TouchableOpacity,
   TextInput, LayoutAnimation, Alert
 } from 'react-native';
 
@@ -155,9 +155,9 @@ class WelcomePage extends Component {
         <View style={styles.buttonview}>
           {(step === 0 || step === 1)
               && (
-                <TouchableWithoutFeedback onPress={this.onNextClick}>
+                <TouchableOpacity onPress={this.onNextClick}>
                   <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               )}
         </View>
       </View>

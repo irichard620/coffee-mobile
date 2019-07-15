@@ -16,6 +16,15 @@ function receiveUser(user) {
   };
 }
 
+export const ERROR_USER = 'ERROR_USER';
+function errorUser(err) {
+  return {
+    type: ERROR_USER,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
 export function fetchUser() {
   return function (dispatch) {
     dispatch(requestUser());
@@ -23,7 +32,8 @@ export function fetchUser() {
       .then((user) => {
         const userDetails = user ? JSON.parse(user) : {};
         dispatch(receiveUser(userDetails));
-      });
+      })
+      .catch(error => dispatch(errorUser(error)));
   };
 }
 

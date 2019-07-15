@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableWithoutFeedback
+  View, Text, StyleSheet, Image, TouchableOpacity
 } from 'react-native';
 import Button from '../../components/button';
 import * as constants from '../../constants';
@@ -204,9 +204,9 @@ class BrewPage extends Component {
     return (
       <View style={styles.transparentcontainer}>
         <View style={styles.container}>
-          <TouchableWithoutFeedback onPress={this.onCloseClick}>
+          <TouchableOpacity onPress={this.onCloseClick}>
             <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
           <Text style={styles.title}>{recipe.recipeName}</Text>
           <View style={styles.iconview}>
             {this.getIcon(recipe)}
@@ -215,9 +215,9 @@ class BrewPage extends Component {
           <View style={styles.buttonview}>
             {step !== -1 && step !== recipe.steps.length
                 && (
-                  <TouchableWithoutFeedback onPress={this.onBackClick}>
+                  <TouchableOpacity onPress={this.onBackClick}>
                     <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Go.png`)} />
-                  </TouchableWithoutFeedback>
+                  </TouchableOpacity>
                 )}
             <Button
               onButtonClick={this.onBrewClick}
@@ -227,9 +227,9 @@ class BrewPage extends Component {
               margin={[0, buttonMarginRight, 0, 0]}
             />
             {step === -1 && (
-            <TouchableWithoutFeedback onPress={this.onEditClick}>
+            <TouchableOpacity onPress={this.onEditClick}>
               <Image style={styles.mini} source={require(`${baseButtonPath}Edit.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
           </View>
         </View>

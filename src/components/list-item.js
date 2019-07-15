@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableWithoutFeedback, Image
+  View, Text, StyleSheet, TouchableOpacity, Image
 } from 'react-native';
 import * as constants from '../constants';
 
@@ -11,7 +11,7 @@ export default function ListItem(props) {
   const baseButtonPath = '../assets/buttons/menu/';
 
   return (
-    <TouchableWithoutFeedback style={styles.container} onPress={() => onPressItem(id)}>
+    <TouchableOpacity style={styles.container} onPress={() => onPressItem(id)}>
       <View style={styles.textcontainer}>
         {id === constants.RECIPE_MENU_EDIT && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Edit.png`)} />}
         {id === constants.RECIPE_MENU_FAVORITE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Favorite.png`)} />}
@@ -20,7 +20,7 @@ export default function ListItem(props) {
         {id === constants.RECIPE_MENU_CANCEL && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Cancel.png`)} />}
         <Text style={styles.listtitle}>{title}</Text>
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 }
 

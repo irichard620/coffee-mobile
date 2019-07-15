@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   View, Text, StyleSheet, TextInput, Picker, Image,
-  TouchableWithoutFeedback
+  TouchableOpacity, KeyboardAvoidingView
 } from 'react-native';
 import Modal from 'react-native-modal';
 import List from './list';
@@ -28,51 +28,56 @@ export default function CustomModal(props) {
       swipeDirection={['down']}
       style={styles.bottomModal}
     >
-      <View style={styles.content}>
-        <View style={styles.buttonsContainer}>
-          <TouchableWithoutFeedback onPress={onCloseClick}>
-            <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
-          </TouchableWithoutFeedback>
-          {!isListModal && (
-          <ButtonMini
-            onButtonClick={() => onModalSave(modalId)}
-            type={0}
-            title="Save"
-            width={70}
-            margin={[0, 0, 0, 0]}
+      <KeyboardAvoidingView
+        behavior="position"
+        enabled
+      >
+        <View style={styles.content}>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity onPress={onCloseClick}>
+              <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
+            </TouchableOpacity>
+            {!isListModal && (
+            <ButtonMini
+              onButtonClick={() => onModalSave(modalId)}
+              type={0}
+              title="Save"
+              width={70}
+              margin={[0, 0, 0, 0]}
+            />
+            )}
+          </View>
+          {isTitle && <Text style={styles.title}>{title}</Text>}
+          {isTextInput && (
+          <TextInput
+            onChangeText={text => onChangeText(text)}
+            value={modalText}
+            placeholder={textPlaceholder}
+            placeholderTextColor="#b7b3b3"
+            style={styles.textinput}
+          />
+          )}
+          {isSelectInput && (
+          <View style={styles.picker}>
+            <Picker
+              selectedValue={modalSelect}
+              onValueChange={onChangePicker}
+              itemStyle={styles.pickertitle}
+            >
+              {pickerValues.map(pickerVal => (
+                <Picker.Item label={pickerVal} value={pickerVal} />
+              ))}
+            </Picker>
+          </View>
+          )}
+          {isListModal && (
+          <List
+            options={options}
+            onPressItem={onPressItem}
           />
           )}
         </View>
-        {isTitle && <Text style={styles.title}>{title}</Text>}
-        {isTextInput && (
-        <TextInput
-          onChangeText={text => onChangeText(text)}
-          value={modalText}
-          placeholder={textPlaceholder}
-          placeholderTextColor="#b7b3b3"
-          style={styles.textinput}
-        />
-        )}
-        {isSelectInput && (
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={modalSelect}
-            onValueChange={onChangePicker}
-            itemStyle={styles.pickertitle}
-          >
-            {pickerValues.map(pickerVal => (
-              <Picker.Item label={pickerVal} value={pickerVal} />
-            ))}
-          </Picker>
-        </View>
-        )}
-        {isListModal && (
-        <List
-          options={options}
-          onPressItem={onPressItem}
-        />
-        )}
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -84,7 +89,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 45,
-    borderRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
   },
   buttonsContainer: {
     flexDirection: 'row',

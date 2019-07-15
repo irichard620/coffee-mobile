@@ -48,15 +48,15 @@ class BuilderModal extends Component {
 
   getTextPlaceholder = (modalType) => {
     if (modalType === constants.STEP_HEAT_WATER) {
-      return 'Water Temp';
+      return 'Degrees Fahrenheit';
     } if (modalType === constants.STEP_GRIND_COFFEE) {
       return 'Grams of Coffee';
     } if (modalType === constants.STEP_BLOOM_GROUNDS) {
-      return 'Water Amount';
+      return 'Grams of Water';
     } if (modalType === constants.STEP_POUR_WATER) {
-      return 'Water Amount';
+      return 'Grams of Water';
     } if (modalType === constants.STEP_WAIT) {
-      return 'Wait Time';
+      return 'Seconds to Wait';
     } if (modalType === constants.RECIPE_NAME_ELEM) {
       return 'Recipe Name';
     }

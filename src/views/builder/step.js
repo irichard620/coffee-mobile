@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, Image, TouchableWithoutFeedback
+  View, Text, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
 
 export default function Step(props) {
@@ -35,23 +35,23 @@ export default function Step(props) {
           <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
           <View style={styles.rightbuttonview}>
             {canGoUp && (
-            <TouchableWithoutFeedback onPress={onPressUp}>
+            <TouchableOpacity onPress={onPressUp}>
               <Image style={styles.edit} source={require(`${baseButtonPath}Move_Up.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
             {canGoDown && (
-            <TouchableWithoutFeedback onPress={onPressDown}>
+            <TouchableOpacity onPress={onPressDown}>
               <Image style={styles.edit} source={require(`${baseButtonPath}Move_Down.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
             {canEdit && (
-            <TouchableWithoutFeedback onPress={onPressEdit}>
+            <TouchableOpacity onPress={onPressEdit}>
               <Image style={styles.edit} source={require(`${baseButtonPath}Edit.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             )}
-            <TouchableWithoutFeedback onPress={onPressDelete}>
+            <TouchableOpacity onPress={onPressDelete}>
               <Image style={styles.use} source={require(`${baseButtonPath}Delete.png`)} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           </View>
         </View>
         )}
