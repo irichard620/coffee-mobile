@@ -31,7 +31,7 @@ export default function Sponsor(props) {
   const { height } = Dimensions.get('window');
   const outlineHeight = {
     height: height * 0.24
-  }
+  };
 
   return (
     <TouchableWithoutFeedback

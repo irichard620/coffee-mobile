@@ -50,3 +50,18 @@ export function getRecipeDescription(recipe) {
 
   return description;
 }
+
+export function validateRecipe(recipe) {
+  let error = '';
+
+  // Recipe name
+  if (recipe.recipeName === '-' || recipe.recipeName === '') {
+    error = 'Recipe name must not be blank.';
+  } else if (recipe.brewingVessel === '-' || recipe.brewingVessel === '' || recipe.vesselId === '') {
+    error = 'Recipe must contain valid brewing vessel.';
+  } else if (recipe.filterType === '-' || recipe.filterType === '') {
+    error = 'Recipe must contain a filter type for selected vessel.';
+  }
+
+  return error;
+}

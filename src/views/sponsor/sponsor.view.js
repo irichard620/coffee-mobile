@@ -57,17 +57,18 @@ class SponsorPage extends Component {
       const newBeans = [];
       const newRecipes = [];
 
-      const { beans, recipes } = nextSponsors.sponsor;
+      const nextBeans = nextSponsors.sponsor.beans;
+      const nextSponsorRecipes = nextSponsors.sponsor.recipes;
 
-      for (let i = 0; i < beans.length; i += 1) {
+      for (let i = 0; i < nextBeans.length; i += 1) {
         // Push to beans
         newSelectedBeans.push(false);
-        newBeans.push(camelcaseKeys(beans[i]));
+        newBeans.push(camelcaseKeys(nextBeans[i]));
       }
-      for (let i = 0; i < recipes.length; i += 1) {
+      for (let i = 0; i < nextSponsorRecipes.length; i += 1) {
         // Push to recipes
         newSelectedRecipes.push(false);
-        newRecipes.push(camelcaseKeys(recipes[i]));
+        newRecipes.push(camelcaseKeys(nextSponsorRecipes[i]));
       }
       this.setState({
         selectedBeans: newSelectedBeans,
@@ -114,8 +115,6 @@ class SponsorPage extends Component {
     const { beans } = this.state;
 
     // Get our specific bean link
-    console.log(beans);
-    console.log(beans[idx]);
     const url = beans[idx].beanLink;
 
     // Open
@@ -126,7 +125,7 @@ class SponsorPage extends Component {
         // Open error alert
         Alert.alert(
           'Error occurred',
-          `Could not open url`,
+          'Could not open url',
           [
             {
               text: 'OK'
@@ -170,7 +169,7 @@ class SponsorPage extends Component {
     const { height } = Dimensions.get('window');
     const headerHeight = {
       height: height * 0.38
-    }
+    };
 
     return (
       <ScrollView style={styles.container}>

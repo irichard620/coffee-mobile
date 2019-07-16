@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import fetch from 'cross-fetch';
 import Config from 'react-native-config';
 
-import { Recipe } from '../storage/recipe';
+import { Recipe, validateRecipe } from '../storage/recipe';
 
 const camelcaseKeys = require('camelcase-keys');
 
@@ -110,9 +110,23 @@ function savedRecipe(recipe) {
   };
 }
 
+export const ERROR_SAVING_RECIPE = 'ERROR_SAVING_RECIPE';
+function errorSavingRecipe(err) {
+  return {
+    type: ERROR_SAVING_RECIPE,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
 export function saveRecipe(recipeToSave) {
   return function (dispatch) {
     dispatch(savingRecipe());
+    // Validation for save - fields
+    const err = validateRecipe(recipeToSave);
+    if (err !== '') {
+      return dispatch(errorSavingRecipe(err));
+    }
     return AsyncStorage.getItem('recipes')
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];

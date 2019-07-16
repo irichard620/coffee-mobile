@@ -6,6 +6,7 @@ import {
   RECEIVE_RECIPES,
   SAVING_RECIPE,
   SAVED_RECIPE,
+  ERROR_SAVING_RECIPE,
   DELETING_RECIPE,
   DELETED_RECIPE,
 } from '../actions/recipe-actions';
@@ -74,6 +75,12 @@ function recipes(
         lastUpdated: action.receivedAt
       });
     }
+    case ERROR_SAVING_RECIPE:
+      return Object.assign({}, state, {
+        recipeIsSaving: false,
+        error: action.error,
+        lastUpdated: action.receivedAt
+      });
     case DELETING_RECIPE:
       return Object.assign({}, state, {
         recipeIsDeleting: true,
@@ -106,6 +113,7 @@ function recipesReducer(state = {}, action) {
     case REQUEST_RECIPES:
     case SAVED_RECIPE:
     case SAVING_RECIPE:
+    case ERROR_SAVING_RECIPE:
     case DELETING_RECIPE:
     case DELETED_RECIPE:
       return Object.assign({}, state, {

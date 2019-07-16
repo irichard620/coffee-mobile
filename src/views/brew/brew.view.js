@@ -2,8 +2,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity
+  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
 } from 'react-native';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Button from '../../components/button';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
@@ -17,6 +18,8 @@ class BrewPage extends Component {
     this.state = {
       step: -1,
       recipe: {},
+      timerRemaining: -1,
+      timerTotal: -1,
       visibleModal: false
     };
   }
@@ -42,6 +45,18 @@ class BrewPage extends Component {
     }
   }
 
+  componentDidUpdate() {
+    const { timerRemaining } = this.state;
+    if (timerRemaining === 0) {
+      // Clear and enable next button
+      clearInterval(this.interval);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   onCloseClick = () => {
     const { navigation } = this.props;
 
@@ -52,10 +67,40 @@ class BrewPage extends Component {
     const { navigation } = this.props;
     const { step, recipe } = this.state;
 
+    // Clear interval
+    clearInterval(this.interval);
+
+    // Check step
     if (step !== recipe.steps.length) {
-      this.setState({
-        step: step + 1
-      });
+      // Check if next one is a timer
+      if (step + 1 === recipe.steps.length) {
+        this.setState({
+          step: step + 1,
+          timerRemaining: -1,
+          timerTotal: -1,
+        });
+      } else {
+        const nextStep = recipe.steps[step + 1];
+        if (nextStep.type === constants.STEP_WAIT) {
+          this.setState({
+            step: step + 1,
+            timerRemaining: nextStep.properties.seconds,
+            timerTotal: nextStep.properties.seconds,
+          }, () => {
+            // Start timer
+            this.interval = setInterval(
+              () => this.setState(prevState => ({ timerRemaining: prevState.timerRemaining - 1 })),
+              1000
+            );
+          });
+        } else {
+          this.setState({
+            step: step + 1,
+            timerRemaining: -1,
+            timerTotal: -1,
+          });
+        }
+      }
     } else {
       navigation.goBack();
     }
@@ -69,6 +114,10 @@ class BrewPage extends Component {
 
   onBackClick = () => {
     const { step } = this.state;
+
+    // Clear interval
+    clearInterval(this.interval);
+
     this.setState({
       step: step - 1
     });
@@ -144,8 +193,25 @@ class BrewPage extends Component {
     return (<Image style={styles.icon} source={require(`${baseBrewPath}V60_Vessel.png`)} />);
   }
 
+  getTimerDisplay = () => {
+    const { timerRemaining } = this.state;
+
+    if (timerRemaining === 0) {
+      return 'Done!';
+    }
+    let numMinutes = String(Math.floor(timerRemaining / 60));
+    let numSeconds = String(Math.floor(timerRemaining % 60));
+    if (numMinutes.length === 1) {
+      numMinutes = `0${numMinutes}`;
+    }
+    if (numSeconds.length === 1) {
+      numSeconds = `0${numSeconds}`;
+    }
+    return `${numMinutes}:${numSeconds}`;
+  }
+
   getIcon = (recipe) => {
-    const { step } = this.state;
+    const { step, timerRemaining, timerTotal } = this.state;
 
     const baseBrewPath = '../../assets/brew/';
 
@@ -163,6 +229,30 @@ class BrewPage extends Component {
       if (stepObj.type === constants.STEP_GRIND_COFFEE
         || stepObj.type === constants.STEP_ADD_GROUNDS) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}CoffeeBeans.png`)} />);
+      }
+      if (stepObj.type === constants.STEP_WAIT) {
+        // Get fill number
+        const fill = Math.round((timerRemaining / timerTotal) * 100);
+        const { height } = Dimensions.get('window');
+        const timerSize = height * 0.30;
+
+        return (
+          <AnimatedCircularProgress
+            size={timerSize}
+            width={15}
+            fill={fill}
+            tintColor="#a7d2ea"
+            backgroundColor="#F4F4F4"
+          >
+            {
+              () => (
+                <Text style={styles.timertext}>
+                  { this.getTimerDisplay() }
+                </Text>
+              )
+            }
+          </AnimatedCircularProgress>
+        );
       }
       return this.getVesselIcon(recipe.vesselId);
     }
@@ -281,6 +371,11 @@ const styles = StyleSheet.create({
   icon: {
     height: '100%',
     resizeMode: 'contain'
+  },
+  timertext: {
+    color: '#727272',
+    fontSize: 20,
+    fontWeight: '500'
   },
   description: {
     fontSize: 18,

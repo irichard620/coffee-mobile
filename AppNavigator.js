@@ -42,7 +42,7 @@ const MainStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: 'Welcome',
+    initialRouteName: 'Home',
     transitionSpec: {
       duration: 100,
     },

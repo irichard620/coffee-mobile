@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, LayoutAnimation
+  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert
 } from 'react-native';
 import update from 'immutability-helper';
 import Add from '../../components/add';
@@ -75,6 +75,30 @@ class BuilderPage extends Component {
         steps: recipe.steps,
         selected
       });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { recipes, navigation } = this.props;
+    const nextRecipes = nextProps.recipes;
+
+    // Check if error in saving
+    if (recipes && !nextRecipes.recipeIsSaving) {
+      if (nextRecipes.error !== '') {
+        // Show error in alert
+        Alert.alert(
+          'Could not Save Recipe',
+          nextRecipes.error,
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      } else {
+        // Go back in nav
+        navigation.goBack();
+      }
     }
   }
 
@@ -308,7 +332,7 @@ class BuilderPage extends Component {
   }
 
   onRecipeSave = () => {
-    const { navigation, persistRecipe } = this.props;
+    const { persistRecipe } = this.props;
     const objToUse = this.state;
     // Need to add totalWater, totalCoffee, waterTemp, and grindSize
     for (let i = 0; i < objToUse.steps.length; i += 1) {
@@ -318,16 +342,14 @@ class BuilderPage extends Component {
         objToUse.totalCoffee = currentStep.properties.gramsCoffee;
       } else if (currentStep.type === constants.STEP_HEAT_WATER) {
         objToUse.waterTemp = currentStep.properties.waterTemp;
-      } else if (currentStep.type === constants.STEP_POUR_WATER) {
-        objToUse.totalWater += currentStep.properties.gramsWater;
-      } else if (currentStep.type === constants.STEP_BLOOM_GROUNDS) {
+      } else if (currentStep.type === constants.STEP_POUR_WATER
+        || currentStep.type === constants.STEP_BLOOM_GROUNDS) {
         objToUse.totalWater = String(Number(currentStep.properties.gramsWater)
         + Number(objToUse.totalWater));
       }
     }
     const newRecipe = recipeModel.Recipe(objToUse);
     persistRecipe(newRecipe);
-    navigation.goBack();
   }
 
   render() {
