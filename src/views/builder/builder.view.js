@@ -462,7 +462,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   title: {
-    marginTop: 20,
     marginLeft: 15,
     marginBottom: 20,
     fontSize: 28,

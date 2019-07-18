@@ -277,7 +277,6 @@ class BrewPage extends Component {
       buttonTitle = 'Finish';
     }
     const backStyle = {
-      transform: [{ rotate: '180deg' }],
       marginRight: 15,
     };
 
@@ -303,10 +302,10 @@ class BrewPage extends Component {
           </View>
           <Text style={styles.description}>{description}</Text>
           <View style={styles.buttonview}>
-            {step !== -1 && step !== recipe.steps.length
+            {step !== -1
                 && (
                   <TouchableOpacity onPress={this.onBackClick}>
-                    <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Go.png`)} />
+                    <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Previous_Gray.png`)} />
                   </TouchableOpacity>
                 )}
             <Button

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation
+  ScrollView, StyleSheet, LayoutAnimation, View
 } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
@@ -316,12 +316,14 @@ class HomePage extends Component {
           selected={tab}
         />
 
-        {tab === 0 && favorites.map((favorite, idx) => (
-          this.renderEntry(idx, favorite)
-        ))}
-        {tab === 1 && customs.map((custom, idx) => (
-          this.renderEntry(idx, custom)
-        ))}
+        <View style={styles.entrycontainer}>
+          {tab === 0 && favorites.map((favorite, idx) => (
+            this.renderEntry(idx, favorite)
+          ))}
+          {tab === 1 && customs.map((custom, idx) => (
+            this.renderEntry(idx, custom)
+          ))}
+        </View>
 
         <CustomModal
           visibleModal={visibleModal}
@@ -343,6 +345,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4',
     paddingTop: 70,
   },
+  entrycontainer: {
+    marginBottom: 90
+  }
 });
 
 const mapStateToProps = state => ({
