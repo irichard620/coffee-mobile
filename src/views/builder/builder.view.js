@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert
+  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard
 } from 'react-native';
 import update from 'immutability-helper';
 import Add from '../../components/add';
@@ -18,15 +18,16 @@ import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
 
 const CustomLayoutSpring = {
-  duration: 400,
+  duration: 250,
   create: {
     type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.scaleY,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
   update: {
     type: LayoutAnimation.Types.spring,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
 };
 
@@ -180,6 +181,9 @@ class BuilderPage extends Component {
     const {
       modalType, modalText, modalSelect, steps, selected
     } = this.state;
+
+    // Dismiss keyboard for modal
+    Keyboard.dismiss();
 
     // If modal was for recipe name, just update that
     if (modalType === constants.RECIPE_NAME_ELEM) {
@@ -366,7 +370,7 @@ class BuilderPage extends Component {
     }
 
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.backcontainer}>
           <Back
             onBackClick={this.onBackClick}

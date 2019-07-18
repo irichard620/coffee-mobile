@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   touchable: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingRight: 15,
+    paddingTop: 25,
+    paddingBottom: 25,
+    paddingRight: 25,
   }
 });

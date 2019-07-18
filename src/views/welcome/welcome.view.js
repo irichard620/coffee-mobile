@@ -5,20 +5,22 @@ import {
   View, Text, Dimensions, StyleSheet, Image, TouchableOpacity,
   TextInput, LayoutAnimation, Alert
 } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
 
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
 import { saveUsername, fetchUser } from '../../actions/user-actions';
 
 const CustomLayoutSpring = {
-  duration: 400,
+  duration: 600,
   create: {
     type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.scaleY,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
   update: {
     type: LayoutAnimation.Types.spring,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
 };
 
@@ -32,15 +34,22 @@ class WelcomePage extends Component {
   }
 
   componentDidMount() {
-    const { getUser } = this.props;
-    getUser();
+    // Go to welcome
+    LayoutAnimation.configureNext(CustomLayoutSpring);
+    this.setState({
+      step: 0
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      user, recipes, navigation, getDefaultRecipes
+      user, recipes, navigation, getDefaultRecipes, isFocused
     } = this.props;
     const { step } = this.state;
+
+    if (!isFocused) {
+      return;
+    }
 
     const nextUser = nextProps.user;
     const nextRecipes = nextProps.recipes;
@@ -212,4 +221,4 @@ const mapDispatchToProps = {
   getDefaultRecipes: fetchDefaultRecipes
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(WelcomePage);
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(WelcomePage));

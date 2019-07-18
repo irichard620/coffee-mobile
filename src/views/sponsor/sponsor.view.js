@@ -15,15 +15,16 @@ import { saveRecipe } from '../../actions/recipe-actions';
 const camelcaseKeys = require('camelcase-keys');
 
 const CustomLayoutSpring = {
-  duration: 400,
+  duration: 250,
   create: {
     type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.scaleY,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
   update: {
     type: LayoutAnimation.Types.spring,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
 };
 
@@ -40,9 +41,19 @@ class SponsorPage extends Component {
   }
 
   componentDidMount() {
-    const { navigation, getSponsor } = this.props;
-    const sponsorId = navigation.getParam('sponsorId', 'NO-ID');
-    getSponsor(sponsorId);
+    const { navigation, getSponsor, sponsors } = this.props;
+    const sponsorIdNav = navigation.getParam('sponsorId', 'NO-ID');
+    if (sponsors && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
+      const { sponsorId, beans, recipes } = sponsors.sponsor;
+      if (sponsorId !== sponsorIdNav) {
+        // Only reload if not cached
+        getSponsor(sponsorIdNav);
+      } else {
+        this.addBeansAndRecipesToState(beans, recipes);
+      }
+    } else {
+      getSponsor(sponsorIdNav);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,30 +63,7 @@ class SponsorPage extends Component {
 
     if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching
       && Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
-      const newSelectedBeans = [];
-      const newSelectedRecipes = [];
-      const newBeans = [];
-      const newRecipes = [];
-
-      const nextBeans = nextSponsors.sponsor.beans;
-      const nextSponsorRecipes = nextSponsors.sponsor.recipes;
-
-      for (let i = 0; i < nextBeans.length; i += 1) {
-        // Push to beans
-        newSelectedBeans.push(false);
-        newBeans.push(camelcaseKeys(nextBeans[i]));
-      }
-      for (let i = 0; i < nextSponsorRecipes.length; i += 1) {
-        // Push to recipes
-        newSelectedRecipes.push(false);
-        newRecipes.push(camelcaseKeys(nextSponsorRecipes[i]));
-      }
-      this.setState({
-        selectedBeans: newSelectedBeans,
-        beans: newBeans,
-        selectedRecipes: newSelectedRecipes,
-        recipes: newRecipes,
-      });
+      this.addBeansAndRecipesToState(nextSponsors.sponsor.beans, nextSponsors.sponsor.recipes);
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
       // Tell user it was saved
       Alert.alert(
@@ -89,6 +77,30 @@ class SponsorPage extends Component {
         ],
       );
     }
+  }
+
+  addBeansAndRecipesToState = (nextBeans, nextSponsorRecipes) => {
+    const newSelectedBeans = [];
+    const newSelectedRecipes = [];
+    const newBeans = [];
+    const newRecipes = [];
+
+    for (let i = 0; i < nextBeans.length; i += 1) {
+      // Push to beans
+      newSelectedBeans.push(false);
+      newBeans.push(camelcaseKeys(nextBeans[i]));
+    }
+    for (let i = 0; i < nextSponsorRecipes.length; i += 1) {
+      // Push to recipes
+      newSelectedRecipes.push(false);
+      newRecipes.push(camelcaseKeys(nextSponsorRecipes[i]));
+    }
+    this.setState({
+      selectedBeans: newSelectedBeans,
+      beans: newBeans,
+      selectedRecipes: newSelectedRecipes,
+      recipes: newRecipes,
+    });
   }
 
   onBackClick = () => {

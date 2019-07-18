@@ -48,7 +48,10 @@ const MainStack = createStackNavigator(
     },
     transitionConfig: () => ({
       screenInterpolator: (props) => { fade(props); }
-    })
+    }),
+    navigationOptions: {
+      gesturesEnabled: false
+    }
   }
 );
 const AppNavigator = createStackNavigator(

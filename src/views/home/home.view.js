@@ -16,15 +16,16 @@ import * as constants from '../../constants';
 import CustomModal from '../../components/modal';
 
 const CustomLayoutSpring = {
-  duration: 400,
+  duration: 250,
   create: {
     type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.scaleY,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
   update: {
     type: LayoutAnimation.Types.spring,
-    springDamping: 0.7,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
   },
 };
 
@@ -232,6 +233,12 @@ class HomePage extends Component {
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
+      // Close and clear modal
+      this.setState({
+        visibleModal: false,
+        modalRecipeId: '',
+        modalRecipeIndex: -1,
+      });
       if (tab === 0) {
         navigation.navigate('Builder', {
           recipe: favorites[modalRecipeIndex]

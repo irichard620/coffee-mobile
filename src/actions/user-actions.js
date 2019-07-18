@@ -8,10 +8,10 @@ function requestUser() {
 }
 
 export const RECEIVE_USER = 'RECEIVE_USER';
-function receiveUser(user) {
+function receiveUser(userDetails) {
   return {
     type: RECEIVE_USER,
-    user,
+    user: userDetails,
     receivedAt: Date.now()
   };
 }
