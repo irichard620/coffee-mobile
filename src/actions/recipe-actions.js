@@ -131,18 +131,25 @@ export function saveRecipe(recipeToSave) {
       .then((recipes) => {
         const r = recipes ? JSON.parse(recipes) : [];
         let found = false;
+        let duplicateName = false;
         for (let i = 0; i < r.length; i += 1) {
           if (r[i].recipeId === recipeToSave.recipeId) {
             r[i] = recipeToSave;
             found = true;
             break;
+          } else if (r[i].recipeName === recipeToSave.recipeName) {
+            duplicateName = true;
+            dispatch(errorSavingRecipe('A recipe with this name already exists'));
+            break;
           }
         }
-        if (!found) {
-          r.push(recipeToSave);
+        if (!duplicateName) {
+          if (!found) {
+            r.push(recipeToSave);
+          }
+          AsyncStorage.setItem('recipes', JSON.stringify(r));
+          dispatch(savedRecipe(recipeToSave));
         }
-        AsyncStorage.setItem('recipes', JSON.stringify(r));
-        dispatch(savedRecipe(recipeToSave));
       });
   };
 }
