@@ -2,13 +2,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, LayoutAnimation, Linking,
-  ImageBackground, Image, Dimensions, Alert
+  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
-import Bean from './bean';
+import Sponsor from '../home/sponsor';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
 
@@ -160,54 +159,46 @@ class SponsorPage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      beans, recipes, selectedBeans, selectedRecipes
+      beans, recipes, selectedRecipes
     } = this.state;
 
-    let sponsorTitle = 'Loading Sponsor...';
-    let sponsorLocation = '';
-    let sponsorBackImage = '';
-    let sponsorLogoImage = '';
+    const sponsorObj = {};
+    sponsorObj.description = 'Loading Sponsor...';
+    sponsorObj.disabled = true;
     if (sponsors && !sponsors.sponsorIsFetching
       && Object.getOwnPropertyNames(sponsors.sponsor).length === 0) {
-      sponsorTitle = 'No Sponsors to show';
+      sponsorObj.description = 'Could not load sponsor';
+    } else if (!sponsors || !sponsors.sponsor) {
+      sponsorObj.description = 'Could not load sponsor';
     } else if (sponsors && !sponsors.sponsorIsFetching
       && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
-      sponsorTitle = sponsors.sponsor.company;
-      sponsorLocation = sponsors.sponsor.location;
-      sponsorBackImage = sponsors.sponsor.backgroundLink;
-      sponsorLogoImage = sponsors.sponsor.logoLink;
+      sponsorObj.description = `${sponsors.sponsor.company} \u2022 ${sponsors.sponsor.location}`;
+      sponsorObj.imageLink = sponsors.sponsor.imageLink;
+      sponsorObj.themeColor = sponsors.sponsor.themeColor;
     }
-
-    const { height } = Dimensions.get('window');
-    const headerHeight = {
-      height: height * 0.38
-    };
 
     return (
       <ScrollView style={styles.container}>
-        <ImageBackground source={{ uri: sponsorBackImage }} style={[styles.header, headerHeight]}>
-          <View style={styles.backcontainer}>
-            <Back
-              onBackClick={this.onBackClick}
-              type={1}
-            />
-          </View>
-          <Image style={styles.logo} source={{ uri: sponsorLogoImage }} />
-          <View style={styles.about}>
-            <Text style={styles.company}>{sponsorTitle}</Text>
-            <Text style={styles.location}>{sponsorLocation}</Text>
-          </View>
-        </ImageBackground>
+        <View style={styles.backcontainer}>
+          <Back
+            onBackClick={this.onBackClick}
+            type={0}
+          />
+        </View>
+        <Sponsor
+          sponsor={sponsorObj}
+          type={1}
+        />
         {beans.map((bean, idx) => (
-          <Bean
-            title={bean.title}
+          <Entry
             key={bean.beanId}
-            description={bean.description}
-            beanImageLink={bean.imageLink}
-            selected={selectedBeans[idx]}
-            onBeanClick={this.onBeanClick}
-            onExploreClick={this.onExploreClick}
             idx={idx}
+            selected
+            disabled
+            title={bean.title}
+            description={bean.description}
+            isBean
+            onExploreClick={this.onExploreClick}
           />
         ))}
         {recipes.map((recipe, idx) => (

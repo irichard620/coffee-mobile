@@ -38,6 +38,7 @@ export const RECIPE_NAME_ELEM = 'name';
 export const VESSEL_ELEM = 'vessel';
 export const FILTER_ELEM = 'filter';
 export const ORIENTATION_ELEM = 'orientation';
+export const BEAN_ELEM = 'bean';
 
 // Labels for different IDs
 export const vesselLabels = {

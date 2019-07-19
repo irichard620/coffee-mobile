@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation, View
+  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions
 } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
-import Sponsor from './sponsor';
+import SponsorCarousel from './sponsor-carousel';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import {
   fetchRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
@@ -41,7 +41,8 @@ class HomePage extends Component {
       modalRecipeId: '',
       modalRecipeIndex: -1,
       visibleModal: false,
-      deleteModal: false
+      deleteModal: false,
+      sponsorIndex: 0
     };
   }
 
@@ -118,6 +119,10 @@ class HomePage extends Component {
     navigation.navigate('Sponsor', {
       sponsorId
     });
+  }
+
+  onSnapToItem = (idx) => {
+    this.setState({ sponsorIndex: idx });
   }
 
   onEntryClick = (idx) => {
@@ -295,7 +300,7 @@ class HomePage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      tab, customs, favorites, visibleModal, deleteModal
+      tab, customs, favorites, visibleModal, deleteModal, sponsorIndex
     } = this.state;
 
     let modalTitle = '';
@@ -303,11 +308,19 @@ class HomePage extends Component {
       modalTitle = 'Delete this recipe?';
     }
 
+    // Top margin
+    const { height } = Dimensions.get('window');
+    const topPaddingStyle = {
+      paddingTop: height * 0.07
+    };
+
     return (
-      <ScrollView style={styles.container}>
-        <Sponsor
+      <ScrollView style={[styles.container, topPaddingStyle]}>
+        <SponsorCarousel
           onSponsorClick={this.onSponsorClick}
           sponsors={sponsors}
+          onSnapToItem={this.onSnapToItem}
+          index={sponsorIndex}
         />
         <MenuButtons
           onFavoritesClick={this.onFavoritesClick}
@@ -343,7 +356,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',
-    paddingTop: 70,
   },
   entrycontainer: {
     marginBottom: 90

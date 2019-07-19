@@ -3,12 +3,13 @@ import React from 'react';
 import {
   View, Text, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
+import Button from '../../components/button';
 import * as constants from '../../constants';
 
 export default function Entry(props) {
   const {
     title, description, vesselId, selected, onEntryClick, onEditClick,
-    onGoClick, idx, isSponsor, onDownloadClick, disabled
+    onGoClick, idx, isSponsor, onDownloadClick, disabled, isBean, onExploreClick
   } = props;
 
   const basePath = '../../assets/mini-vessel-icons/';
@@ -43,6 +44,8 @@ export default function Entry(props) {
               && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
             {vesselId === constants.VESSEL_POUROVER
               && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
+            {isBean
+              && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}
           </View>
           <View style={textviewDynamic}>
             {!selected && <Text key={idx} numberOfLines={1} style={[styles.title, titleAdditional]}>{title}</Text>}
@@ -50,9 +53,8 @@ export default function Entry(props) {
             {selected && <Text style={styles.description}>{description}</Text>}
           </View>
         </View>
-        {selected && (
+        {selected && !isBean && (
         <View style={styles.buttonview}>
-          <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
           <View style={styles.rightbuttonview}>
             {!isSponsor && (
             <TouchableOpacity onPress={() => onEditClick(idx)} disabled={disabled}>
@@ -70,6 +72,17 @@ export default function Entry(props) {
             </TouchableOpacity>
             )}
           </View>
+        </View>
+        )}
+        {selected && isBean && (
+        <View style={styles.beanbuttonview}>
+          <Button
+            onButtonClick={() => onExploreClick(idx)}
+            type={0}
+            title="Explore the coffee"
+            width="56%"
+            margin={[0, 0, 0, 0]}
+          />
         </View>
         )}
       </View>
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    color: '#1D5E9E',
+    color: '#333333',
     fontSize: 18,
     fontWeight: '600',
     justifyContent: 'center',
@@ -127,7 +140,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    justifyContent: 'space-between'
+    justifyContent: 'flex-end'
+  },
+  beanbuttonview: {
+    marginTop: 20,
+    alignItems: 'center'
   },
   close: {
     height: 25,

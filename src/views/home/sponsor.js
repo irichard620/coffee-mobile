@@ -1,36 +1,33 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Image, Dimensions
+  View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Dimensions
 } from 'react-native';
 
 export default function Sponsor(props) {
-  const { sponsors, onSponsorClick } = props;
+  const { sponsor, onSponsorClick, type } = props;
 
   // Take care of sponsors
-  let sponsorIdToUse = '';
-  let sponsorDescription = 'Loading Sponsors...';
-  let sponsorBackImage = '';
-  let sponsorLogoImage = '';
-  let disabled = true;
-  if (!sponsors || !sponsors.sponsors) {
-    sponsorDescription = 'Could not load sponsors';
-  } else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length === 0) {
-    sponsorDescription = 'No Sponsors to show';
-  } else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length !== 0) {
-    const {
-      description, sponsorId, backgroundLink, logoLink
-    } = sponsors.sponsors[0];
-    sponsorDescription = description;
-    sponsorIdToUse = sponsorId;
-    sponsorBackImage = backgroundLink;
-    sponsorLogoImage = logoLink;
-    disabled = false;
-  }
+  const sponsorIdToUse = sponsor.sponsorId ? sponsor.sponsorId : '';
+  const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
+  const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#F46F69';
+  const disabled = sponsor.disabled;
 
-  const { height } = Dimensions.get('window');
+  const { height, width } = Dimensions.get('window');
+  const widthMultiplier = type === 0 ? 0.88 : 0.9;
+  const heightMultiplier1 = type === 0 ? 0.27 : 0.24;
+  const heightMultiplier2 = type === 0 ? 0.27 : 0.23;
   const outlineHeight = {
-    height: height * 0.24
+    height: height * heightMultiplier1,
+    width: width * widthMultiplier,
+    marginLeft: width * 0.05
+  };
+  const outlineColorOther = {
+    height: height * heightMultiplier2,
+    marginTop: -(height * heightMultiplier1 * 0.66),
+    width: width * widthMultiplier,
+    marginRight: width * 0.05,
+    backgroundColor: sponsorThemeColor
   };
 
   return (
@@ -41,15 +38,13 @@ export default function Sponsor(props) {
     >
       <View>
         <ImageBackground
-          source={{ uri: sponsorBackImage }}
+          source={{ uri: sponsorImage }}
           style={[styles.outline, outlineHeight]}
           imageStyle={{ borderRadius: 20 }}
-        >
-          <View style={styles.logocontainer}>
-            <Image style={styles.logo} source={{ uri: sponsorLogoImage }} />
-          </View>
-          <Text style={styles.description}>{sponsorDescription}</Text>
-        </ImageBackground>
+        />
+        <View style={[styles.outlinecolor, outlineColorOther]}>
+          <Text style={styles.description}>{sponsor.description}</Text>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -59,10 +54,21 @@ const styles = StyleSheet.create({
   outline: {
     marginLeft: 15,
     marginRight: 15,
-    marginBottom: 15,
     padding: 15,
     resizeMode: 'contain',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    zIndex: 3,
+    alignSelf: 'flex-start'
+  },
+  outlinecolor: {
+    padding: 15,
+    justifyContent: 'flex-end',
+    backgroundColor: '#F46F69',
+    borderRadius: 20,
+    marginLeft: 15,
+    marginRight: 15,
+    zIndex: 2,
+    alignSelf: 'flex-end'
   },
   logocontainer: {
     alignSelf: 'center',
