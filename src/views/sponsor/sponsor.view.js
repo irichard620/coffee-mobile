@@ -189,6 +189,7 @@ class SponsorPage extends Component {
           sponsor={sponsorObj}
           type={1}
         />
+        <View style={styles.separator}/>
         {beans.map((bean, idx) => (
           <Entry
             key={bean.beanId}
@@ -265,6 +266,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     alignSelf: 'flex-start'
+  },
+  separator: {
+    height: 15
   }
 });
 
