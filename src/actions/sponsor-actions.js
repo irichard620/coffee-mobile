@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import Config from 'react-native-config';
+import * as constants from './constants';
 
 const camelcaseKeys = require('camelcase-keys');
 
@@ -35,7 +35,7 @@ function errorSponsors(err) {
 export function fetchSponsors() {
   return function (dispatch) {
     dispatch(requestSponsors());
-    return fetch(`${Config.API_URL}/sponsors`)
+    return fetch(`${constants.API_URL}/sponsors`)
       .then(
         response => response.json(),
         error => dispatch(errorSponsors(error))
@@ -78,7 +78,7 @@ function errorSponsor(err) {
 export function fetchSponsor(sponsorId) {
   return function (dispatch) {
     dispatch(requestSponsor(sponsorId));
-    return fetch(`${Config.API_URL}/sponsors/${sponsorId}`)
+    return fetch(`${constants.API_URL}/sponsors/${sponsorId}`)
       .then(
         response => response.json(),
         error => dispatch(errorSponsor(error))

@@ -189,7 +189,7 @@ class SponsorPage extends Component {
           sponsor={sponsorObj}
           type={1}
         />
-        <View style={styles.separator}/>
+        <View style={styles.separator} />
         {beans.map((bean, idx) => (
           <Entry
             key={bean.beanId}

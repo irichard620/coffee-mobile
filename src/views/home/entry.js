@@ -48,7 +48,15 @@ export default function Entry(props) {
               && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}
           </View>
           <View style={textviewDynamic}>
-            {!selected && <Text key={idx} numberOfLines={1} style={[styles.title, titleAdditional]}>{title}</Text>}
+            {!selected && (
+            <Text
+              key={idx}
+              numberOfLines={1}
+              style={[styles.title, titleAdditional]}
+            >
+              {title}
+            </Text>
+            )}
             {selected && <Text key={idx} style={[styles.title, titleAdditional]}>{title}</Text>}
             {selected && <Text style={styles.description}>{description}</Text>}
           </View>

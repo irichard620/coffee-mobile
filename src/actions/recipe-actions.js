@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import fetch from 'cross-fetch';
-import Config from 'react-native-config';
+import * as constants from './constants';
 
 import { Recipe, validateRecipe } from '../storage/recipe';
 
@@ -33,7 +33,7 @@ function errorDefaultRecipes(err) {
 export function fetchDefaultRecipes() {
   return function (dispatch) {
     dispatch(requestDefaultRecipes());
-    return fetch(`${Config.API_URL}/recipes`)
+    return fetch(`${constants.API_URL}/recipes`)
       .then(
         response => response.json(),
         error => dispatch(errorDefaultRecipes(error))

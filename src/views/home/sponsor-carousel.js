@@ -4,7 +4,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import Sponsor from './sponsor';
 
 class SponsorCarousel extends Component {
-  renderItem = ({ item, index }) => {
+  renderItem = ({ item }) => {
     const { onSponsorClick } = this.props;
     return (
       <Sponsor
@@ -23,10 +23,15 @@ class SponsorCarousel extends Component {
     if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length !== 0) {
       data = sponsors.sponsors;
     } else if (!sponsors || !sponsors.sponsors) {
-      data.push({ description: 'Could not load sponsors', disabled: true });
+      data.push({ description: 'Could not load sponsors', disabled: true, themeColor: '#F46F69' });
     } else if (sponsors && !sponsors.sponsorsIsFetching && sponsors.sponsors.length === 0) {
-      data.push({ description: 'No Sponsors to show', disabled: true });
+      data.push({ description: 'No Sponsors to show', disabled: true, themeColor: '#F46F69' });
+    } else {
+      data.push({ description: 'Loading Sponsors', disabled: true, themeColor: '#F46F69' });
     }
+
+    // Theme color at index
+    const activeDotColor = data[index].themeColor;
 
     // Width
     const { width } = Dimensions.get('window');
@@ -40,7 +45,6 @@ class SponsorCarousel extends Component {
           sliderWidth={width}
           itemWidth={width}
           hasParallaxImages={false}
-          firstItem={0}
           inactiveSlideScale={0.94}
           inactiveSlideOpacity={0.7}
           containerCustomStyle={styles.slider}
@@ -56,7 +60,7 @@ class SponsorCarousel extends Component {
           dotsLength={data.length}
           activeDotIndex={index}
           containerStyle={styles.paginationContainer}
-          dotColor="#F46F69"
+          dotColor={activeDotColor}
           dotStyle={styles.activePaginationDot}
           inactiveDotStyle={styles.inactivePaginationDot}
           inactiveDotColor="#E3E3E3"

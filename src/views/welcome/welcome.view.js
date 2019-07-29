@@ -34,11 +34,8 @@ class WelcomePage extends Component {
   }
 
   componentDidMount() {
-    // Go to welcome
-    LayoutAnimation.configureNext(CustomLayoutSpring);
-    this.setState({
-      step: 0
-    });
+    const { getUser } = this.props;
+    getUser();
   }
 
   componentWillReceiveProps(nextProps) {

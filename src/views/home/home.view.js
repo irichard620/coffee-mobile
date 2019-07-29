@@ -316,12 +316,15 @@ class HomePage extends Component {
 
     return (
       <ScrollView style={[styles.container, topPaddingStyle]}>
+        {sponsors && !sponsors.sponsorsIsFetching
+        && sponsors.sponsors.length !== 0 && (
         <SponsorCarousel
           onSponsorClick={this.onSponsorClick}
           sponsors={sponsors}
           onSnapToItem={this.onSnapToItem}
           index={sponsorIndex}
         />
+        )}
         <MenuButtons
           onFavoritesClick={this.onFavoritesClick}
           onCustomClick={this.onCustomClick}

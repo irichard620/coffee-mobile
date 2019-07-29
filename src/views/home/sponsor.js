@@ -1,8 +1,9 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableWithoutFeedback, ImageBackground, Dimensions
+  View, Text, StyleSheet, TouchableWithoutFeedback, Dimensions
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 export default function Sponsor(props) {
   const { sponsor, onSponsorClick, type } = props;
@@ -37,11 +38,22 @@ export default function Sponsor(props) {
       onPress={() => onSponsorClick(sponsorIdToUse)}
     >
       <View>
-        <ImageBackground
-          source={{ uri: sponsorImage }}
-          style={[styles.outline, outlineHeight]}
-          imageStyle={{ borderRadius: 20 }}
-        />
+        <View style={[styles.outline, outlineHeight]}>
+          {sponsorImage !== '' && (
+          <FastImage
+            style={{
+              width: width * widthMultiplier,
+              height: height * heightMultiplier1,
+              borderRadius: 20
+            }}
+            source={{
+              uri: sponsorImage,
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          )}
+        </View>
         <View style={[styles.outlinecolor, outlineColorOther]}>
           <Text style={styles.description}>{sponsor.description}</Text>
         </View>
@@ -54,9 +66,8 @@ const styles = StyleSheet.create({
   outline: {
     marginLeft: 15,
     marginRight: 15,
-    padding: 15,
-    resizeMode: 'contain',
-    justifyContent: 'space-between',
+    backgroundColor: '#727272',
+    borderRadius: 20,
     zIndex: 3,
     alignSelf: 'flex-start'
   },

@@ -137,6 +137,9 @@ class BrewPage extends Component {
     const { recipe } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
+      this.setState({
+        visibleModal: false
+      });
       navigation.navigate('Builder', {
         recipe
       });
