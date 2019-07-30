@@ -177,31 +177,33 @@ class SponsorPage extends Component {
           type={1}
         />
         <View style={styles.separator} />
-        {beans.map((bean, idx) => (
-          <Entry
-            key={bean.beanId}
-            idx={idx}
-            selected
-            disabled
-            title={bean.title}
-            description={bean.description}
-            isBean
-            onExploreClick={this.onExploreClick}
-          />
-        ))}
-        {recipes.map((recipe, idx) => (
-          <Entry
-            key={recipe.recipeId}
-            idx={idx}
-            selected={selectedRecipes[idx]}
-            vesselId={recipe.vesselId}
-            title={recipe.recipeName}
-            description={recipeModel.getRecipeDescription(recipe)}
-            onEntryClick={this.onEntryClick}
-            isSponsor
-            onDownloadClick={this.onDownloadClick}
-          />
-        ))}
+        <View style={styles.entrycontainer}>
+          {beans.map((bean, idx) => (
+            <Entry
+              key={bean.beanId}
+              idx={idx}
+              selected
+              disabled
+              title={bean.title}
+              description={bean.description}
+              isBean
+              onExploreClick={this.onExploreClick}
+            />
+          ))}
+          {recipes.map((recipe, idx) => (
+            <Entry
+              key={recipe.recipeId}
+              idx={idx}
+              selected={selectedRecipes[idx]}
+              vesselId={recipe.vesselId}
+              title={recipe.recipeName}
+              description={recipeModel.getRecipeDescription(recipe)}
+              onEntryClick={this.onEntryClick}
+              isSponsor
+              onDownloadClick={this.onDownloadClick}
+            />
+          ))}
+        </View>
       </ScrollView>
     );
   }
@@ -212,50 +214,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F4'
   },
-  header: {
-    flex: 1,
-    height: 352,
-    width: '100%',
-    marginBottom: 15,
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
   backcontainer: {
     marginTop: 60,
     marginLeft: 15,
     alignItems: 'flex-start',
   },
-  logo: {
-    height: '24%',
-    width: '75%',
-    resizeMode: 'contain',
-    alignSelf: 'center',
-    justifyContent: 'center'
-  },
-  title: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    alignSelf: 'center'
-  },
-  about: {
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 16
-  },
-  company: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '600',
-    alignSelf: 'flex-start'
-  },
-  location: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '600',
-    alignSelf: 'flex-start'
-  },
   separator: {
     height: 15
+  },
+  entrycontainer: {
+    marginBottom: 90
   }
 });
 

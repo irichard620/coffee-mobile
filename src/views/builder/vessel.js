@@ -50,7 +50,11 @@ const styles = StyleSheet.create({
     marginRight: 15,
     marginTop: 0,
     marginBottom: 15,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
   },
   title: {
     color: '#1D5E9E',

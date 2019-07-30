@@ -79,7 +79,11 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     zIndex: 2,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
   },
   logocontainer: {
     alignSelf: 'center',

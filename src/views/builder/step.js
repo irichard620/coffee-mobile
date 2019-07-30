@@ -32,7 +32,6 @@ export default function Step(props) {
         </View>
         {selected && (
         <View style={styles.buttonview}>
-          <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
           <View style={styles.rightbuttonview}>
             {canGoUp && (
             <TouchableOpacity onPress={onPressUp}>
@@ -68,7 +67,11 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingTop: 15,
     paddingBottom: 15,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
   },
   title: {
     color: '#1D5E9E',
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    justifyContent: 'space-between'
+    justifyContent: 'flex-end'
   },
   close: {
     height: 25,

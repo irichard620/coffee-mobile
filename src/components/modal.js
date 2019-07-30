@@ -19,7 +19,7 @@ export default function CustomModal(props) {
 
   // Elems with atleast one text
   const isTextInput = !isListModal;
-  const isTitle = false;
+  let isTitle = false;
   if (title && title !== '') {
     isTitle = true;
   }
