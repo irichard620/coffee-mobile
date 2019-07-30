@@ -1,3 +1,5 @@
+import { LayoutAnimation } from 'react-native';
+
 // Brew vessel types
 export const VESSEL_AEROPRESS = 'vessel1';
 export const VESSEL_CHEMEX = 'vessel2';
@@ -93,3 +95,18 @@ export const RECIPE_MENU_FAVORITE = 'recipe_menu2';
 export const RECIPE_MENU_UNFAVORITE = 'recipe_menu3';
 export const RECIPE_MENU_DELETE = 'recipe_menu4';
 export const RECIPE_MENU_CANCEL = 'recipe_menu5';
+
+// Animation
+export const CustomLayoutSpring = {
+  duration: 325,
+  create: {
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
+  },
+  update: {
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.opacity,
+    springDamping: 0.6,
+  },
+};

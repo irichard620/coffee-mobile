@@ -17,20 +17,6 @@ import * as stepModel from '../../storage/step';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
 
-const CustomLayoutSpring = {
-  duration: 250,
-  create: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-  update: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-};
-
 class BuilderPage extends Component {
   constructor(props) {
     super(props);
@@ -242,7 +228,7 @@ class BuilderPage extends Component {
     } else {
       // Update selected
       const { selected } = this.state;
-      LayoutAnimation.configureNext(CustomLayoutSpring);
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({ selected: selected.map((val, i) => (i === stepId ? !val : false)) });
     }
   }
@@ -273,7 +259,7 @@ class BuilderPage extends Component {
     if (index !== -1) {
       array.splice(index, 1);
       newSelected.splice(index, 1);
-      LayoutAnimation.configureNext(CustomLayoutSpring);
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
         selected: newSelected,
@@ -299,7 +285,7 @@ class BuilderPage extends Component {
     if (index !== -1) {
       array = this.swapInArray(array, index - 1, index);
       newSelected = this.swapInArray(newSelected, index - 1, index);
-      LayoutAnimation.configureNext(CustomLayoutSpring);
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
         selected: newSelected,
@@ -317,7 +303,7 @@ class BuilderPage extends Component {
     if (index !== -1) {
       array = this.swapInArray(array, index, index + 1);
       newSelected = this.swapInArray(newSelected, index, index + 1);
-      LayoutAnimation.configureNext(CustomLayoutSpring);
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
         selected: newSelected,

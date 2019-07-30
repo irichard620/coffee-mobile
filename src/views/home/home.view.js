@@ -15,20 +15,6 @@ import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
 import CustomModal from '../../components/modal';
 
-const CustomLayoutSpring = {
-  duration: 250,
-  create: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-  update: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-};
-
 class HomePage extends Component {
   constructor(props) {
     super(props);
@@ -47,8 +33,7 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
-    const { getSponsors, getRecipes } = this.props;
-    getSponsors();
+    const { getRecipes } = this.props;
     getRecipes();
   }
 
@@ -128,7 +113,7 @@ class HomePage extends Component {
   onEntryClick = (idx) => {
     const { tab, selectedFavorites, selectedCustoms } = this.state;
 
-    LayoutAnimation.configureNext(CustomLayoutSpring);
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     if (tab === 0) {
       this.setState({
         selectedFavorites: selectedFavorites.map((val, i) => (i === idx ? !val : false))

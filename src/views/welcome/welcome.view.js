@@ -9,20 +9,9 @@ import { withNavigationFocus } from 'react-navigation';
 
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
 import { saveUsername, fetchUser } from '../../actions/user-actions';
-
-const CustomLayoutSpring = {
-  duration: 600,
-  create: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-  update: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-};
+import { fetchSponsors } from '../../actions/sponsor-actions';
+import * as constants from '../../constants';
+import FastImage from 'react-native-fast-image';
 
 class WelcomePage extends Component {
   constructor(props) {
@@ -40,7 +29,7 @@ class WelcomePage extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      user, recipes, navigation, getDefaultRecipes, isFocused
+      user, recipes, sponsors, navigation, getDefaultRecipes, getSponsors, isFocused
     } = this.props;
     const { step } = this.state;
 
@@ -50,12 +39,13 @@ class WelcomePage extends Component {
 
     const nextUser = nextProps.user;
     const nextRecipes = nextProps.recipes;
+    const nextSponsors = nextProps.sponsors;
 
     if (user && user.userIsFetching && !nextUser.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
       if (Object.keys(nextUser.user).length === 0 || nextUser.user.name === '') {
         // Go to welcome page
-        LayoutAnimation.configureNext(CustomLayoutSpring);
+        LayoutAnimation.configureNext(constants.CustomLayoutSpring);
         this.setState({
           step: 0
         });
@@ -76,6 +66,24 @@ class WelcomePage extends Component {
             {
               text: 'OK',
               onPress: () => {
+                getSponsors();
+              }
+            },
+          ],
+        );
+      } else {
+        getSponsors();
+      }
+    } else if (sponsors && sponsors.sponsorsIsFetching && !nextSponsors.sponsorsIsFetching) {
+      if (nextSponsors.error !== '') {
+        // Show alert
+        Alert.alert(
+          'Error occurred',
+          `Could not fetch sponsors from server. Error: ${nextSponsors.error}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
                 if (step === 2) {
                   // Go to tutorial - we were in welcome
                   navigation.navigate('Tutorial');
@@ -87,12 +95,23 @@ class WelcomePage extends Component {
             },
           ],
         );
-      } else if (step === 2) {
-        // Go to tutorial - we were in welcome
-        navigation.navigate('Tutorial');
       } else {
-        // Go to home - means user there
-        navigation.navigate('Home');
+        // Preload images
+        let preloadList = [];
+        for (let i = 0; i < sponsors.sponsors.length; i++) {
+          preloadList.push({
+            uri: sponsors.sponsors[i].imageLink
+          });
+        }
+        FastImage.preload(preloadList);
+
+        if (step === 2) {
+          // Go to tutorial - we were in welcome
+          navigation.navigate('Tutorial');
+        } else {
+          // Go to home - means user there
+          navigation.navigate('Home');
+        }
       }
     }
   }
@@ -211,10 +230,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   user: state.userReducer.user,
-  recipes: state.recipesReducer.recipes
+  recipes: state.recipesReducer.recipes,
+  sponsors: state.sponsorsReducer.sponsors
 });
 
 const mapDispatchToProps = {
+  getSponsors: fetchSponsors,
   getUser: fetchUser,
   persistUsername: saveUsername,
   getDefaultRecipes: fetchDefaultRecipes

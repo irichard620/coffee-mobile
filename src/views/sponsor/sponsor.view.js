@@ -8,24 +8,11 @@ import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
 import Sponsor from '../home/sponsor';
+import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
 
 const camelcaseKeys = require('camelcase-keys');
-
-const CustomLayoutSpring = {
-  duration: 250,
-  create: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-  update: {
-    type: LayoutAnimation.Types.spring,
-    property: LayoutAnimation.Properties.opacity,
-    springDamping: 0.6,
-  },
-};
 
 class SponsorPage extends Component {
   constructor(props) {
@@ -110,14 +97,14 @@ class SponsorPage extends Component {
   onBeanClick = (idx) => {
     const { selectedBeans } = this.state;
 
-    LayoutAnimation.configureNext(CustomLayoutSpring);
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     this.setState({ selectedBeans: selectedBeans.map((val, i) => (i === idx ? !val : false)) });
   }
 
   onEntryClick = (idx) => {
     const { selectedRecipes } = this.state;
 
-    LayoutAnimation.configureNext(CustomLayoutSpring);
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     this.setState({ selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false)) });
   }
 

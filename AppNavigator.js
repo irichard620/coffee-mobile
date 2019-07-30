@@ -7,60 +7,49 @@ import BrewPage from './src/views/brew/brew.view';
 import WelcomePage from './src/views/welcome/welcome.view';
 import TutorialPage from './src/views/tutorial/tutorial.view';
 
-const fade = (props) => {
-  const { position, scene } = props;
-  const { index } = scene;
-
-  const translateX = 0;
-  const translateY = 0;
-
-  const opacity = position.interpolate({
-    inputRange: [index - 0.7, index, index + 0.7],
-    outputRange: [0.3, 1, 0.3]
-  });
-
-  return {
-    opacity,
-    transform: [{ translateX }, { translateY }]
-  };
-};
-
 const MainStack = createStackNavigator(
   {
     Welcome: {
       screen: WelcomePage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
     Tutorial: {
       screen: TutorialPage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
     Home: {
       screen: HomePage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
     Sponsor: {
       screen: SponsorPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    Builder: {
+      screen: BuilderPage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
   },
   {
     headerMode: 'none',
     initialRouteName: 'Welcome',
-    transitionSpec: {
-      duration: 100,
-    },
-    transitionConfig: () => ({
-      screenInterpolator: (props) => { fade(props); }
-    }),
-    navigationOptions: {
-      gesturesEnabled: false
-    }
+    mode: 'card',
   }
 );
 const AppNavigator = createStackNavigator(
   {
     Main: {
       screen: MainStack,
-    },
-    Builder: {
-      screen: BuilderPage,
     },
     Brew: {
       screen: BrewPage,
@@ -71,7 +60,7 @@ const AppNavigator = createStackNavigator(
     initialRouteName: 'Main',
     mode: 'modal',
     cardStyle: {
-      backgroundColor: 'rgba(0, 0, 0, 0)',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
       opacity: 1
     },
     transitionConfig: () => ({
