@@ -6,12 +6,11 @@ import {
   TextInput, LayoutAnimation, Alert, Keyboard, TouchableWithoutFeedback
 } from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
-
+import FastImage from 'react-native-fast-image';
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
 import { saveUsername, fetchUser } from '../../actions/user-actions';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import * as constants from '../../constants';
-import FastImage from 'react-native-fast-image';
 
 class WelcomePage extends Component {
   constructor(props) {
@@ -97,8 +96,8 @@ class WelcomePage extends Component {
         );
       } else {
         // Preload images
-        let preloadList = [];
-        for (let i = 0; i < sponsors.sponsors.length; i++) {
+        const preloadList = [];
+        for (let i = 0; i < sponsors.sponsors.length; i += 1) {
           preloadList.push({
             uri: sponsors.sponsors[i].imageLink
           });

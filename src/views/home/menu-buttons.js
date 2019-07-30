@@ -30,7 +30,7 @@ export default function MenuButtons(props) {
       <Button
         onButtonClick={onCustomClick}
         type={customStyle}
-        title="Custom"
+        title="All Recipes"
         width="39%"
         margin={[0, '5%', 0, 0]}
       />

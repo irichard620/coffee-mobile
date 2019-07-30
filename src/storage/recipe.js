@@ -36,10 +36,11 @@ export function getRecipeDescription(recipe) {
   // Line 1
   let description = '';
   if (recipe.orientation !== '') {
-    description += `${recipe.orientation} `;
+    description += `${recipe.orientation}`;
+    description += ` with a ${recipe.filterType} filter`;
+  } else {
+    description += `${recipe.filterType} filter`;
   }
-  description += recipe.brewingVessel;
-  description += ` with a ${recipe.filterType} filter`;
   description += '\n';
 
   // Line 2

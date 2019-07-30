@@ -135,13 +135,14 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#333333',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     justifyContent: 'center',
   },
   description: {
     color: '#727272',
     fontSize: 14,
+    lineHeight: 18
   },
   buttonview: {
     marginTop: 20,

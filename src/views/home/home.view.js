@@ -52,11 +52,10 @@ class HomePage extends Component {
         if (recipes.recipes[i].favorited) {
           newSelectedFavorites.push(false);
           newFavorites.push(recipes.recipes[i]);
-        } else {
-          // Push to custom
-          newSelectedCustoms.push(false);
-          newCustoms.push(recipes.recipes[i]);
         }
+        // Push to all recipes
+        newSelectedCustoms.push(false);
+        newCustoms.push(recipes.recipes[i]);
       }
 
       this.setState({
