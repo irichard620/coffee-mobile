@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Dimensions, StyleSheet } from 'react-native';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+import Carousel from 'react-native-snap-carousel';
 import Sponsor from './sponsor';
+import Pagination from './pagination';
 
 class SponsorCarousel extends Component {
   renderItem = ({ item }) => {
@@ -57,17 +58,9 @@ class SponsorCarousel extends Component {
           onSnapToItem={snapIdx => onSnapToItem(snapIdx)}
         />
         <Pagination
-          dotsLength={data.length}
-          activeDotIndex={index}
-          containerStyle={styles.paginationContainer}
-          dotColor={activeDotColor}
-          dotStyle={styles.activePaginationDot}
-          inactiveDotStyle={styles.inactivePaginationDot}
-          inactiveDotColor="#E3E3E3"
-          inactiveDotOpacity={1}
-          inactiveDotScale={1}
-          carouselRef={this.sliderRef}
-          tappableDots={!!this.sliderRef}
+          total={data.length}
+          index={index}
+          activeColor={activeDotColor}
         />
       </View>
     );
@@ -83,20 +76,6 @@ const styles = StyleSheet.create({
   },
   sliderContentContainer: {
     paddingVertical: 10 // for custom animation
-  },
-  paginationContainer: {
-    paddingVertical: 5
-  },
-  activePaginationDot: {
-    width: 15,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#F46F69'
-  },
-  inactivePaginationDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
   }
 });
 
