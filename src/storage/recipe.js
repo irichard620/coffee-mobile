@@ -28,6 +28,16 @@ export function Recipe(recipeObj) {
   } else {
     recipe.favorited = recipeObj.favorited;
   }
+  if (!('default' in recipeObj)) {
+    recipe.default = false;
+  } else {
+    recipe.default = recipeObj.default;
+  }
+  if (!('status' in recipeObj)) {
+    recipe.status = 'ACTIVE';
+  } else {
+    recipe.status = recipeObj.status;
+  }
 
   return recipe;
 }

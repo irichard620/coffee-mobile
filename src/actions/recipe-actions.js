@@ -43,7 +43,7 @@ export function fetchDefaultRecipes() {
           .then((recipes) => {
             const r = recipes ? JSON.parse(recipes) : [];
             for (let i = 0; i < json.length; i += 1) {
-              const defaultRecipe = camelcaseKeys(json[i]);
+              const defaultRecipe = Recipe(camelcaseKeys(json[i]));
               let found = false;
               for (let j = 0; j < r.length; j += 1) {
                 if (r[j].recipeId === defaultRecipe.recipeId) {
@@ -87,7 +87,10 @@ export function fetchRecipes() {
         const r = recipes ? JSON.parse(recipes) : [];
         for (let i = 0; i < r.length; i += 1) {
           // Create objects and add to result
-          result.push(Recipe(r[i]));
+          const recipe = Recipe(r[i]);
+          if (recipe.status === 'ACTIVE') {
+            result.push(recipe);
+          }
         }
         dispatch(receiveRecipes(result));
       });
@@ -219,7 +222,12 @@ export function deleteRecipe(id) {
         for (let i = 0; i < r.length; i += 1) {
           const recipe = r[i];
           if (recipe.recipeId === id) {
-            r.splice(i, 1);
+            if (recipe.default) {
+              // If default, just change status
+              r[i].status = 'DELETED';
+            } else {
+              r.splice(i, 1);
+            }
             break;
           }
         }

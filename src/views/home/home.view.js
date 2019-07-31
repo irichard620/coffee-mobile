@@ -28,7 +28,10 @@ class HomePage extends Component {
       modalRecipeIndex: -1,
       visibleModal: false,
       deleteModal: false,
-      sponsorIndex: 0
+      sponsorIndex: 0,
+      recipesIsFetching: false,
+      recipeIsSaving: false,
+      recipeIsDeleting: false
     };
   }
 
@@ -37,28 +40,41 @@ class HomePage extends Component {
     getRecipes();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { recipes } = nextProps;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const nextRecipes = nextProps.recipes;
 
-    if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving
-      && !recipes.recipeIsDeleting) {
+    if (!prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
+      return {
+        recipesIsFetching: true
+      }
+    } else if (!prevState.recipeIsSaving && nextRecipes.recipeIsSaving) {
+      return {
+        recipeIsSaving: true
+      }
+    } else if (!prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
+      return {
+        recipeIsDeleting: true
+      }
+    } else if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
+    || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
+    || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
       const newSelectedFavorites = [];
       const newSelectedCustoms = [];
       const newFavorites = [];
       const newCustoms = [];
 
-      for (let i = 0; i < recipes.recipes.length; i += 1) {
+      for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
         // Push to favorite
-        if (recipes.recipes[i].favorited) {
+        if (nextRecipes.recipes[i].favorited) {
           newSelectedFavorites.push(false);
-          newFavorites.push(recipes.recipes[i]);
+          newFavorites.push(nextRecipes.recipes[i]);
         }
         // Push to all recipes
         newSelectedCustoms.push(false);
-        newCustoms.push(recipes.recipes[i]);
+        newCustoms.push(nextRecipes.recipes[i]);
       }
 
-      this.setState({
+      return {
         modalRecipeId: '',
         modalRecipeIndex: -1,
         visibleModal: false,
@@ -67,8 +83,12 @@ class HomePage extends Component {
         favorites: newFavorites,
         selectedCustoms: newSelectedCustoms,
         customs: newCustoms,
-      });
+        recipesIsFetching: false,
+        recipeIsSaving: false,
+        recipeIsDeleting: false
+      };
     }
+    return null;
   }
 
   onFavoritesClick = () => {

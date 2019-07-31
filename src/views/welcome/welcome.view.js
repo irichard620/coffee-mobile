@@ -12,6 +12,9 @@ import { saveUsername, fetchUser } from '../../actions/user-actions';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import * as constants from '../../constants';
 
+const SplashLeft = require('../../assets/splash/Splash_Left.png');
+const SplashRight = require('../../assets/splash/Splash_Right.png');
+
 class WelcomePage extends Component {
   constructor(props) {
     super(props);
@@ -26,23 +29,23 @@ class WelcomePage extends Component {
     getUser();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps, prevState) {
     const {
       user, recipes, sponsors, navigation, getDefaultRecipes, getSponsors, isFocused
     } = this.props;
-    const { step } = this.state;
+    const { step } = prevState;
 
     if (!isFocused) {
       return;
     }
 
-    const nextUser = nextProps.user;
-    const nextRecipes = nextProps.recipes;
-    const nextSponsors = nextProps.sponsors;
+    const prevUser = prevProps.user;
+    const prevRecipes = prevProps.recipes;
+    const prevSponsors = prevProps.sponsors;
 
-    if (user && user.userIsFetching && !nextUser.userIsFetching) {
+    if (prevUser && prevUser.userIsFetching && !user.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
-      if (Object.keys(nextUser.user).length === 0 || nextUser.user.name === '') {
+      if (Object.keys(user.user).length === 0 || user.user.name === '') {
         // Go to welcome page
         LayoutAnimation.configureNext(constants.CustomLayoutSpring);
         this.setState({
@@ -52,15 +55,15 @@ class WelcomePage extends Component {
         // Do default recipes if user there
         getDefaultRecipes();
       }
-    } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
+    } else if (prevUser && prevUser.userIsSaving && !user.userIsSaving) {
       // If finished saving, save default recipes
       getDefaultRecipes();
-    } else if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
-      if (nextRecipes.error !== '') {
+    } else if (prevRecipes && prevRecipes.recipesIsFetching && !recipes.recipesIsFetching) {
+      if (recipes.error !== '') {
         // Show alert
         Alert.alert(
           'Error occurred',
-          `Could not fetch new recipes from server. Error: ${nextRecipes.error}`,
+          `Could not fetch new recipes from server. Error: ${recipes.error}`,
           [
             {
               text: 'OK',
@@ -73,12 +76,12 @@ class WelcomePage extends Component {
       } else {
         getSponsors();
       }
-    } else if (sponsors && sponsors.sponsorsIsFetching && !nextSponsors.sponsorsIsFetching) {
-      if (nextSponsors.error !== '') {
+    } else if (prevSponsors && prevSponsors.sponsorsIsFetching && !sponsors.sponsorsIsFetching) {
+      if (sponsors.error !== '') {
         // Show alert
         Alert.alert(
           'Error occurred',
-          `Could not fetch sponsors from server. Error: ${nextSponsors.error}`,
+          `Could not fetch sponsors from server. Error: ${sponsors.error}`,
           [
             {
               text: 'OK',
@@ -166,6 +169,8 @@ class WelcomePage extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
+          <Image style={styles.leftbackground} source={SplashLeft} />
+          <Image style={styles.rightbackground} source={SplashRight} />
           <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
           {step !== -1 && <Text style={styles.title}>{title}</Text>}
           {step === 1 && (
@@ -196,6 +201,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F4',
     alignItems: 'center'
+  },
+  leftbackground: {
+    position: 'absolute',
+    left: '0%',
+    height: '100%'
+  },
+  rightbackground: {
+    position: 'absolute',
+    right: '0%',
+    height: '100%'
   },
   buttonview: {
     position: 'absolute',

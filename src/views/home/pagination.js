@@ -22,9 +22,9 @@ export default function Pagination(props) {
       const activeStyle = {
         backgroundColor: activeColor
       };
-      items.push(<View style={[styles.activeDot, activeStyle, marginStyle]} />);
+      items.push(<View key={i} style={[styles.activeDot, activeStyle, marginStyle]} />);
     } else {
-      items.push(<View style={[styles.inactiveDot, marginStyle]} />);
+      items.push(<View key={i} style={[styles.inactiveDot, marginStyle]} />);
     }
   }
 
