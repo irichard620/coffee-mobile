@@ -43,15 +43,15 @@ class HomePage extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextRecipes = nextProps.recipes;
 
-    if (!prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
+    if (nextRecipes && !prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
         recipesIsFetching: true
       };
-    } if (!prevState.recipeIsSaving && nextRecipes.recipeIsSaving) {
+    } if (nextRecipes && !prevState.recipeIsSaving && nextRecipes.recipeIsSaving) {
       return {
         recipeIsSaving: true
       };
-    } if (!prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
+    } if (nextRecipes && !prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
       return {
         recipeIsDeleting: true
       };

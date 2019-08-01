@@ -187,13 +187,13 @@ class BrewPage extends Component {
     const baseBrewPath = '../../assets/brew/';
 
     if (vesselId === constants.VESSEL_AEROPRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Aeropress_Vessel.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Aero.png`)} />);
     } if (vesselId === constants.VESSEL_CHEMEX) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Chemex_Vessel.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Chemex.png`)} />);
     } if (vesselId === constants.VESSEL_FRENCH_PRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}FrenchPress_Vessel.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
     }
-    return (<Image style={styles.icon} source={require(`${baseBrewPath}V60_Vessel.png`)} />);
+    return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
   }
 
   getTimerDisplay = () => {
@@ -224,14 +224,19 @@ class BrewPage extends Component {
     if (step < recipe.steps.length) {
       // Get step
       const stepObj = recipe.steps[step];
-      if (stepObj.type === constants.STEP_HEAT_WATER
-        || stepObj.type === constants.STEP_BLOOM_GROUNDS
+      if (stepObj.type === constants.STEP_HEAT_WATER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
+      }
+      if (stepObj.type === constants.STEP_RINSE_FILTER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
+      }
+      if (stepObj.type === constants.STEP_BLOOM_GROUNDS
         || stepObj.type === constants.STEP_POUR_WATER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}WaterKettle.png`)} />);
+        return(<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
       }
       if (stepObj.type === constants.STEP_GRIND_COFFEE
         || stepObj.type === constants.STEP_ADD_GROUNDS) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}CoffeeBeans.png`)} />);
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}GrindBeans.png`)} />);
       }
       if (stepObj.type === constants.STEP_WAIT) {
         // Get fill number
@@ -260,7 +265,7 @@ class BrewPage extends Component {
       return this.getVesselIcon(recipe.vesselId);
     }
     // End image
-    return (<Image style={styles.icon} source={require(`${baseBrewPath}Mug_DoneBrewing.png`)} />);
+    return (<Image style={styles.icon} source={require(`${baseBrewPath}Complete.png`)} />);
   }
 
   render() {
@@ -283,6 +288,16 @@ class BrewPage extends Component {
       marginRight: 15,
     };
 
+    // Title
+    let title = '';
+    if (step === -1) {
+      title = recipe.recipeName;
+    } else if (step < recipe.steps.length) {
+      title = recipe.steps[step].title;
+    } else {
+      title = 'Serve';
+    }
+
     // Description
     let description = '';
     if (step === -1) {
@@ -299,7 +314,7 @@ class BrewPage extends Component {
           <TouchableOpacity onPress={this.onCloseClick}>
             <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
           </TouchableOpacity>
-          <Text style={styles.title}>{recipe.recipeName}</Text>
+          <Text style={styles.title}>{title}</Text>
           <View style={styles.iconview}>
             {this.getIcon(recipe)}
           </View>
@@ -354,9 +369,9 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 25,
     marginBottom: 20,
-    fontSize: 28,
+    fontSize: 22,
     color: '#1D5E9E',
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     fontWeight: '600',
   },
   close: {
@@ -380,17 +395,16 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   description: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#727272'
   },
   buttonview: {
     position: 'absolute',
-    top: '80%',
+    top: '90%',
     alignSelf: 'center',
     width: 175,
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    marginBottom: '13%'
   },
   mini: {
     height: 40,
