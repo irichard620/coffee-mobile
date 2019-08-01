@@ -14,9 +14,10 @@ function requestDefaultRecipes() {
 }
 
 export const RECEIVE_DEFAULT_RECIPES = 'RECEIVE_DEFAULT_RECIPES';
-function receiveDefaultRecipes() {
+function receiveDefaultRecipes(r) {
   return {
     type: RECEIVE_DEFAULT_RECIPES,
+    recipes: r,
     receivedAt: Date.now()
   };
 }
@@ -30,7 +31,7 @@ function errorDefaultRecipes(err) {
   };
 }
 
-export function fetchDefaultRecipes() {
+export function fetchDefaultRecipes(reset) {
   return function (dispatch) {
     dispatch(requestDefaultRecipes());
     return fetch(`${constants.API_URL}/recipes`)
@@ -47,6 +48,10 @@ export function fetchDefaultRecipes() {
               let found = false;
               for (let j = 0; j < r.length; j += 1) {
                 if (r[j].recipeId === defaultRecipe.recipeId) {
+                  if (reset) {
+                    // If reset, replace existing
+                    r[j] = defaultRecipe;
+                  }
                   found = true;
                   break;
                 }
@@ -56,7 +61,7 @@ export function fetchDefaultRecipes() {
               }
             }
             AsyncStorage.setItem('recipes', JSON.stringify(r));
-            dispatch(receiveDefaultRecipes());
+            dispatch(receiveDefaultRecipes(r));
           });
       });
   };

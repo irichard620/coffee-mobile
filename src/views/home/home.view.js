@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions
+  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions, Alert
 } from 'react-native';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import SponsorCarousel from './sponsor-carousel';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import {
-  fetchRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
+  fetchRecipes, fetchDefaultRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
 } from '../../actions/recipe-actions';
 import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
@@ -46,16 +46,16 @@ class HomePage extends Component {
     if (!prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
         recipesIsFetching: true
-      }
-    } else if (!prevState.recipeIsSaving && nextRecipes.recipeIsSaving) {
+      };
+    } if (!prevState.recipeIsSaving && nextRecipes.recipeIsSaving) {
       return {
         recipeIsSaving: true
-      }
-    } else if (!prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
+      };
+    } if (!prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
       return {
         recipeIsDeleting: true
-      }
-    } else if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
+      };
+    } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
     || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
       const newSelectedFavorites = [];
@@ -115,6 +115,27 @@ class HomePage extends Component {
     // Pull up add menu
     const { navigation } = this.props;
     navigation.navigate('Builder');
+  }
+
+  onAddHold = () => {
+    const { getDefaultRecipes } = this.props;
+
+    // Prompt if they want to reset default recipes
+    Alert.alert(
+      'Are you sure?',
+      'Do you really want to reset default recipes? This will bring back any you deleted and remove edits.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            getDefaultRecipes(true);
+          }
+        },
+        {
+          text: 'Cancel'
+        },
+      ],
+    );
   }
 
   onSponsorClick = (sponsorId) => {
@@ -333,6 +354,7 @@ class HomePage extends Component {
           onFavoritesClick={this.onFavoritesClick}
           onCustomClick={this.onCustomClick}
           onAddClick={this.onAddClick}
+          onAddHold={this.onAddHold}
           selected={tab}
         />
 
@@ -377,6 +399,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getSponsors: fetchSponsors,
   getRecipes: fetchRecipes,
+  getDefaultRecipes: fetchDefaultRecipes,
   favRecipe: favoriteRecipe,
   unfavRecipe: unfavoriteRecipe,
   delRecipe: deleteRecipe

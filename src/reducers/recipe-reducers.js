@@ -29,7 +29,7 @@ function recipes(
     case RECEIVE_DEFAULT_RECIPES:
       return Object.assign({}, state, {
         recipesIsFetching: false,
-        defaultRecipes: action.defaultRecipes,
+        recipes: action.recipes,
         error: '',
         lastUpdated: action.receivedAt
       });

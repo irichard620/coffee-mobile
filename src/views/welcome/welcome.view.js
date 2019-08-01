@@ -21,12 +21,36 @@ class WelcomePage extends Component {
     this.state = {
       step: -1,
       name: '',
+      userIsFetching: true
     };
   }
 
   componentDidMount() {
     const { getUser } = this.props;
     getUser();
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { userIsFetching } = prevState;
+    const { user, getDefaultRecipes } = nextProps;
+
+    if (user && userIsFetching && !user.userIsFetching) {
+      // If finished fetching, check if we should go to welcome page
+      if (Object.keys(user.user).length === 0 || user.user.name === '') {
+        // Go to welcome page
+        LayoutAnimation.configureNext(constants.CustomLayoutSpring);
+        return {
+          step: 0,
+          userIsFetching: false
+        };
+      }
+      // Do default recipes if user there
+      getDefaultRecipes(false);
+      return {
+        userIsFetching: false
+      };
+    }
+    return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -43,21 +67,9 @@ class WelcomePage extends Component {
     const prevRecipes = prevProps.recipes;
     const prevSponsors = prevProps.sponsors;
 
-    if (prevUser && prevUser.userIsFetching && !user.userIsFetching) {
-      // If finished fetching, check if we should go to welcome page
-      if (Object.keys(user.user).length === 0 || user.user.name === '') {
-        // Go to welcome page
-        LayoutAnimation.configureNext(constants.CustomLayoutSpring);
-        this.setState({
-          step: 0
-        });
-      } else {
-        // Do default recipes if user there
-        getDefaultRecipes();
-      }
-    } else if (prevUser && prevUser.userIsSaving && !user.userIsSaving) {
+    if (prevUser && prevUser.userIsSaving && !user.userIsSaving) {
       // If finished saving, save default recipes
-      getDefaultRecipes();
+      getDefaultRecipes(false);
     } else if (prevRecipes && prevRecipes.recipesIsFetching && !recipes.recipesIsFetching) {
       if (recipes.error !== '') {
         // Show alert
