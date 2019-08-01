@@ -95,30 +95,73 @@ class BuilderPage extends Component {
   }
 
   onAddClick = () => {
+    const { vesselId } = this.state;
+
+    // If no vessel, show alert
+    if (vesselId === '') {
+      Alert.alert(
+        'Must select vessel',
+        'Must select brewing vessel before creating recipe steps',
+        [
+          {
+            text: 'OK',
+          }
+        ],
+      );
+      return;
+    }
     // Pull up add menu
     this.setState({ visibleModal: true, modalType: constants.NEW_STEP_ELEM });
   }
 
+  changeVessel = (item) => {
+    this.setState({
+      brewingVessel: constants.vesselLabels[item],
+      vesselId: item,
+      filterType: '-',
+      orientation: '-',
+      visibleModal: false,
+      modalType: '',
+      steps: []
+    });
+  }
+
   onPressItem = (item) => {
     const {
-      steps, selected
+      steps, selected, vesselId
     } = this.state;
     // Open modal if necessary or add step to screen
     if (item === constants.STEP_HEAT_WATER || item === constants.STEP_GRIND_COFFEE
     || item === constants.STEP_BLOOM_GROUNDS || item === constants.STEP_POUR_WATER
-    || item === constants.STEP_WAIT) {
+    || item === constants.STEP_WAIT || item === constants.STEP_ADD_ICE) {
       // These require text inputs - open up modal
       this.setState({ visibleModal: true, modalType: item });
     } else if (item.includes(constants.VESSEL_ELEM)) {
-      // Update vessel
-      this.setState({
-        brewingVessel: constants.vesselLabels[item],
-        vesselId: item,
-        filterType: '-',
-        orientation: '-',
-        visibleModal: false,
-        modalType: ''
-      });
+      // If same vessel, return
+      if (vesselId === item) {
+        return
+      }
+      // If no vessel, update
+      if (vesselId === '' || steps.length === 0) {
+        this.changeVessel(item);
+        return
+      }
+      // Send alert that this resets steps
+      Alert.alert(
+        'Are you sure?',
+        'Changing the brew vessel will remove all current steps',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              this.changeVessel(item);
+            }
+          },
+          {
+            text: 'Cancel'
+          },
+        ],
+      );
     } else if (item.includes(constants.FILTER_ELEM)) {
       // Update filter
       this.setState({

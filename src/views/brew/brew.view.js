@@ -221,19 +221,25 @@ class BrewPage extends Component {
       const stepObj = recipe.steps[step];
       if (stepObj.type === constants.STEP_HEAT_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
-      }
-      if (stepObj.type === constants.STEP_RINSE_FILTER) {
+      } if (stepObj.type === constants.STEP_RINSE_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
-      }
-      if (stepObj.type === constants.STEP_BLOOM_GROUNDS
+      } if (stepObj.type === constants.STEP_BLOOM_GROUNDS
         || stepObj.type === constants.STEP_POUR_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
-      }
-      if (stepObj.type === constants.STEP_GRIND_COFFEE
+      } if (stepObj.type === constants.STEP_GRIND_COFFEE
         || stepObj.type === constants.STEP_ADD_GROUNDS) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}GrindBeans.png`)} />);
-      }
-      if (stepObj.type === constants.STEP_WAIT) {
+      } if (stepObj.type === constants.STEP_ADD_ICE) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}AddIce.png`)} />);
+      } if (stepObj.type === constants.STEP_STIR) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}Stir.png`)} />);
+      } if (stepObj.type === constants.STEP_INSERT_PLUNGER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertPlunger_Aero.png`)} />);
+      } if (stepObj.type === constants.STEP_PUSH_PLUNGER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_Aero.png`)} />);
+      } if (stepObj.type === constants.STEP_PUSH_FILTER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_FP.png`)} />);
+      } if (stepObj.type === constants.STEP_WAIT) {
         // Get fill number
         const fill = Math.round((timerRemaining / timerTotal) * 100);
         const { height } = Dimensions.get('window');

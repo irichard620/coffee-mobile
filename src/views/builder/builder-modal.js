@@ -4,12 +4,26 @@ import CustomModal from '../../components/modal';
 import * as constants from '../../constants';
 
 class BuilderModal extends Component {
-  newStepOptions = () => {
+  newStepOptions = (vessel) => {
     const arrToUse = [];
     Object.keys(constants.stepLabels)
       .sort()
       .forEach((v) => {
-        arrToUse.push({ id: v, title: constants.stepLabels[v] });
+        if (v === constants.STEP_INSERT_PLUNGER) {
+          if (vessel === constants.VESSEL_AEROPRESS) {
+            arrToUse.push({ id: v, title: constants.stepLabels[v] });
+          }
+        } else if (v === constants.STEP_PUSH_PLUNGER) {
+          if (vessel === constants.VESSEL_AEROPRESS) {
+            arrToUse.push({ id: v, title: constants.stepLabels[v] });
+          }
+        } else if (v === constants.STEP_PUSH_FILTER) {
+          if (vessel === constants.VESSEL_FRENCH_PRESS) {
+            arrToUse.push({ id: v, title: constants.stepLabels[v] });
+          }
+        } else {
+          arrToUse.push({ id: v, title: constants.stepLabels[v] });
+        }
       });
     return arrToUse;
   }
@@ -57,6 +71,8 @@ class BuilderModal extends Component {
       return 'Grams of Water';
     } if (modalType === constants.STEP_WAIT) {
       return 'Seconds to Wait';
+    } if (modalType === constants.STEP_ADD_ICE) {
+      return 'Grams of Ice';
     } if (modalType === constants.RECIPE_NAME_ELEM) {
       return 'Recipe Name';
     }
@@ -66,7 +82,7 @@ class BuilderModal extends Component {
   render() {
     const {
       visibleModal, modalId, modalType, modalText, modalSelect, onCloseClick, onPressItem,
-      onChangeText, onModalSave, onChangePicker
+      onChangeText, onModalSave, onChangePicker, vessel
     } = this.props;
 
     // Get list content
@@ -74,7 +90,7 @@ class BuilderModal extends Component {
     let options = [];
     if (modalType === constants.NEW_STEP_ELEM) {
       isListModal = true;
-      options = this.newStepOptions();
+      options = this.newStepOptions(vessel);
     } else if (modalType === constants.VESSEL_ELEM) {
       isListModal = true;
       options = this.brewVesselOptions();

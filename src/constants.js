@@ -33,6 +33,11 @@ export const STEP_ADD_GROUNDS = 'step4';
 export const STEP_BLOOM_GROUNDS = 'step5';
 export const STEP_POUR_WATER = 'step6';
 export const STEP_WAIT = 'step7';
+export const STEP_ADD_ICE = 'step8';
+export const STEP_STIR = 'step9';
+export const STEP_INSERT_PLUNGER = 'step10';
+export const STEP_PUSH_PLUNGER = 'step11';
+export const STEP_PUSH_FILTER = 'step12';
 
 // Modal IDs
 export const NEW_STEP_ELEM = 'step';
@@ -69,6 +74,11 @@ export const stepLabels = {
   [STEP_BLOOM_GROUNDS]: 'Bloom Grounds',
   [STEP_POUR_WATER]: 'Pour Water',
   [STEP_WAIT]: 'Wait',
+  [STEP_ADD_ICE]: 'Add Ice',
+  [STEP_STIR]: 'Stir',
+  [STEP_INSERT_PLUNGER]: 'Insert Plunger',
+  [STEP_PUSH_PLUNGER]: 'Push Down Plunger',
+  [STEP_PUSH_FILTER]: 'Push Down Filter'
 };
 
 // Filters for each vessel
