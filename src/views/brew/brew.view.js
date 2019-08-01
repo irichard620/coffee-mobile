@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Button from '../../components/button';
+import PullDown from '../../components/pulldown';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import * as stepModel from '../../storage/step';
@@ -55,12 +56,6 @@ class BrewPage extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
-  }
-
-  onCloseClick = () => {
-    const { navigation } = this.props;
-
-    navigation.goBack();
   }
 
   onBrewClick = () => {
@@ -232,7 +227,7 @@ class BrewPage extends Component {
       }
       if (stepObj.type === constants.STEP_BLOOM_GROUNDS
         || stepObj.type === constants.STEP_POUR_WATER) {
-        return(<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
       }
       if (stepObj.type === constants.STEP_GRIND_COFFEE
         || stepObj.type === constants.STEP_ADD_GROUNDS) {
@@ -270,6 +265,7 @@ class BrewPage extends Component {
 
   render() {
     const { step, visibleModal, recipe } = this.state;
+    const { recipeName, steps } = recipe;
 
     const baseButtonPath = '../../assets/buttons/';
 
@@ -291,9 +287,9 @@ class BrewPage extends Component {
     // Title
     let title = '';
     if (step === -1) {
-      title = recipe.recipeName;
-    } else if (step < recipe.steps.length) {
-      title = recipe.steps[step].title;
+      title = recipeName;
+    } else if (step < steps.length) {
+      title = steps[step].title;
     } else {
       title = 'Serve';
     }
@@ -302,8 +298,8 @@ class BrewPage extends Component {
     let description = '';
     if (step === -1) {
       description = recipeModel.getRecipeDescription(recipe);
-    } else if (step < recipe.steps.length) {
-      description = stepModel.getStepDescription(recipe.steps[step]);
+    } else if (step < steps.length) {
+      description = stepModel.getStepDescription(steps[step]);
     } else {
       description = 'Enjoy your coffee!';
     }
@@ -311,9 +307,7 @@ class BrewPage extends Component {
     return (
       <View style={styles.transparentcontainer}>
         <View style={styles.container}>
-          <TouchableOpacity onPress={this.onCloseClick}>
-            <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
-          </TouchableOpacity>
+          <PullDown />
           <Text style={styles.title}>{title}</Text>
           <View style={styles.iconview}>
             {this.getIcon(recipe)}
@@ -361,7 +355,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    padding: 15,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
     marginTop: 50,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
@@ -373,11 +369,6 @@ const styles = StyleSheet.create({
     color: '#1D5E9E',
     alignSelf: 'center',
     fontWeight: '600',
-  },
-  close: {
-    alignSelf: 'flex-start',
-    height: 25,
-    width: 25,
   },
   iconview: {
     alignItems: 'center',

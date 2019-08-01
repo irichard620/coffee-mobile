@@ -1,12 +1,12 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TextInput, Picker, Image,
-  TouchableOpacity, KeyboardAvoidingView
+  View, Text, StyleSheet, TextInput, Picker, KeyboardAvoidingView
 } from 'react-native';
 import Modal from 'react-native-modal';
 import List from './list';
-import ButtonMini from './button-mini';
+import Button from './button';
+import PullDown from './pulldown';
 
 export default function CustomModal(props) {
   const {
@@ -14,8 +14,6 @@ export default function CustomModal(props) {
     onPressItem, onChangeText, onModalSave, onChangePicker, isListModal,
     isSelectInput, options, title, pickerValues
   } = props;
-
-  const baseButtonPath = '../assets/buttons/';
 
   // Elems with atleast one text
   const isTextInput = !isListModal;
@@ -36,20 +34,7 @@ export default function CustomModal(props) {
         enabled
       >
         <View style={styles.content}>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity onPress={onCloseClick}>
-              <Image style={styles.close} source={require(`${baseButtonPath}Close.png`)} />
-            </TouchableOpacity>
-            {!isListModal && (
-            <ButtonMini
-              onButtonClick={() => onModalSave(modalId)}
-              type={0}
-              title="Save"
-              width={70}
-              margin={[0, 0, 0, 0]}
-            />
-            )}
-          </View>
+          <PullDown />
           {isTitle && <Text style={styles.title}>{title}</Text>}
           {isTextInput && (
           <TextInput
@@ -73,11 +58,24 @@ export default function CustomModal(props) {
             </Picker>
           </View>
           )}
+          {!isListModal && (
+            <View style={styles.saveContainer}>
+              <Button
+                onButtonClick={() => onModalSave(modalId)}
+                type={0}
+                title="Save"
+                width={110}
+                margin={[0, 0, 0, 0]}
+              />
+            </View>
+          )}
           {isListModal && (
-          <List
-            options={options}
-            onPressItem={onPressItem}
-          />
+            <View style={styles.listContainer}>
+              <List
+                options={options}
+                onPressItem={onPressItem}
+              />
+            </View>
           )}
         </View>
       </KeyboardAvoidingView>
@@ -88,22 +86,19 @@ export default function CustomModal(props) {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
-    paddingTop: 15,
+    paddingTop: 10,
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 45,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  saveContainer: {
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  saveButton: {
+    marginTop: 20,
   },
   title: {
+    marginTop: 35,
     marginBottom: 20,
     fontSize: 20,
     fontWeight: '600',
@@ -114,12 +109,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     margin: 0,
   },
-  close: {
-    height: 25,
-    width: 25,
-  },
-  picker: {
-  },
   pickertitle: {
     fontSize: 16,
     color: '#1D5E9E',
@@ -128,5 +117,8 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     backgroundColor: '#F4F4F4'
+  },
+  listContainer: {
+    marginTop: 35
   }
 });

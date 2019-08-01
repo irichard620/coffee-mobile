@@ -156,12 +156,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center'
   },
-  close: {
-    height: 25,
-    width: 25,
-    alignSelf: 'flex-end',
-    justifyContent: 'flex-start'
-  },
   rightbuttonview: {
     flexDirection: 'row',
     flexWrap: 'nowrap',

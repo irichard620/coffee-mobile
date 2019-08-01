@@ -94,12 +94,6 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
-  close: {
-    height: 25,
-    width: 25,
-    alignSelf: 'flex-end',
-    justifyContent: 'flex-start'
-  },
   rightbuttonview: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
