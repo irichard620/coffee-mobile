@@ -35,10 +35,10 @@ export function fetchDefaultRecipes(reset) {
   return function (dispatch) {
     dispatch(requestDefaultRecipes());
     return fetch(`${constants.API_URL}/recipes`)
-      .then(
-        response => response.json(),
-        error => dispatch(errorDefaultRecipes(error))
-      )
+      .then(response => {
+        if (!response.ok) throw response;
+        return response.json()
+      })
       .then((json) => {
         AsyncStorage.getItem('recipes')
           .then((recipes) => {
@@ -63,7 +63,8 @@ export function fetchDefaultRecipes(reset) {
             AsyncStorage.setItem('recipes', JSON.stringify(r));
             dispatch(receiveDefaultRecipes(r));
           });
-      });
+      })
+      .catch(error => dispatch(errorDefaultRecipes(error)));
   };
 }
 

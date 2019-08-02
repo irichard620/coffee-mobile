@@ -36,11 +36,12 @@ export function fetchSponsors() {
   return function (dispatch) {
     dispatch(requestSponsors());
     return fetch(`${constants.API_URL}/sponsors`)
-      .then(
-        response => response.json(),
-        error => dispatch(errorSponsors(error))
-      )
-      .then(json => dispatch(receiveSponsors(json)));
+      .then(response => {
+        if (!response.ok) throw response;
+        return response.json();
+      })
+      .then(json => dispatch(receiveSponsors(json)))
+      .catch(error => dispatch(errorSponsors(error)));
   };
 }
 
@@ -79,10 +80,11 @@ export function fetchSponsor(sponsorId) {
   return function (dispatch) {
     dispatch(requestSponsor(sponsorId));
     return fetch(`${constants.API_URL}/sponsors/${sponsorId}`)
-      .then(
-        response => response.json(),
-        error => dispatch(errorSponsor(error))
-      )
-      .then(json => dispatch(receiveSponsor(sponsorId, json)));
+      .then(response => {
+        if (!response.ok) throw response;
+        return response.json();
+      })
+      .then(json => dispatch(receiveSponsor(sponsorId, json)))
+      .catch(error => dispatch(errorSponsor(error)));
   };
 }

@@ -38,11 +38,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     paddingTop: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
+    alignItems: 'center'
   },
   icon: {
-    width: 16,
-    height: 16,
+    height: 18,
     resizeMode: 'contain',
     marginRight: 15,
   }

@@ -9,7 +9,6 @@ export default function Sponsor(props) {
   const { sponsor, onSponsorClick, type } = props;
 
   // Take care of sponsors
-  const sponsorIdToUse = sponsor.sponsorId ? sponsor.sponsorId : '';
   const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
   const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#F46F69';
   const disabled = sponsor.disabled;
@@ -35,7 +34,7 @@ export default function Sponsor(props) {
     <TouchableWithoutFeedback
       disabled={disabled}
       style={styles.touch}
-      onPress={() => onSponsorClick(sponsorIdToUse)}
+      onPress={() => onSponsorClick(sponsor)}
     >
       <View>
         <View style={[styles.outline, outlineHeight]}>

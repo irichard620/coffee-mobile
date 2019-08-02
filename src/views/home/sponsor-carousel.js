@@ -40,7 +40,6 @@ class SponsorCarousel extends Component {
     return (
       <View style={styles.outline}>
         <Carousel
-          ref={c => this.sliderRef = c}
           data={data}
           renderItem={this.renderItem}
           sliderWidth={width}
@@ -50,11 +49,9 @@ class SponsorCarousel extends Component {
           inactiveSlideOpacity={0.7}
           containerCustomStyle={styles.slider}
           contentContainerCustomStyle={styles.sliderContentContainer}
-          loop={true}
+          loop
           loopClonesPerSide={2}
           autoplay={false}
-          autoplayDelay={500}
-          autoplayInterval={3000}
           onSnapToItem={snapIdx => onSnapToItem(snapIdx)}
         />
         <Pagination

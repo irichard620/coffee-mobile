@@ -12,9 +12,6 @@ import { saveUsername, fetchUser } from '../../actions/user-actions';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import * as constants from '../../constants';
 
-const SplashLeft = require('../../assets/splash/Splash_Left.png');
-const SplashRight = require('../../assets/splash/Splash_Right.png');
-
 class WelcomePage extends Component {
   constructor(props) {
     super(props);
@@ -181,8 +178,6 @@ class WelcomePage extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-          <Image style={styles.leftbackground} source={SplashLeft} />
-          <Image style={styles.rightbackground} source={SplashRight} />
           <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
           {step !== -1 && <Text style={styles.title}>{title}</Text>}
           {step === 1 && (

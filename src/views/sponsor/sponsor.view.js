@@ -28,7 +28,7 @@ class SponsorPage extends Component {
 
   componentDidMount() {
     const { navigation, getSponsor, sponsors } = this.props;
-    const sponsorIdNav = navigation.getParam('sponsorId', 'NO-ID');
+    const sponsorIdNav = navigation.getParam('sponsor', {}).sponsorId;
     if (sponsors && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
       const { sponsorId, beans, recipes } = sponsors.sponsor;
       if (sponsorId !== sponsorIdNav) {
@@ -47,9 +47,21 @@ class SponsorPage extends Component {
     const nextSponsors = nextProps.sponsors;
     const nextRecipes = nextProps.recipes;
 
-    if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching
-      && Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
-      this.addBeansAndRecipesToState(nextSponsors.sponsor.beans, nextSponsors.sponsor.recipes);
+    if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching) {
+      if (nextSponsors.error !== '') {
+        // Show alert
+        Alert.alert(
+          'Error occurred',
+          'Could not fetch sponsor beans/recipes from server.',
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      } else if (Object.getOwnPropertyNames(nextSponsors.sponsor).length !== 0) {
+        this.addBeansAndRecipesToState(nextSponsors.sponsor.beans, nextSponsors.sponsor.recipes);
+      }
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
       // Tell user it was saved
       Alert.alert(
@@ -144,25 +156,23 @@ class SponsorPage extends Component {
   }
 
   render() {
-    const { sponsors } = this.props;
+    const { navigation } = this.props;
     const {
       beans, recipes, selectedRecipes
     } = this.state;
 
+    const sponsor = navigation.getParam('sponsor', {});
+
+    const sponsorCompany = sponsor.company ? sponsor.company : '';
+    const sponsorLocation = sponsor.location ? sponsor.location : '';
+    const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
+    const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#F46F69';
+
     const sponsorObj = {};
-    sponsorObj.description = 'Loading Sponsor...';
+    sponsorObj.description = `${sponsorCompany} \u2022 ${sponsorLocation}`;
+    sponsorObj.imageLink = sponsorImage;
+    sponsorObj.themeColor = sponsorThemeColor;
     sponsorObj.disabled = true;
-    if (sponsors && !sponsors.sponsorIsFetching
-      && Object.getOwnPropertyNames(sponsors.sponsor).length === 0) {
-      sponsorObj.description = 'Could not load sponsor';
-    } else if (!sponsors || !sponsors.sponsor) {
-      sponsorObj.description = 'Could not load sponsor';
-    } else if (sponsors && !sponsors.sponsorIsFetching
-      && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
-      sponsorObj.description = `${sponsors.sponsor.company} \u2022 ${sponsors.sponsor.location}`;
-      sponsorObj.imageLink = sponsors.sponsor.imageLink;
-      sponsorObj.themeColor = sponsors.sponsor.themeColor;
-    }
 
     return (
       <ScrollView style={styles.container}>

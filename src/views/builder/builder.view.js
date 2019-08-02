@@ -139,12 +139,12 @@ class BuilderPage extends Component {
     } else if (item.includes(constants.VESSEL_ELEM)) {
       // If same vessel, return
       if (vesselId === item) {
-        return
+        return;
       }
       // If no vessel, update
       if (vesselId === '' || steps.length === 0) {
         this.changeVessel(item);
-        return
+        return;
       }
       // Send alert that this resets steps
       Alert.alert(

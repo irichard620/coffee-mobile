@@ -138,11 +138,11 @@ class HomePage extends Component {
     );
   }
 
-  onSponsorClick = (sponsorId) => {
+  onSponsorClick = (sponsor) => {
     // Pull up sponsor page
     const { navigation } = this.props;
     navigation.navigate('Sponsor', {
-      sponsorId
+      sponsor
     });
   }
 

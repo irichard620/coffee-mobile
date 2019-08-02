@@ -63,8 +63,10 @@ function sponsorsReducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_SPONSORS:
     case REQUEST_SPONSORS:
+    case ERROR_SPONSORS:
     case RECEIVE_SPONSOR:
     case REQUEST_SPONSOR:
+    case ERROR_SPONSOR:
       return Object.assign({}, state, {
         sponsors: sponsors(state.sponsors, action)
       });
