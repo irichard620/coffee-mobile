@@ -12,6 +12,7 @@ import * as recipeModel from '../../storage/recipe';
 import * as stepModel from '../../storage/step';
 import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
 import CustomModal from '../../components/modal';
+import Pagination from '../../components/pagination';
 
 class BrewPage extends Component {
   constructor(props) {
@@ -243,7 +244,7 @@ class BrewPage extends Component {
         // Get fill number
         const fill = Math.round((timerRemaining / timerTotal) * 100);
         const { height } = Dimensions.get('window');
-        const timerSize = height * 0.30;
+        const timerSize = height * 0.34;
 
         return (
           <AnimatedCircularProgress
@@ -290,6 +291,13 @@ class BrewPage extends Component {
       marginRight: 15,
     };
 
+    // Icon view styles
+    const { height } = Dimensions.get('window');
+    const iconViewSize = {
+      height: height * 0.34,
+      marginTop: height * 0.07
+    };
+
     // Title
     let title = '';
     if (step === -1) {
@@ -310,14 +318,25 @@ class BrewPage extends Component {
       description = 'Enjoy your coffee!';
     }
 
+    // Pagination
+    let stepsLength = 0;
+    if (steps && steps.length > 0) {
+      stepsLength = steps.length + 1;
+    }
+
     return (
       <View style={styles.transparentcontainer}>
         <View style={styles.container}>
           <PullDown />
           <Text style={styles.title}>{title}</Text>
-          <View style={styles.iconview}>
+          <View style={[styles.iconview, iconViewSize]}>
             {this.getIcon(recipe)}
           </View>
+          <Pagination
+            total={stepsLength}
+            index={step}
+            activeColor="#1D5E9E"
+          />
           <Text style={styles.description}>{description}</Text>
           <View style={styles.buttonview}>
             {step !== -1
@@ -369,8 +388,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
   },
   title: {
-    marginTop: 25,
-    marginBottom: 20,
     fontSize: 22,
     color: '#1D5E9E',
     alignSelf: 'center',
@@ -378,9 +395,7 @@ const styles = StyleSheet.create({
   },
   iconview: {
     alignItems: 'center',
-    height: '30%',
-    marginTop: 30,
-    marginBottom: 30,
+    marginBottom: 10,
   },
   icon: {
     height: '100%',
@@ -393,7 +408,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: '#727272'
+    color: '#727272',
+    marginTop: 40
   },
   buttonview: {
     position: 'absolute',

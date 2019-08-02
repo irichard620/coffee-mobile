@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 3,
     alignSelf: 'center',
-    backgroundColor: '#E3E3E3'
+    backgroundColor: '#E3E3E3',
+    marginBottom: 30
   }
 });

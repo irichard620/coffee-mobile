@@ -35,9 +35,9 @@ export function fetchDefaultRecipes(reset) {
   return function (dispatch) {
     dispatch(requestDefaultRecipes());
     return fetch(`${constants.API_URL}/recipes`)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) throw response;
-        return response.json()
+        return response.json();
       })
       .then((json) => {
         AsyncStorage.getItem('recipes')

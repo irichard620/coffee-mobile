@@ -1,5 +1,7 @@
 import uuidv4 from 'uuid/v4';
 
+const camelcaseKeys = require('camelcase-keys');
+
 export function Recipe(recipeObj) {
   const recipe = {};
   // Get ID
@@ -22,7 +24,7 @@ export function Recipe(recipeObj) {
   recipe.totalCoffee = recipeObj.totalCoffee;
   recipe.waterTemp = recipeObj.waterTemp;
   recipe.grindSize = recipeObj.grindSize;
-  recipe.steps = recipeObj.steps;
+  recipe.steps = camelcaseKeys(recipeObj.steps);
   if (!('favorited' in recipeObj)) {
     recipe.favorited = false;
   } else {

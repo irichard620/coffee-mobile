@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Dimensions, StyleSheet } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Sponsor from './sponsor';
-import Pagination from './pagination';
+import Pagination from '../../components/pagination';
 
 class SponsorCarousel extends Component {
   renderItem = ({ item }) => {

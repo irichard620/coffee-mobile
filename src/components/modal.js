@@ -70,12 +70,10 @@ export default function CustomModal(props) {
             </View>
           )}
           {isListModal && (
-            <View style={styles.listContainer}>
-              <List
-                options={options}
-                onPressItem={onPressItem}
-              />
-            </View>
+            <List
+              options={options}
+              onPressItem={onPressItem}
+            />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -98,7 +96,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   title: {
-    marginTop: 35,
     marginBottom: 20,
     fontSize: 20,
     fontWeight: '600',
@@ -117,8 +114,5 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     backgroundColor: '#F4F4F4'
-  },
-  listContainer: {
-    marginTop: 35
   }
 });

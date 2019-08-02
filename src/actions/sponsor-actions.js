@@ -36,7 +36,7 @@ export function fetchSponsors() {
   return function (dispatch) {
     dispatch(requestSponsors());
     return fetch(`${constants.API_URL}/sponsors`)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) throw response;
         return response.json();
       })
@@ -80,7 +80,7 @@ export function fetchSponsor(sponsorId) {
   return function (dispatch) {
     dispatch(requestSponsor(sponsorId));
     return fetch(`${constants.API_URL}/sponsors/${sponsorId}`)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) throw response;
         return response.json();
       })
