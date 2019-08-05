@@ -22,7 +22,8 @@ class BrewPage extends Component {
       recipe: {},
       timerRemaining: -1,
       timerTotal: -1,
-      visibleModal: false
+      visibleModal: false,
+      deleteModal: false
     };
   }
 
@@ -104,7 +105,8 @@ class BrewPage extends Component {
 
   onEditClick = () => {
     this.setState({
-      visibleModal: true
+      visibleModal: true,
+      deleteModal: false
     });
   }
 
@@ -130,7 +132,7 @@ class BrewPage extends Component {
     const {
       navigation, favRecipe, unfavRecipe, delRecipe
     } = this.props;
-    const { recipe } = this.state;
+    const { recipe, deleteModal } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
       this.setState({
@@ -147,14 +149,40 @@ class BrewPage extends Component {
       unfavRecipe(recipe.recipeId);
     } else if (item === constants.RECIPE_MENU_DELETE) {
       // Call delete recipe
-      delRecipe(recipe.recipeId);
-      // Go back in navigation
-      navigation.goBack();
+      if (!deleteModal) {
+        this.setState({
+          deleteModal: true
+        });
+      } else {
+        delRecipe(recipe.recipeId);
+        // Hide modal
+        this.setState({
+          visibleModal: false
+        });
+        // Go back
+        navigation.goBack();
+      }
+    } else if (item === constants.RECIPE_MENU_CANCEL) {
+      // Call clear
+      this.onCloseModalClick();
     }
   }
 
   getModalOptions = () => {
-    const { recipe } = this.state;
+    const { recipe, deleteModal } = this.state;
+
+    if (deleteModal) {
+      return [
+        {
+          id: constants.RECIPE_MENU_CANCEL,
+          title: 'Cancel'
+        },
+        {
+          id: constants.RECIPE_MENU_DELETE,
+          title: 'Delete'
+        },
+      ];
+    }
 
     const options = [{
       id: constants.RECIPE_MENU_EDIT,
@@ -271,7 +299,9 @@ class BrewPage extends Component {
   }
 
   render() {
-    const { step, visibleModal, recipe } = this.state;
+    const {
+      step, visibleModal, recipe, deleteModal
+    } = this.state;
     const { recipeName, steps } = recipe;
 
     const baseButtonPath = '../../assets/buttons/';
@@ -297,6 +327,12 @@ class BrewPage extends Component {
       height: height * 0.34,
       marginTop: height * 0.07
     };
+
+    // Modal title
+    let modalTitle = '';
+    if (deleteModal) {
+      modalTitle = 'Delete this recipe?';
+    }
 
     // Title
     let title = '';
@@ -363,6 +399,7 @@ class BrewPage extends Component {
           visibleModal={visibleModal}
           onCloseClick={this.onCloseModalClick}
           onPressItem={this.onPressItem}
+          title={modalTitle}
           isListModal
           isSelectInput={false}
           options={this.getModalOptions()}

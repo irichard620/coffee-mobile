@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard
+  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard, Dimensions
 } from 'react-native';
 import update from 'immutability-helper';
 import Add from '../../components/add';
@@ -398,9 +398,15 @@ class BuilderPage extends Component {
       orientationDisabled = true;
     }
 
+    // Top margin - dynamic
+    const { height } = Dimensions.get('window');
+    const marginTopStyle = {
+      marginTop: height * 0.03
+    };
+
     return (
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.backcontainer}>
+        <View style={[styles.backcontainer, marginTopStyle]}>
           <Back
             onBackClick={this.onBackClick}
             type={0}
@@ -459,7 +465,7 @@ class BuilderPage extends Component {
             type={1}
             title="Save"
             width={110}
-            margin={[15, 0, 15, 0]}
+            margin={[15, 0, 90, 0]}
           />
         </View>
         <BuilderModal
@@ -486,7 +492,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4'
   },
   backcontainer: {
-    marginTop: 60,
     marginLeft: 15,
     alignItems: 'flex-start',
   },

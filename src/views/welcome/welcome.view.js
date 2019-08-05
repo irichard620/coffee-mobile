@@ -72,12 +72,18 @@ class WelcomePage extends Component {
         // Show alert
         Alert.alert(
           'Error occurred',
-          `Could not fetch new recipes from server. Error: ${recipes.error}`,
+          `Could not reach Drippy server. Error: ${recipes.error}`,
           [
             {
               text: 'OK',
               onPress: () => {
-                getSponsors();
+                if (step === 2) {
+                  // Go to tutorial - we were in welcome
+                  navigation.navigate('Tutorial');
+                } else {
+                  // Go to home - means user there
+                  navigation.navigate('Home');
+                }
               }
             },
           ],
@@ -90,7 +96,7 @@ class WelcomePage extends Component {
         // Show alert
         Alert.alert(
           'Error occurred',
-          `Could not fetch sponsors from server. Error: ${sponsors.error}`,
+          `Could not reach Drippy server. Error: ${sponsors.error}`,
           [
             {
               text: 'OK',
@@ -208,16 +214,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F4',
     alignItems: 'center'
-  },
-  leftbackground: {
-    position: 'absolute',
-    left: '0%',
-    height: '100%'
-  },
-  rightbackground: {
-    position: 'absolute',
-    right: '0%',
-    height: '100%'
   },
   buttonview: {
     position: 'absolute',

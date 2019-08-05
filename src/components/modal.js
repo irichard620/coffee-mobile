@@ -43,6 +43,8 @@ export default function CustomModal(props) {
             placeholder={textPlaceholder}
             placeholderTextColor="#b7b3b3"
             style={styles.textinput}
+            maxLength={4}
+            multiline={false}
           />
           )}
           {isSelectInput && (

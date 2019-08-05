@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert
+  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, Dimensions
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import Entry from '../home/entry';
@@ -174,9 +174,15 @@ class SponsorPage extends Component {
     sponsorObj.themeColor = sponsorThemeColor;
     sponsorObj.disabled = true;
 
+    // Top margin - dynamic
+    const { height } = Dimensions.get('window');
+    const marginTopStyle = {
+      marginTop: height * 0.03
+    };
+
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.backcontainer}>
+        <View style={[styles.backcontainer, marginTopStyle]}>
           <Back
             onBackClick={this.onBackClick}
             type={0}
@@ -225,7 +231,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4'
   },
   backcontainer: {
-    marginTop: 60,
     marginLeft: 15,
     alignItems: 'flex-start',
   },
