@@ -98,3 +98,26 @@ export function getStepProperties(modalType, modalText, modalSelect) {
   }
   return {};
 }
+
+export function validateStep(modalType, modalText) {
+  // First, check it's a number
+  const modalNumber = Number(modalText);
+  if (modalText === ''
+  || Number.isNaN(modalNumber)
+  || Number.parseFloat(modalNumber) !== modalNumber) {
+    return 'You must enter a number for this field.';
+  }
+  const x = Number.parseFloat(modalNumber);
+
+  // Check wait time
+  if (modalType === constants.STEP_WAIT && (x < 1 || x > 3600)) {
+    return 'Wait time must be between 1 second and 60 minutes.';
+  }
+
+  // Check temp
+  if (modalType === constants.STEP_HEAT_WATER && (x < 0 || x > 212)) {
+    return 'Water temperature must not be above boiling or below 0 degrees.';
+  }
+
+  return '';
+}

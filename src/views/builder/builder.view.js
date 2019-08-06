@@ -203,6 +203,7 @@ class BuilderPage extends Component {
       visibleModal: false,
       modalType: '',
       modalText: '',
+      modalId: ''
     });
   }
 
@@ -222,44 +223,66 @@ class BuilderPage extends Component {
         modalType: '',
         modalText: ''
       });
-    } else if (stepId === '') {
-      // Get title label
-      const titleLabel = constants.stepLabels[modalType];
+    } else {
+      // Validate step
+      const result = stepModel.validateStep(modalType, modalText);
+      if (result !== '') {
+        // Show alert
+        Alert.alert(
+          'Could not save',
+          `${result}`,
+          [
+            {
+              text: 'OK'
+            }
+          ]
+        );
+        return;
+      }
 
-      // Add new step and update state
-      const newStep = stepModel.Step({
-        type: modalType,
-        title: titleLabel,
-        properties: stepModel.getStepProperties(modalType, modalText, modalSelect)
-      });
-      this.setState({
-        visibleModal: false,
-        modalType: '',
-        modalText: '',
-        steps: [
-          ...steps,
-          newStep
-        ],
-        selected: [
-          ...selected,
-          false
-        ]
-      });
-    } else if (stepId !== '') {
-      // Find index
-      const index = this.findIndexOfId(stepId, steps);
-      if (index !== -1) {
+      // Check if new or update
+      if (stepId === '') {
+        // Get title label
+        const titleLabel = constants.stepLabels[modalType];
+
+        // Add new step and update state
+        const newStep = stepModel.Step({
+          type: modalType,
+          title: titleLabel,
+          properties: stepModel.getStepProperties(modalType, modalText, modalSelect)
+        });
         this.setState({
           visibleModal: false,
           modalType: '',
           modalText: '',
           modalId: '',
-          steps: update(steps, {
-            [index]: {
-              properties: { $set: stepModel.getStepProperties(modalType, modalText, modalSelect) },
-            }
-          }),
+          steps: [
+            ...steps,
+            newStep
+          ],
+          selected: [
+            ...selected,
+            false
+          ]
         });
+      } else if (stepId !== '') {
+        // Find index
+        const index = this.findIndexOfId(stepId, steps);
+        if (index !== -1) {
+          this.setState({
+            visibleModal: false,
+            modalType: '',
+            modalText: '',
+            modalId: '',
+            steps: update(steps, {
+              [index]: {
+                properties: {
+                  $set: stepModel.getStepProperties(modalType, modalText, modalSelect)
+                },
+              }
+            }),
+          });
+        }
       }
     }
   }
