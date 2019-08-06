@@ -71,31 +71,13 @@ class BrewPage extends Component {
     if (step !== recipe.steps.length) {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
-        this.setState({
-          step: step + 1,
-          timerRemaining: -1,
-          timerTotal: -1,
-        });
+        this.clearTimer(step + 1);
       } else {
         const nextStep = recipe.steps[step + 1];
         if (nextStep.type === constants.STEP_WAIT) {
-          this.setState({
-            step: step + 1,
-            timerRemaining: nextStep.properties.seconds,
-            timerTotal: nextStep.properties.seconds,
-          }, () => {
-            // Start timer
-            this.interval = setInterval(
-              () => this.setState(prevState => ({ timerRemaining: prevState.timerRemaining - 1 })),
-              1000
-            );
-          });
+          this.setupTimer(step + 1, nextStep);
         } else {
-          this.setState({
-            step: step + 1,
-            timerRemaining: -1,
-            timerTotal: -1,
-          });
+          this.clearTimer(step + 1);
         }
       }
     } else {
@@ -111,13 +93,46 @@ class BrewPage extends Component {
   }
 
   onBackClick = () => {
-    const { step } = this.state;
+    const { step, recipe } = this.state;
 
     // Clear interval
     clearInterval(this.interval);
 
+    if (step > 0) {
+      const prevStep = recipe.steps[step - 1];
+      if (prevStep.type === constants.STEP_WAIT) {
+        this.setupTimer(step - 1, prevStep);
+      } else {
+        this.clearTimer(step - 1);
+      }
+    } else {
+      this.clearTimer(step - 1);
+    }
+
     this.setState({
       step: step - 1
+    });
+  }
+
+  setupTimer = (newStep, nextStep) => {
+    this.setState({
+      step: newStep,
+      timerRemaining: nextStep.properties.seconds,
+      timerTotal: nextStep.properties.seconds,
+    }, () => {
+      // Start timer
+      this.interval = setInterval(
+        () => this.setState(prevState => ({ timerRemaining: prevState.timerRemaining - 1 })),
+        1000
+      );
+    });
+  }
+
+  clearTimer = (newStep) => {
+    this.setState({
+      step: newStep,
+      timerRemaining: -1,
+      timerTotal: -1,
     });
   }
 
@@ -328,6 +343,16 @@ class BrewPage extends Component {
       marginTop: height * 0.07
     };
 
+    // Top margin of brew page
+    const brewTopMargin = {
+      marginTop: height * 0.06
+    };
+
+    // Backdrop top attribute
+    const backdropTop = {
+      top: -height
+    };
+
     // Modal title
     let modalTitle = '';
     if (deleteModal) {
@@ -361,8 +386,9 @@ class BrewPage extends Component {
     }
 
     return (
-      <View style={styles.transparentcontainer}>
-        <View style={styles.container}>
+      <React.Fragment>
+        <View style={[styles.backdrop, backdropTop]} />
+        <View style={[styles.container, brewTopMargin]}>
           <PullDown />
           <Text style={styles.title}>{title}</Text>
           <View style={[styles.iconview, iconViewSize]}>
@@ -404,15 +430,20 @@ class BrewPage extends Component {
           isSelectInput={false}
           options={this.getModalOptions()}
         />
-      </View>
+      </React.Fragment>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  transparentcontainer: {
-    height: '100%',
-    backgroundColor: 'transparent'
+  backdrop: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    opacity: 0.7,
+    backgroundColor: 'black',
+    overflow: 'visible',
   },
   container: {
     flex: 1,
@@ -420,7 +451,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 10,
-    marginTop: 50,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
