@@ -108,12 +108,14 @@ class BuilderModal extends Component {
       isSelectInput = true;
     }
 
-    // Title
+    // Title and char limit
     let titleToDisplay = '';
+    let charLimit = 4;
     if (modalType.includes(constants.NEW_STEP_ELEM)) {
       titleToDisplay = constants.stepLabels[modalType];
     } else if (modalType.includes(constants.RECIPE_NAME_ELEM)) {
       titleToDisplay = 'Recipe Name';
+      charLimit = 30;
     }
 
     return (
@@ -128,6 +130,7 @@ class BuilderModal extends Component {
         isSelectInput={isSelectInput}
         options={options}
         title={titleToDisplay}
+        charLimit={charLimit}
         pickerValues={constants.grindSizes}
         onPressItem={onPressItem}
         onChangeText={onChangeText}

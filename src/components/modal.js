@@ -1,7 +1,8 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TextInput, Picker, KeyboardAvoidingView
+  View, Text, StyleSheet, TextInput, Picker, KeyboardAvoidingView,
+  Dimensions
 } from 'react-native';
 import Modal from 'react-native-modal';
 import List from './list';
@@ -12,7 +13,7 @@ export default function CustomModal(props) {
   const {
     visibleModal, modalId, modalText, textPlaceholder, modalSelect, onCloseClick,
     onPressItem, onChangeText, onModalSave, onChangePicker, isListModal,
-    isSelectInput, options, title, pickerValues
+    isSelectInput, options, title, charLimit, pickerValues
   } = props;
 
   // Elems with atleast one text
@@ -21,6 +22,12 @@ export default function CustomModal(props) {
   if (title && title !== '') {
     isTitle = true;
   }
+
+  // Max height for modal
+  const { height } = Dimensions.get('window');
+  const maxHeightModal = {
+    maxHeight: height * 0.75
+  };
 
   return (
     <Modal
@@ -33,7 +40,7 @@ export default function CustomModal(props) {
         behavior="position"
         enabled
       >
-        <View style={styles.content}>
+        <View style={[styles.content, maxHeightModal]}>
           <PullDown />
           {isTitle && <Text style={styles.title}>{title}</Text>}
           {isTextInput && (
@@ -43,7 +50,7 @@ export default function CustomModal(props) {
             placeholder={textPlaceholder}
             placeholderTextColor="#b7b3b3"
             style={styles.textinput}
-            maxLength={4}
+            maxLength={charLimit}
             multiline={false}
           />
           )}
