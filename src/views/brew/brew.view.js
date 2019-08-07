@@ -11,6 +11,7 @@ import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import * as stepModel from '../../storage/step';
 import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
+import { brewFinishAnalytics } from '../../actions/analytics-actions';
 import CustomModal from '../../components/modal';
 import Pagination from '../../components/pagination';
 
@@ -81,6 +82,10 @@ class BrewPage extends Component {
         }
       }
     } else {
+      // Analytics
+      brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
+        recipe.brewingVessel, recipe.sponsorId);
+
       navigation.goBack();
     }
   }
