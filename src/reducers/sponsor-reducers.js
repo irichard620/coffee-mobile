@@ -12,7 +12,8 @@ function sponsors(
     sponsorsIsFetching: false,
     sponsors: [],
     sponsorIsFetching: false,
-    sponsor: {}
+    sponsor: {},
+    error: ''
   },
   action
 ) {

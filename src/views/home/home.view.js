@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions, Alert
 } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
 import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import SponsorCarousel from './sponsor-carousel';
@@ -42,6 +43,7 @@ class HomePage extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextRecipes = nextProps.recipes;
+    const isFocused = nextProps.isFocused;
 
     if (nextRecipes && !prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
@@ -58,35 +60,54 @@ class HomePage extends Component {
     } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
     || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
-      const newSelectedFavorites = [];
-      const newSelectedCustoms = [];
-      const newFavorites = [];
-      const newCustoms = [];
-
-      for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
-        // Push to favorite
-        if (nextRecipes.recipes[i].favorited) {
-          newSelectedFavorites.push(false);
-          newFavorites.push(nextRecipes.recipes[i]);
+      if (nextRecipes.error !== '') {
+        if (isFocused) {
+          Alert.alert(
+            'Error occurred',
+            'Could not reset default recipes from server.',
+            [
+              {
+                text: 'OK'
+              },
+            ],
+          );
         }
-        // Push to all recipes
-        newSelectedCustoms.push(false);
-        newCustoms.push(nextRecipes.recipes[i]);
-      }
+        return {
+          recipesIsFetching: false,
+          recipeIsSaving: false,
+          recipeIsDeleting: false
+        };
+      } else {
+        const newSelectedFavorites = [];
+        const newSelectedCustoms = [];
+        const newFavorites = [];
+        const newCustoms = [];
 
-      return {
-        modalRecipeId: '',
-        modalRecipeIndex: -1,
-        visibleModal: false,
-        deleteModal: false,
-        selectedFavorites: newSelectedFavorites,
-        favorites: newFavorites,
-        selectedCustoms: newSelectedCustoms,
-        customs: newCustoms,
-        recipesIsFetching: false,
-        recipeIsSaving: false,
-        recipeIsDeleting: false
-      };
+        for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
+          // Push to favorite
+          if (nextRecipes.recipes[i].favorited) {
+            newSelectedFavorites.push(false);
+            newFavorites.push(nextRecipes.recipes[i]);
+          }
+          // Push to all recipes
+          newSelectedCustoms.push(false);
+          newCustoms.push(nextRecipes.recipes[i]);
+        }
+
+        return {
+          modalRecipeId: '',
+          modalRecipeIndex: -1,
+          visibleModal: false,
+          deleteModal: false,
+          selectedFavorites: newSelectedFavorites,
+          favorites: newFavorites,
+          selectedCustoms: newSelectedCustoms,
+          customs: newCustoms,
+          recipesIsFetching: false,
+          recipeIsSaving: false,
+          recipeIsDeleting: false
+        };
+      }
     }
     return null;
   }
@@ -147,6 +168,7 @@ class HomePage extends Component {
   }
 
   onSnapToItem = (idx) => {
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     this.setState({ sponsorIndex: idx });
   }
 
@@ -405,4 +427,4 @@ const mapDispatchToProps = {
   delRecipe: deleteRecipe
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(HomePage));

@@ -166,12 +166,12 @@ class SponsorPage extends Component {
     const sponsorCompany = sponsor.company ? sponsor.company : '';
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
-    const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#F46F69';
+    const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
 
     const sponsorObj = {};
     sponsorObj.description = `${sponsorCompany} \u2022 ${sponsorLocation}`;
     sponsorObj.imageLink = sponsorImage;
-    sponsorObj.themeColor = sponsorThemeColor;
+    sponsorObj.textColor = sponsorTextColor;
     sponsorObj.disabled = true;
 
     // Top margin - dynamic

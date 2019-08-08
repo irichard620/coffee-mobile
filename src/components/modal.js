@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   View, Text, StyleSheet, TextInput, Picker, KeyboardAvoidingView,
-  Dimensions
+  Dimensions, ScrollView
 } from 'react-native';
 import Modal from 'react-native-modal';
 import List from './list';
@@ -34,6 +34,7 @@ export default function CustomModal(props) {
       isVisible={visibleModal}
       onSwipeComplete={onCloseClick}
       swipeDirection={['down']}
+      propagateSwipe={true}
       style={styles.bottomModal}
     >
       <KeyboardAvoidingView
@@ -79,10 +80,12 @@ export default function CustomModal(props) {
             </View>
           )}
           {isListModal && (
-            <List
-              options={options}
-              onPressItem={onPressItem}
-            />
+            <ScrollView>
+              <List
+                options={options}
+                onPressItem={onPressItem}
+              />
+            </ScrollView>
           )}
         </View>
       </KeyboardAvoidingView>
