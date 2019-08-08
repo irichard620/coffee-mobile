@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import fetch from 'cross-fetch';
 import * as constants from './constants';
+import {
+  sponsorRecipeAnalytics, builderNewRecipeAnalytics, builderEditRecipeAnalytics
+} from './analytics-actions';
 
 import { Recipe, validateRecipe } from '../storage/recipe';
 
@@ -154,7 +157,18 @@ export function saveRecipe(recipeToSave) {
         }
         if (!duplicateName) {
           if (!found) {
+            if (recipeToSave.sponsorId !== '') {
+              // Download sponsor analytics
+              sponsorRecipeAnalytics(recipeToSave.recipeId, recipeToSave.recipeName,
+                recipeToSave.brewingVessel, recipeToSave.sponsorId);
+            } else {
+              // New recipe analytics
+              builderNewRecipeAnalytics();
+            }
             r.push(recipeToSave);
+          } else {
+            // Edit analytics
+            builderEditRecipeAnalytics();
           }
           AsyncStorage.setItem('recipes', JSON.stringify(r));
           dispatch(savedRecipe(recipeToSave));

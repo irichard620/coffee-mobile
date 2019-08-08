@@ -25,6 +25,11 @@ export function Recipe(recipeObj) {
   recipe.waterTemp = recipeObj.waterTemp;
   recipe.grindSize = recipeObj.grindSize;
   recipe.steps = camelcaseKeys(recipeObj.steps);
+  if (!('sponsorId' in recipeObj)) {
+    recipe.sponsorId = '';
+  } else {
+    recipe.sponsorId = recipeObj.sponsorId;
+  }
   if (!('favorited' in recipeObj)) {
     recipe.favorited = false;
   } else {

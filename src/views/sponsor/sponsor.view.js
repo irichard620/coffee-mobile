@@ -5,6 +5,7 @@ import {
   View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, Dimensions
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
+import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
 import Sponsor from '../home/sponsor';
@@ -151,6 +152,10 @@ class SponsorPage extends Component {
     const { recipes } = this.state;
     // Get our recipe
     const recipe = recipes[idx];
+
+    // Analytics
+    sponsorRecipeAnalytics(recipe.recipeId, recipe.recipeName,
+      recipe.brewingVessel, recipe.sponsorId);
 
     persistRecipe(recipeModel.Recipe(recipe));
   }
