@@ -9,6 +9,7 @@ import Entry from './entry';
 import MenuButtons from './menu-buttons';
 import SponsorCarousel from './sponsor-carousel';
 import { fetchSponsors } from '../../actions/sponsor-actions';
+import { brewStartAnalytics } from '../../actions/analytics-actions';
 import {
   fetchRecipes, fetchDefaultRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
 } from '../../actions/recipe-actions';
@@ -206,15 +207,21 @@ class HomePage extends Component {
   onGoClick = (idx) => {
     const { navigation } = this.props;
     const { tab, favorites, customs } = this.state;
+    let recipeToBrew = {};
     if (tab === 0) {
-      navigation.navigate('Brew', {
-        recipe: favorites[idx]
-      });
+      recipeToBrew = favorites[idx];
     } else {
-      navigation.navigate('Brew', {
-        recipe: customs[idx]
-      });
+      recipeToBrew = customs[idx];
     }
+
+    // Analytics
+    brewStartAnalytics(recipeToBrew.recipeId, recipeToBrew.recipeName,
+      recipeToBrew.brewingVessel, recipeToBrew.sponsorId);
+
+    // Navigate
+    navigation.navigate('Brew', {
+      recipe: recipeToBrew
+    });
   }
 
   getModalOptions = () => {
