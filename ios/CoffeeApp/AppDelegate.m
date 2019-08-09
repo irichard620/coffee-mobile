@@ -12,10 +12,13 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+#import <GoogleMaps/GoogleMaps.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSServices provideAPIKey:@"AIzaSyBFA6iWF7RZVsxtJn3RMTqBxNwBEwMVD14"];
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }

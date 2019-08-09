@@ -9,6 +9,7 @@ import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
 import Sponsor from '../home/sponsor';
+import Map from './map';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
@@ -172,6 +173,10 @@ class SponsorPage extends Component {
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
     const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
+    const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#727272';
+    const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
+    const sponsorLatitude = sponsor.latitude ? sponsor.latitude : 37.78825;
+    const sponsorLongitude = sponsor.longitude ? sponsor.longitude : -122.4324;
 
     const sponsorObj = {};
     sponsorObj.description = `${sponsorCompany} \u2022 ${sponsorLocation}`;
@@ -197,7 +202,12 @@ class SponsorPage extends Component {
           sponsor={sponsorObj}
           type={1}
         />
-        <View style={styles.separator} />
+        <Map
+          latitude={sponsorLatitude}
+          longitude={sponsorLongitude}
+          fullAddress={`${sponsorStreetAddress}\n${sponsorLocation}`}
+          themeColor={sponsorThemeColor}
+        />
         <View style={styles.entrycontainer}>
           {beans.map((bean, idx) => (
             <Entry
