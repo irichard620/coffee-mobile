@@ -55,15 +55,16 @@ export function getStepDescription(step) {
     return `Grind ${step.properties.gramsCoffee
     } grams of coffee to a ${step.properties.grindSize} consistency.`;
   } if (step.type === constants.STEP_RINSE_FILTER) {
-    return 'Rinse the filter with some of your hot water, then discard the water. '
-      + 'This washes the filter and remove any paper taste.';
+    return 'Rinse your filter with hot water, then discard. '
+      + 'This prevents any paper taste from getting into your coffee.';
   } if (step.type === constants.STEP_ADD_GROUNDS) {
     return 'Add the ground coffee to the vessel.';
   } if (step.type === constants.STEP_BLOOM_GROUNDS) {
-    return `Pour ${step.properties.gramsWater} grams of water on to `
-      + 'fully saturate your coffee grounds.';
+    return `Pour ${step.properties.gramsWater} grams of water slowly and `
+      + 'evenly around your brew bed to saturate all the coffee grounds.';
   } if (step.type === constants.STEP_POUR_WATER) {
-    return `Add ${step.properties.gramsWater} grams of water to the brew bed.`;
+    return `Pour ${step.properties.gramsWater} grams of water onto the brew bed `
+      + 'in an even circular motion.';
   } if (step.type === constants.STEP_WAIT) {
     return `Wait ${step.properties.seconds} seconds`;
   } if (step.type === constants.STEP_ADD_ICE) {

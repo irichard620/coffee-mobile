@@ -488,7 +488,7 @@ class BuilderPage extends Component {
             type={1}
             title="Save"
             width={110}
-            margin={[15, 0, 90, 0]}
+            margin={[15, 0, 45, 0]}
           />
         </View>
         <BuilderModal

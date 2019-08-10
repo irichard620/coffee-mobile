@@ -9,7 +9,6 @@ import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
 import Entry from '../home/entry';
 import Back from '../../components/back';
 import Sponsor from '../home/sponsor';
-import Map from './map';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
@@ -25,6 +24,7 @@ class SponsorPage extends Component {
       selectedRecipes: [],
       beans: [],
       recipes: [],
+      selectedMap: false
     };
   }
 
@@ -116,10 +116,16 @@ class SponsorPage extends Component {
   }
 
   onEntryClick = (idx) => {
-    const { selectedRecipes } = this.state;
+    const { selectedRecipes, selectedMap } = this.state;
 
     LayoutAnimation.configureNext(constants.CustomLayoutSpring);
-    this.setState({ selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false)) });
+    if (idx === -1) {
+      this.setState({ selectedMap: !selectedMap });
+    } else {
+      this.setState({
+        selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false))
+      });
+    }
   }
 
   onExploreClick = (idx) => {
@@ -164,7 +170,7 @@ class SponsorPage extends Component {
   render() {
     const { navigation } = this.props;
     const {
-      beans, recipes, selectedRecipes
+      beans, recipes, selectedRecipes, selectedMap
     } = this.state;
 
     const sponsor = navigation.getParam('sponsor', {});
@@ -173,7 +179,7 @@ class SponsorPage extends Component {
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
     const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
-    const sponsorThemeColor = sponsor.themeColor ? sponsor.themeColor : '#727272';
+    const sponsorVisitDescription = sponsor.visitDescription ? sponsor.visitDescription : `the ${sponsorCompany}`;
     const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
     const sponsorLatitude = sponsor.latitude ? sponsor.latitude : 37.78825;
     const sponsorLongitude = sponsor.longitude ? sponsor.longitude : -122.4324;
@@ -202,11 +208,17 @@ class SponsorPage extends Component {
           sponsor={sponsorObj}
           type={1}
         />
-        <Map
+        <View style={styles.separator} />
+        <Entry
+          idx={-1}
+          selected={selectedMap}
+          disabled={false}
+          title={`Visit ${sponsorVisitDescription}`}
+          description={`${sponsorStreetAddress}\n${sponsorLocation}`}
+          isMap
           latitude={sponsorLatitude}
           longitude={sponsorLongitude}
-          fullAddress={`${sponsorStreetAddress}\n${sponsorLocation}`}
-          themeColor={sponsorThemeColor}
+          onEntryClick={this.onEntryClick}
         />
         <View style={styles.entrycontainer}>
           {beans.map((bean, idx) => (
@@ -253,7 +265,7 @@ const styles = StyleSheet.create({
     height: 15
   },
   entrycontainer: {
-    marginBottom: 90
+    marginBottom: 45
   }
 });
 

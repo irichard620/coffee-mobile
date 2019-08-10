@@ -3,13 +3,15 @@ import React from 'react';
 import {
   View, Text, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import Button from '../../components/button';
 import * as constants from '../../constants';
 
 export default function Entry(props) {
   const {
     title, description, vesselId, selected, onEntryClick, onEditClick,
-    onGoClick, idx, isSponsor, onDownloadClick, disabled, isBean, onExploreClick
+    onGoClick, idx, isSponsor, onDownloadClick, disabled, isBean, onExploreClick,
+    isMap, latitude, longitude
   } = props;
 
   const basePath = '../../assets/mini-vessel-icons/';
@@ -31,11 +33,19 @@ export default function Entry(props) {
     marginBottom: titleMargin,
   };
 
+  let logoBackgroundColor = '#F1F1F1';
+  if (isMap) {
+    logoBackgroundColor = '#E8533E';
+  }
+  const logoBackgroundStyle = {
+    backgroundColor: logoBackgroundColor
+  };
+
   return (
     <TouchableWithoutFeedback onPress={() => onEntryClick(idx)} disabled={disabled}>
       <View style={styles.outline}>
         <View style={styles.topview}>
-          <View style={styles.logoview}>
+          <View style={[styles.logoview, logoBackgroundStyle]}>
             {vesselId === constants.VESSEL_AEROPRESS
               && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
             {vesselId === constants.VESSEL_CHEMEX
@@ -46,6 +56,8 @@ export default function Entry(props) {
               && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
             {isBean
               && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}
+            {isMap
+              && <Image style={styles.image} source={require(`${basePath}Map_Pin.png`)} />}
           </View>
           <View style={textviewDynamic}>
             {!selected && (
@@ -61,7 +73,7 @@ export default function Entry(props) {
             {selected && <Text style={styles.description}>{description}</Text>}
           </View>
         </View>
-        {selected && !isBean && (
+        {selected && !isBean && !isMap && (
         <View style={styles.buttonview}>
           <View style={styles.rightbuttonview}>
             {!isSponsor && (
@@ -93,6 +105,34 @@ export default function Entry(props) {
           />
         </View>
         )}
+        {selected && isMap && (
+        <View style={styles.mapview}>
+          <MapView
+            provider={PROVIDER_DEFAULT}
+            style={{ flex: 1, height: 125 }}
+            region={{
+              latitude,
+              longitude,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0075,
+            }}
+            pitchEnabled={false}
+            scrollEnabled={false}
+            rotateEnabled={false}
+            zoomControlEnabled={false}
+            showsPointsOfInterest={false}
+            showsBuildings={false}
+            showsTraffic={false}
+          >
+            <Marker
+              coordinate={{
+                latitude,
+                longitude
+              }}
+            />
+          </MapView>
+        </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -114,7 +154,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
     shadowRadius: 10,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden'
   },
   topview: {
     alignItems: 'flex-start',
@@ -125,7 +166,6 @@ const styles = StyleSheet.create({
     height: 55,
     width: 55,
     borderRadius: 20,
-    backgroundColor: '#F1F1F1',
     marginRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -160,6 +200,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start'
+  },
+  mapview: {
+    marginTop: 15,
+    height: 125,
+    marginLeft: -16,
+    marginRight: -16,
+    marginBottom: -15,
   },
   edit: {
     height: 40,
