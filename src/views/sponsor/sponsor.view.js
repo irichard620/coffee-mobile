@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, Dimensions
+  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, 
+  Dimensions, Platform
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
@@ -154,6 +155,56 @@ class SponsorPage extends Component {
     });
   }
 
+  onMapClick = () => {
+    Alert.alert(
+      'Open in maps',
+      'Do you want to open this in your maps app?',
+      [
+        {
+          text: 'Open',
+          onPress: () => {
+            this.openMaps();
+          }
+        },
+        {
+          text: 'Cancel'
+        },
+      ],
+    );
+  }
+
+  openMaps = () => {
+    const { navigation } = this.props;
+    const sponsor = navigation.getParam('sponsor', {});
+    const sponsorLocation = sponsor.location ? sponsor.location : '';
+    const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
+    let daddr = encodeURIComponent(`${sponsorStreetAddress}, ${sponsorLocation}`);
+
+    let urlToUse = '';
+    if (Platform.OS === 'ios') {
+      urlToUse = `http://maps.apple.com/?daddr=${daddr}`;
+    } else {
+      urlToUse = `http://maps.google.com/?daddr=${daddr}`;
+    }
+
+    Linking.canOpenURL(urlToUse).then((supported) => {
+      if (supported) {
+        Linking.openURL(urlToUse);
+      } else {
+        // Open error alert
+        Alert.alert(
+          'Error occurred',
+          'Could not open address',
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      }
+    });
+  }
+
   onDownloadClick = (idx) => {
     const { persistRecipe } = this.props;
     const { recipes } = this.state;
@@ -219,6 +270,7 @@ class SponsorPage extends Component {
           latitude={sponsorLatitude}
           longitude={sponsorLongitude}
           onEntryClick={this.onEntryClick}
+          onMapClick={this.onMapClick}
         />
         <View style={styles.entrycontainer}>
           {beans.map((bean, idx) => (

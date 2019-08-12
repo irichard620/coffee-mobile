@@ -11,7 +11,7 @@ export default function Entry(props) {
   const {
     title, description, vesselId, selected, onEntryClick, onEditClick,
     onGoClick, idx, isSponsor, onDownloadClick, disabled, isBean, onExploreClick,
-    isMap, latitude, longitude
+    isMap, latitude, longitude, onMapClick
   } = props;
 
   const basePath = '../../assets/mini-vessel-icons/';
@@ -106,32 +106,35 @@ export default function Entry(props) {
         </View>
         )}
         {selected && isMap && (
-        <View style={styles.mapview}>
-          <MapView
-            provider={PROVIDER_DEFAULT}
-            style={{ flex: 1, height: 125 }}
-            region={{
-              latitude,
-              longitude,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0075,
-            }}
-            pitchEnabled={false}
-            scrollEnabled={false}
-            rotateEnabled={false}
-            zoomControlEnabled={false}
-            showsPointsOfInterest={false}
-            showsBuildings={false}
-            showsTraffic={false}
-          >
-            <Marker
-              coordinate={{
+        <TouchableWithoutFeedback onPress={() => onMapClick()} >
+          <View style={styles.mapview}>
+            <MapView
+              provider={PROVIDER_DEFAULT}
+              style={{ flex: 1, height: 125 }}
+              region={{
                 latitude,
-                longitude
+                longitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0075,
               }}
-            />
-          </MapView>
-        </View>
+              pitchEnabled={false}
+              scrollEnabled={false}
+              rotateEnabled={false}
+              zoomControlEnabled={false}
+              showsPointsOfInterest={false}
+              showsBuildings={false}
+              showsTraffic={false}
+              onPress={() => onMapClick()}
+            >
+              <Marker
+                coordinate={{
+                  latitude,
+                  longitude
+                }}
+              />
+            </MapView>
+          </View>
+        </TouchableWithoutFeedback>
         )}
       </View>
     </TouchableWithoutFeedback>
