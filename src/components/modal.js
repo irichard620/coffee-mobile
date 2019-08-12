@@ -34,7 +34,7 @@ export default function CustomModal(props) {
       isVisible={visibleModal}
       onSwipeComplete={onCloseClick}
       swipeDirection={['down']}
-      propagateSwipe={true}
+      propagateSwipe
       style={styles.bottomModal}
     >
       <KeyboardAvoidingView

@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, Dimensions
+  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert,
+  Dimensions, Platform
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
@@ -24,6 +25,7 @@ class SponsorPage extends Component {
       selectedRecipes: [],
       beans: [],
       recipes: [],
+      selectedMap: false
     };
   }
 
@@ -115,10 +117,16 @@ class SponsorPage extends Component {
   }
 
   onEntryClick = (idx) => {
-    const { selectedRecipes } = this.state;
+    const { selectedRecipes, selectedMap } = this.state;
 
     LayoutAnimation.configureNext(constants.CustomLayoutSpring);
-    this.setState({ selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false)) });
+    if (idx === -1) {
+      this.setState({ selectedMap: !selectedMap });
+    } else {
+      this.setState({
+        selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false))
+      });
+    }
   }
 
   onExploreClick = (idx) => {
@@ -147,6 +155,56 @@ class SponsorPage extends Component {
     });
   }
 
+  onMapClick = () => {
+    Alert.alert(
+      'Open in maps',
+      'Do you want to open this in your maps app?',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Open',
+          onPress: () => {
+            this.openMaps();
+          }
+        },
+      ],
+    );
+  }
+
+  openMaps = () => {
+    const { navigation } = this.props;
+    const sponsor = navigation.getParam('sponsor', {});
+    const sponsorLocation = sponsor.location ? sponsor.location : '';
+    const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
+    const daddr = encodeURIComponent(`${sponsorStreetAddress}, ${sponsorLocation}`);
+
+    let urlToUse = '';
+    if (Platform.OS === 'ios') {
+      urlToUse = `http://maps.apple.com/?daddr=${daddr}`;
+    } else {
+      urlToUse = `http://maps.google.com/?daddr=${daddr}`;
+    }
+
+    Linking.canOpenURL(urlToUse).then((supported) => {
+      if (supported) {
+        Linking.openURL(urlToUse);
+      } else {
+        // Open error alert
+        Alert.alert(
+          'Error occurred',
+          'Could not open address',
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      }
+    });
+  }
+
   onDownloadClick = (idx) => {
     const { persistRecipe } = this.props;
     const { recipes } = this.state;
@@ -163,7 +221,7 @@ class SponsorPage extends Component {
   render() {
     const { navigation } = this.props;
     const {
-      beans, recipes, selectedRecipes
+      beans, recipes, selectedRecipes, selectedMap
     } = this.state;
 
     const sponsor = navigation.getParam('sponsor', {});
@@ -172,6 +230,10 @@ class SponsorPage extends Component {
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
     const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
+    const sponsorVisitDescription = sponsor.visitDescription ? sponsor.visitDescription : `the ${sponsorCompany}`;
+    const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
+    const sponsorLatitude = sponsor.latitude ? sponsor.latitude : 37.78825;
+    const sponsorLongitude = sponsor.longitude ? sponsor.longitude : -122.4324;
 
     const sponsorObj = {};
     sponsorObj.description = `${sponsorCompany} \u2022 ${sponsorLocation}`;
@@ -198,6 +260,18 @@ class SponsorPage extends Component {
           type={1}
         />
         <View style={styles.separator} />
+        <Entry
+          idx={-1}
+          selected={selectedMap}
+          disabled={false}
+          title={`Visit ${sponsorVisitDescription}`}
+          description={`${sponsorStreetAddress}\n${sponsorLocation}`}
+          isMap
+          latitude={sponsorLatitude}
+          longitude={sponsorLongitude}
+          onEntryClick={this.onEntryClick}
+          onMapClick={this.onMapClick}
+        />
         <View style={styles.entrycontainer}>
           {beans.map((bean, idx) => (
             <Entry
@@ -243,7 +317,7 @@ const styles = StyleSheet.create({
     height: 15
   },
   entrycontainer: {
-    marginBottom: 90
+    marginBottom: 45
   }
 });
 

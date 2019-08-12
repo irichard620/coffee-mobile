@@ -78,37 +78,36 @@ class HomePage extends Component {
           recipeIsSaving: false,
           recipeIsDeleting: false
         };
-      } else {
-        const newSelectedFavorites = [];
-        const newSelectedCustoms = [];
-        const newFavorites = [];
-        const newCustoms = [];
-
-        for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
-          // Push to favorite
-          if (nextRecipes.recipes[i].favorited) {
-            newSelectedFavorites.push(false);
-            newFavorites.push(nextRecipes.recipes[i]);
-          }
-          // Push to all recipes
-          newSelectedCustoms.push(false);
-          newCustoms.push(nextRecipes.recipes[i]);
-        }
-
-        return {
-          modalRecipeId: '',
-          modalRecipeIndex: -1,
-          visibleModal: false,
-          deleteModal: false,
-          selectedFavorites: newSelectedFavorites,
-          favorites: newFavorites,
-          selectedCustoms: newSelectedCustoms,
-          customs: newCustoms,
-          recipesIsFetching: false,
-          recipeIsSaving: false,
-          recipeIsDeleting: false
-        };
       }
+      const newSelectedFavorites = [];
+      const newSelectedCustoms = [];
+      const newFavorites = [];
+      const newCustoms = [];
+
+      for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
+        // Push to favorite
+        if (nextRecipes.recipes[i].favorited) {
+          newSelectedFavorites.push(false);
+          newFavorites.push(nextRecipes.recipes[i]);
+        }
+        // Push to all recipes
+        newSelectedCustoms.push(false);
+        newCustoms.push(nextRecipes.recipes[i]);
+      }
+
+      return {
+        modalRecipeId: '',
+        modalRecipeIndex: -1,
+        visibleModal: false,
+        deleteModal: false,
+        selectedFavorites: newSelectedFavorites,
+        favorites: newFavorites,
+        selectedCustoms: newSelectedCustoms,
+        customs: newCustoms,
+        recipesIsFetching: false,
+        recipeIsSaving: false,
+        recipeIsDeleting: false
+      };
     }
     return null;
   }
@@ -148,13 +147,13 @@ class HomePage extends Component {
       'Do you really want to reset default recipes? This will bring back any you deleted and remove edits.',
       [
         {
-          text: 'OK',
+          text: 'Cancel'
+        },
+        {
+          text: 'Reset',
           onPress: () => {
             getDefaultRecipes(true);
           }
-        },
-        {
-          text: 'Cancel'
         },
       ],
     );

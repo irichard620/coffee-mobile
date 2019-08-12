@@ -17,7 +17,7 @@ export default function Sponsor(props) {
 
   const descriptionTextColor = {
     color: sponsorTextColor
-  }
+  };
 
   return (
     <TouchableWithoutFeedback

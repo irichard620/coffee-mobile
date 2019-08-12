@@ -277,7 +277,11 @@ class BuilderPage extends Component {
   }
 
   onStepClick = (stepId, inList) => {
-    if (!inList) {
+    const { recipeName } = this.state;
+    if (stepId === constants.RECIPE_NAME_ELEM) {
+      // Recipe edit modal with name prepopulated
+      this.setState({ visibleModal: true, modalType: stepId, modalText: recipeName });
+    } else if (!inList) {
       // Pull up modify menu
       this.setState({ visibleModal: true, modalType: stepId });
     } else {
@@ -289,7 +293,17 @@ class BuilderPage extends Component {
   }
 
   onPressEdit = (stepIdx, title) => {
-    this.setState({ visibleModal: true, modalType: title, modalIdx: stepIdx });
+    const { steps } = this.state;
+    if (stepIdx !== -1) {
+      const currentStep = steps[stepIdx];
+      this.setState({
+        visibleModal: true,
+        modalType: title,
+        modalIdx: stepIdx,
+        modalText: stepModel.getModalTextProperty(currentStep),
+        modalSelect: stepModel.getModalSelectProperty(currentStep)
+      });
+    }
   }
 
   onPressDelete = (stepIdx) => {
@@ -463,7 +477,7 @@ class BuilderPage extends Component {
             type={1}
             title="Save"
             width={110}
-            margin={[15, 0, 90, 0]}
+            margin={[15, 0, 45, 0]}
           />
         </View>
         <BuilderModal

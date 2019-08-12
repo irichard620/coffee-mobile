@@ -47,15 +47,16 @@ export function getStepDescription(step) {
     return `Grind ${step.properties.gramsCoffee
     } grams of coffee to a ${step.properties.grindSize} consistency.`;
   } if (step.title === constants.STEP_RINSE_FILTER) {
-    return 'Rinse the filter with some of your hot water, then discard the water. '
-      + 'This washes the filter and remove any paper taste.';
+    return 'Rinse your filter with hot water, then discard. '
+      + 'This prevents any paper taste from getting into your coffee.';
   } if (step.title === constants.STEP_ADD_GROUNDS) {
     return 'Add the ground coffee to the vessel.';
   } if (step.title === constants.STEP_BLOOM_GROUNDS) {
-    return `Pour ${step.properties.gramsWater} grams of water on to `
-      + 'fully saturate your coffee grounds.';
+    return `Pour ${step.properties.gramsWater} grams of water slowly and `
+      + 'evenly around your brew bed to saturate all the coffee grounds.';
   } if (step.title === constants.STEP_POUR_WATER) {
-    return `Add ${step.properties.gramsWater} grams of water to the brew bed.`;
+    return `Pour ${step.properties.gramsWater} grams of water onto the brew bed `
+      + 'in an even circular motion.';
   } if (step.title === constants.STEP_WAIT) {
     return `Wait ${step.properties.seconds} seconds`;
   } if (step.title === constants.STEP_ADD_ICE) {
@@ -89,6 +90,32 @@ export function getStepProperties(modalType, modalText, modalSelect) {
     return { gramsIce: modalText };
   }
   return {};
+}
+
+export function getModalTextProperty(step) {
+  const { title, properties } = step;
+  if (title === constants.STEP_HEAT_WATER) {
+    return properties.waterTemp;
+  } if (title === constants.STEP_GRIND_COFFEE) {
+    return properties.gramsCoffee;
+  } if (title === constants.STEP_BLOOM_GROUNDS) {
+    return properties.gramsWater;
+  } if (title === constants.STEP_POUR_WATER) {
+    return properties.gramsWater;
+  } if (title === constants.STEP_WAIT) {
+    return properties.seconds;
+  } if (title === constants.STEP_ADD_ICE) {
+    return properties.gramsIce;
+  }
+  return '';
+}
+
+export function getModalSelectProperty(step) {
+  const { title, properties } = step;
+  if (title === constants.STEP_GRIND_COFFEE) {
+    return properties.grindSize;
+  }
+  return '';
 }
 
 export function validateStep(modalType, modalText) {

@@ -5288,6 +5288,11 @@ react-native-iap@^3.2.4:
   dependencies:
     dooboolab-welcome "^1.1.0"
 
+react-native-maps@0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.25.0.tgz#81bc51eb50e33811a9e1c345cc48869413ead67d"
+  integrity sha512-PFJuW1pt+HnnnN0m0OGk29RSvICFVkK/DScX6cUk0SuCSN2DAHx0y6y57lZyYXcYqU4J4usNpfxgp/ccjASDiw==
+
 react-native-modal@^11.0.2:
   version "11.2.0"
   resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-11.2.0.tgz#15cec0596a9088772947384fd29a1326692af0a5"
