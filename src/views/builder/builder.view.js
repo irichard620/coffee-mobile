@@ -23,13 +23,12 @@ class BuilderPage extends Component {
     this.state = {
       recipeId: '',
       visibleModal: false,
-      modalId: '',
+      modalIdx: -1,
       modalType: '',
       modalText: '',
       modalSelect: constants.GRIND_MEDIUM,
       recipeName: 'New Recipe',
       favorited: false,
-      vesselId: '',
       brewingVessel: '-',
       filterType: '-',
       orientation: '-',
@@ -55,7 +54,6 @@ class BuilderPage extends Component {
         recipeId: recipe.recipeId,
         recipeName: recipe.recipeName,
         favorited: recipe.favorited,
-        vesselId: recipe.vesselId,
         brewingVessel: recipe.brewingVessel,
         filterType: recipe.filterType,
         orientation: recipe.orientation,
@@ -95,10 +93,10 @@ class BuilderPage extends Component {
   }
 
   onAddClick = () => {
-    const { vesselId } = this.state;
+    const { brewingVessel } = this.state;
 
     // If no vessel, show alert
-    if (vesselId === '') {
+    if (brewingVessel === '' || brewingVessel === '-') {
       Alert.alert(
         'Must select vessel',
         'Must select brewing vessel before creating recipe steps',
@@ -114,10 +112,9 @@ class BuilderPage extends Component {
     this.setState({ visibleModal: true, modalType: constants.NEW_STEP_ELEM });
   }
 
-  changeVessel = (item) => {
+  changeVessel = (vessel) => {
     this.setState({
-      brewingVessel: constants.vesselLabels[item],
-      vesselId: item,
+      brewingVessel: vessel,
       filterType: '-',
       orientation: '-',
       visibleModal: false,
@@ -128,7 +125,7 @@ class BuilderPage extends Component {
 
   onPressItem = (item) => {
     const {
-      steps, selected, vesselId
+      steps, selected, brewingVessel, modalType
     } = this.state;
     // Open modal if necessary or add step to screen
     if (item === constants.STEP_HEAT_WATER || item === constants.STEP_GRIND_COFFEE
@@ -136,13 +133,13 @@ class BuilderPage extends Component {
     || item === constants.STEP_WAIT || item === constants.STEP_ADD_ICE) {
       // These require text inputs - open up modal
       this.setState({ visibleModal: true, modalType: item });
-    } else if (item.includes(constants.VESSEL_ELEM)) {
+    } else if (modalType === constants.VESSEL_ELEM) {
       // If same vessel, return
-      if (vesselId === item) {
+      if (brewingVessel === item) {
         return;
       }
       // If no vessel, update
-      if (vesselId === '' || steps.length === 0) {
+      if (brewingVessel === '' || brewingVessel === '-' || steps.length === 0) {
         this.changeVessel(item);
         return;
       }
@@ -162,25 +159,24 @@ class BuilderPage extends Component {
           },
         ],
       );
-    } else if (item.includes(constants.FILTER_ELEM)) {
+    } else if (modalType === constants.FILTER_ELEM) {
       // Update filter
       this.setState({
-        filterType: constants.filterLabels[item],
+        filterType: item,
         visibleModal: false,
         modalType: ''
       });
-    } else if (item.includes(constants.ORIENTATION_ELEM)) {
+    } else if (modalType === constants.ORIENTATION_ELEM) {
       // Update orientation
       this.setState({
-        orientation: constants.orientationLabels[item],
+        orientation: item,
         visibleModal: false,
         modalType: ''
       });
     } else {
       // Add new step
       const newStep = stepModel.Step({
-        type: item,
-        title: constants.stepLabels[item],
+        title: item,
       });
       this.setState({
         visibleModal: false,
@@ -203,13 +199,13 @@ class BuilderPage extends Component {
       visibleModal: false,
       modalType: '',
       modalText: '',
-      modalId: ''
+      modalIdx: -1
     });
   }
 
-  onModalSave = (stepId) => {
+  onModalSave = () => {
     const {
-      modalType, modalText, modalSelect, steps, selected
+      modalType, modalText, modalIdx, modalSelect, steps, selected
     } = this.state;
 
     // Dismiss keyboard for modal
@@ -241,21 +237,17 @@ class BuilderPage extends Component {
       }
 
       // Check if new or update
-      if (stepId === '') {
-        // Get title label
-        const titleLabel = constants.stepLabels[modalType];
-
+      if (modalIdx === -1) {
         // Add new step and update state
         const newStep = stepModel.Step({
-          type: modalType,
-          title: titleLabel,
+          title: modalType,
           properties: stepModel.getStepProperties(modalType, modalText, modalSelect)
         });
         this.setState({
           visibleModal: false,
           modalType: '',
           modalText: '',
-          modalId: '',
+          modalIdx: -1,
           steps: [
             ...steps,
             newStep
@@ -265,24 +257,21 @@ class BuilderPage extends Component {
             false
           ]
         });
-      } else if (stepId !== '') {
-        // Find index
-        const index = this.findIndexOfId(stepId, steps);
-        if (index !== -1) {
-          this.setState({
-            visibleModal: false,
-            modalType: '',
-            modalText: '',
-            modalId: '',
-            steps: update(steps, {
-              [index]: {
-                properties: {
-                  $set: stepModel.getStepProperties(modalType, modalText, modalSelect)
-                },
-              }
-            }),
-          });
-        }
+      } else if (modalIdx !== -1) {
+        // Replace at index
+        this.setState({
+          visibleModal: false,
+          modalType: '',
+          modalText: '',
+          modalIdx: -1,
+          steps: update(steps, {
+            [modalIdx]: {
+              properties: {
+                $set: stepModel.getStepProperties(modalType, modalText, modalSelect)
+              },
+            }
+          }),
+        });
       }
     }
   }
@@ -299,32 +288,19 @@ class BuilderPage extends Component {
     }
   }
 
-  onPressEdit = (stepId, type) => {
-    this.setState({ visibleModal: true, modalType: type, modalId: stepId });
+  onPressEdit = (stepIdx, title) => {
+    this.setState({ visibleModal: true, modalType: title, modalIdx: stepIdx });
   }
 
-  findIndexOfId = (stepId, array) => {
-    // Find index
-    let index = -1;
-    for (let i = 0; i < array.length; i += 1) {
-      // Check id
-      if (array[i].stepId === stepId) {
-        index = i;
-      }
-    }
-    return index;
-  }
-
-  onPressDelete = (stepId) => {
+  onPressDelete = (stepIdx) => {
     const { steps, selected } = this.state;
     // make a separate copy of the array
     const array = [...steps];
     const newSelected = [...selected];
     // Find index
-    const index = this.findIndexOfId(stepId, array);
-    if (index !== -1) {
-      array.splice(index, 1);
-      newSelected.splice(index, 1);
+    if (stepIdx !== -1) {
+      array.splice(stepIdx, 1);
+      newSelected.splice(stepIdx, 1);
       LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
@@ -341,16 +317,15 @@ class BuilderPage extends Component {
     return arrayCopy;
   }
 
-  onPressUp = (stepId) => {
+  onPressUp = (stepIdx) => {
     const { steps, selected } = this.state;
     // make a separate copy of the array
     let array = [...steps];
     let newSelected = [...selected];
     // Find index
-    const index = this.findIndexOfId(stepId, array);
-    if (index !== -1) {
-      array = this.swapInArray(array, index - 1, index);
-      newSelected = this.swapInArray(newSelected, index - 1, index);
+    if (stepIdx !== -1) {
+      array = this.swapInArray(array, stepIdx - 1, stepIdx);
+      newSelected = this.swapInArray(newSelected, stepIdx - 1, stepIdx);
       LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
@@ -359,16 +334,15 @@ class BuilderPage extends Component {
     }
   }
 
-  onPressDown = (stepId) => {
+  onPressDown = (stepIdx) => {
     const { steps, selected } = this.state;
     // make a separate copy of the array
     let array = [...steps];
     let newSelected = [...selected];
     // Find index
-    const index = this.findIndexOfId(stepId, array);
-    if (index !== -1) {
-      array = this.swapInArray(array, index, index + 1);
-      newSelected = this.swapInArray(newSelected, index, index + 1);
+    if (stepIdx !== -1) {
+      array = this.swapInArray(array, stepIdx, stepIdx + 1);
+      newSelected = this.swapInArray(newSelected, stepIdx, stepIdx + 1);
       LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         steps: array,
@@ -393,13 +367,13 @@ class BuilderPage extends Component {
     // Need to add totalWater, totalCoffee, waterTemp, and grindSize
     for (let i = 0; i < objToUse.steps.length; i += 1) {
       const currentStep = objToUse.steps[i];
-      if (currentStep.type === constants.STEP_GRIND_COFFEE) {
+      if (currentStep.title === constants.STEP_GRIND_COFFEE) {
         objToUse.grindSize = currentStep.properties.grindSize;
         objToUse.totalCoffee = currentStep.properties.gramsCoffee;
-      } else if (currentStep.type === constants.STEP_HEAT_WATER) {
+      } else if (currentStep.title === constants.STEP_HEAT_WATER) {
         objToUse.waterTemp = currentStep.properties.waterTemp;
-      } else if (currentStep.type === constants.STEP_POUR_WATER
-        || currentStep.type === constants.STEP_BLOOM_GROUNDS) {
+      } else if (currentStep.title === constants.STEP_POUR_WATER
+        || currentStep.title === constants.STEP_BLOOM_GROUNDS) {
         objToUse.totalWater = String(Number(currentStep.properties.gramsWater)
         + Number(objToUse.totalWater));
       }
@@ -410,14 +384,15 @@ class BuilderPage extends Component {
 
   render() {
     const {
-      recipeName, brewingVessel, filterType, orientation, modalId, modalType,
-      modalText, modalSelect, steps, vesselId, selected, visibleModal
+      recipeName, brewingVessel, filterType, orientation, modalIdx, modalType,
+      modalText, modalSelect, steps, selected, visibleModal
     } = this.state;
 
     // Check if we should disable certain fields
     const filterDisabled = (brewingVessel === '-');
     let orientationDisabled = false;
-    if (vesselId === '' || filterType === '-' || !(vesselId in constants.orientations)) {
+    if (brewingVessel === '-' || filterType === '-'
+    || !(brewingVessel in constants.orientations)) {
       orientationDisabled = true;
     }
 
@@ -447,7 +422,7 @@ class BuilderPage extends Component {
           <View style={styles.vesselContainer}>
             <Vessel
               disabled={false}
-              vesselId={vesselId}
+              vessel={brewingVessel}
               onStepClick={() => this.onStepClick(constants.VESSEL_ELEM)}
             />
           </View>
@@ -493,11 +468,11 @@ class BuilderPage extends Component {
         </View>
         <BuilderModal
           visibleModal={visibleModal}
-          modalId={modalId}
+          modalIdx={modalIdx}
           modalType={modalType}
           modalText={modalText}
           modalSelect={modalSelect}
-          vessel={vesselId}
+          vessel={brewingVessel}
           onCloseClick={this.onCloseClick}
           onPressItem={this.onPressItem}
           onChangeText={this.onChangeText}

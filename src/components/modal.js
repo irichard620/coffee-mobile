@@ -11,7 +11,7 @@ import PullDown from './pulldown';
 
 export default function CustomModal(props) {
   const {
-    visibleModal, modalId, modalText, textPlaceholder, modalSelect, onCloseClick,
+    visibleModal, modalText, textPlaceholder, modalSelect, onCloseClick,
     onPressItem, onChangeText, onModalSave, onChangePicker, isListModal,
     isSelectInput, options, title, charLimit, pickerValues
   } = props;
@@ -71,7 +71,7 @@ export default function CustomModal(props) {
           {!isListModal && (
             <View style={styles.saveContainer}>
               <Button
-                onButtonClick={() => onModalSave(modalId)}
+                onButtonClick={onModalSave}
                 type={0}
                 title="Save"
                 width={110}

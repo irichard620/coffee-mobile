@@ -6,13 +6,12 @@ import {
 import ListItem from './list-item';
 
 class List extends Component {
-  keyExtractor = item => item.id;
+  keyExtractor = item => item.title;
 
   renderItem = ({ item }) => {
     const { onPressItem } = this.props;
     return (
       <ListItem
-        id={item.id}
         onPressItem={onPressItem}
         title={item.title}
       />

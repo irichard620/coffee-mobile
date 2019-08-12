@@ -13,7 +13,6 @@ export function Recipe(recipeObj) {
 
   // Assign other values
   recipe.recipeName = recipeObj.recipeName;
-  recipe.vesselId = recipeObj.vesselId;
   recipe.brewingVessel = recipeObj.brewingVessel;
   recipe.filterType = recipeObj.filterType;
   recipe.orientation = recipeObj.orientation;
@@ -75,7 +74,7 @@ export function validateRecipe(recipe) {
   // Recipe name
   if (recipe.recipeName === '-' || recipe.recipeName === '') {
     error = 'Recipe name must not be blank.';
-  } else if (recipe.brewingVessel === '-' || recipe.brewingVessel === '' || recipe.vesselId === '') {
+  } else if (recipe.brewingVessel === '-' || recipe.brewingVessel === '') {
     error = 'Recipe must contain valid brewing vessel.';
   } else if (recipe.filterType === '-' || recipe.filterType === '') {
     error = 'Recipe must contain a filter type for selected vessel.';

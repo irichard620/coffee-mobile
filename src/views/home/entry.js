@@ -9,7 +9,7 @@ import * as constants from '../../constants';
 
 export default function Entry(props) {
   const {
-    title, description, vesselId, selected, onEntryClick, onEditClick,
+    title, description, vessel, selected, onEntryClick, onEditClick,
     onGoClick, idx, isSponsor, onDownloadClick, disabled, isBean, onExploreClick,
     isMap, latitude, longitude, onMapClick
   } = props;
@@ -46,13 +46,13 @@ export default function Entry(props) {
       <View style={styles.outline}>
         <View style={styles.topview}>
           <View style={[styles.logoview, logoBackgroundStyle]}>
-            {vesselId === constants.VESSEL_AEROPRESS
+            {vessel === constants.VESSEL_AEROPRESS
               && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
-            {vesselId === constants.VESSEL_CHEMEX
+            {vessel === constants.VESSEL_CHEMEX
               && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
-            {vesselId === constants.VESSEL_FRENCH_PRESS
+            {vessel === constants.VESSEL_FRENCH_PRESS
               && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
-            {vesselId === constants.VESSEL_POUROVER
+            {vessel === constants.VESSEL_POUROVER
               && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
             {isBean
               && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}

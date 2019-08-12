@@ -4,34 +4,29 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Image
 } from 'react-native';
 import {
-  vesselLabels, VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
+  VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
   VESSEL_POUROVER
 } from '../../constants';
 
 export default function Vessel(props) {
-  const { vesselId, onStepClick } = props;
+  const { vessel, onStepClick } = props;
 
   const basePath = '../../assets/mini-vessel-icons/';
-
-  let title = '-';
-  if (vesselId !== '') {
-    title = vesselLabels[vesselId];
-  }
 
   return (
     <TouchableOpacity onPress={onStepClick}>
       <View style={styles.outline}>
         <View style={styles.logoview}>
-          {vesselId === VESSEL_AEROPRESS
+          {vessel === VESSEL_AEROPRESS
             && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
-          {vesselId === VESSEL_CHEMEX
+          {vessel === VESSEL_CHEMEX
             && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
-          {vesselId === VESSEL_FRENCH_PRESS
+          {vessel === VESSEL_FRENCH_PRESS
             && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
-          {vesselId === VESSEL_POUROVER
+          {vessel === VESSEL_POUROVER
             && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
         </View>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{vessel}</Text>
         <Text style={styles.description}>Brewing Vessel</Text>
       </View>
     </TouchableOpacity>

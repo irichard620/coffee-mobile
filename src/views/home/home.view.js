@@ -231,19 +231,16 @@ class HomePage extends Component {
     if (deleteModal) {
       return [
         {
-          id: constants.RECIPE_MENU_CANCEL,
-          title: 'Cancel'
+          title: constants.RECIPE_MENU_CANCEL,
         },
         {
-          id: constants.RECIPE_MENU_DELETE,
-          title: 'Delete'
+          title: constants.RECIPE_MENU_DELETE,
         },
       ];
     }
 
     const options = [{
-      id: constants.RECIPE_MENU_EDIT,
-      title: 'Edit recipe'
+      title: constants.RECIPE_MENU_EDIT,
     }];
 
     let arrToSearch = [];
@@ -256,19 +253,16 @@ class HomePage extends Component {
       const recipe = arrToSearch[modalRecipeIndex];
       if (recipe.favorited) {
         options.push({
-          id: constants.RECIPE_MENU_UNFAVORITE,
-          title: 'Unfavorite recipe'
+          title: constants.RECIPE_MENU_UNFAVORITE,
         });
       } else {
         options.push({
-          id: constants.RECIPE_MENU_FAVORITE,
-          title: 'Favorite recipe'
+          title: constants.RECIPE_MENU_FAVORITE,
         });
       }
     }
     options.push({
-      id: constants.RECIPE_MENU_DELETE,
-      title: 'Delete'
+      title: constants.RECIPE_MENU_DELETE,
     });
     return options;
   }
@@ -340,7 +334,7 @@ class HomePage extends Component {
         key={item.recipeId}
         idx={idx}
         selected={selected}
-        vesselId={item.vesselId}
+        vessel={item.brewingVessel}
         title={item.recipeName}
         description={recipeModel.getRecipeDescription(item)}
         onEntryClick={this.onEntryClick}
