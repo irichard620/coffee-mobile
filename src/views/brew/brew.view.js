@@ -75,7 +75,7 @@ class BrewPage extends Component {
         this.clearTimer(step + 1);
       } else {
         const nextStep = recipe.steps[step + 1];
-        if (nextStep.type === constants.STEP_WAIT) {
+        if (nextStep.title === constants.STEP_WAIT) {
           this.setupTimer(step + 1, nextStep);
         } else {
           this.clearTimer(step + 1);
@@ -105,7 +105,7 @@ class BrewPage extends Component {
 
     if (step > 0) {
       const prevStep = recipe.steps[step - 1];
-      if (prevStep.type === constants.STEP_WAIT) {
+      if (prevStep.title === constants.STEP_WAIT) {
         this.setupTimer(step - 1, prevStep);
       } else {
         this.clearTimer(step - 1);
@@ -194,47 +194,41 @@ class BrewPage extends Component {
     if (deleteModal) {
       return [
         {
-          id: constants.RECIPE_MENU_CANCEL,
-          title: 'Cancel'
+          title: constants.RECIPE_MENU_CANCEL,
         },
         {
-          id: constants.RECIPE_MENU_DELETE,
-          title: 'Delete'
+          title: constants.RECIPE_MENU_DELETE,
         },
       ];
     }
 
     const options = [{
-      id: constants.RECIPE_MENU_EDIT,
-      title: 'Edit recipe'
+      title: constants.RECIPE_MENU_EDIT,
     }];
 
     if (recipe.favorited) {
       options.push({
-        id: constants.RECIPE_MENU_UNFAVORITE,
-        title: 'Unfavorite recipe'
+        title: constants.RECIPE_MENU_UNFAVORITE,
       });
     } else {
       options.push({
-        id: constants.RECIPE_MENU_FAVORITE,
-        title: 'Favorite recipe'
+        title: constants.RECIPE_MENU_FAVORITE,
       });
     }
     options.push({
-      id: constants.RECIPE_MENU_DELETE,
-      title: 'Delete'
+      title: constants.RECIPE_MENU_DELETE,
     });
     return options;
   }
 
-  getVesselIcon = (vesselId) => {
+  getVesselIcon = (vessel) => {
     const baseBrewPath = '../../assets/brew/';
 
-    if (vesselId === constants.VESSEL_AEROPRESS) {
+    if (vessel === constants.VESSEL_AEROPRESS) {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Aero.png`)} />);
-    } if (vesselId === constants.VESSEL_CHEMEX) {
+    } if (vessel === constants.VESSEL_CHEMEX) {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Chemex.png`)} />);
-    } if (vesselId === constants.VESSEL_FRENCH_PRESS) {
+    } if (vessel === constants.VESSEL_FRENCH_PRESS) {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
     }
     return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
@@ -263,32 +257,32 @@ class BrewPage extends Component {
     const baseBrewPath = '../../assets/brew/';
 
     if (step === -1) {
-      return this.getVesselIcon(recipe.vesselId);
+      return this.getVesselIcon(recipe.brewingVessel);
     }
     if (step < recipe.steps.length) {
       // Get step
       const stepObj = recipe.steps[step];
-      if (stepObj.type === constants.STEP_HEAT_WATER) {
+      if (stepObj.title === constants.STEP_HEAT_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
-      } if (stepObj.type === constants.STEP_RINSE_FILTER) {
+      } if (stepObj.title === constants.STEP_RINSE_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
-      } if (stepObj.type === constants.STEP_BLOOM_GROUNDS
-        || stepObj.type === constants.STEP_POUR_WATER) {
+      } if (stepObj.title === constants.STEP_BLOOM_GROUNDS
+        || stepObj.title === constants.STEP_POUR_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
-      } if (stepObj.type === constants.STEP_GRIND_COFFEE
-        || stepObj.type === constants.STEP_ADD_GROUNDS) {
+      } if (stepObj.title === constants.STEP_GRIND_COFFEE
+        || stepObj.title === constants.STEP_ADD_GROUNDS) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}GrindBeans.png`)} />);
-      } if (stepObj.type === constants.STEP_ADD_ICE) {
+      } if (stepObj.title === constants.STEP_ADD_ICE) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}AddIce.png`)} />);
-      } if (stepObj.type === constants.STEP_STIR) {
+      } if (stepObj.title === constants.STEP_STIR) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Stir.png`)} />);
-      } if (stepObj.type === constants.STEP_INSERT_PLUNGER) {
+      } if (stepObj.title === constants.STEP_INSERT_PLUNGER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertPlunger_Aero.png`)} />);
-      } if (stepObj.type === constants.STEP_PUSH_PLUNGER) {
+      } if (stepObj.title === constants.STEP_PUSH_PLUNGER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_Aero.png`)} />);
-      } if (stepObj.type === constants.STEP_PUSH_FILTER) {
+      } if (stepObj.title === constants.STEP_PUSH_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_FP.png`)} />);
-      } if (stepObj.type === constants.STEP_WAIT) {
+      } if (stepObj.title === constants.STEP_WAIT) {
         // Get fill number
         const fill = Math.round((timerRemaining / timerTotal) * 100);
         const { height } = Dimensions.get('window');
@@ -312,7 +306,7 @@ class BrewPage extends Component {
           </AnimatedCircularProgress>
         );
       }
-      return this.getVesselIcon(recipe.vesselId);
+      return this.getVesselIcon(recipe.brewingVessel);
     }
     // End image
     return (<Image style={styles.icon} source={require(`${baseBrewPath}Complete.png`)} />);

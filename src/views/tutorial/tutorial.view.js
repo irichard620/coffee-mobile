@@ -86,7 +86,7 @@ class TutorialPage extends Component {
                   disabled
                   idx={0}
                   selected={entrySelected}
-                  vesselId={constants.VESSEL_AEROPRESS}
+                  vessel={constants.VESSEL_AEROPRESS}
                   title="Intro to the Aeropress"
                   description={recipeDescription}
                 />

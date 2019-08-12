@@ -6,18 +6,18 @@ import {
 import * as constants from '../constants';
 
 export default function ListItem(props) {
-  const { id, title, onPressItem } = props;
+  const { title, onPressItem } = props;
 
   const baseButtonPath = '../assets/buttons/menu/';
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPressItem(id)}>
+    <TouchableOpacity style={styles.container} onPress={() => onPressItem(title)}>
       <View style={styles.textcontainer}>
-        {id === constants.RECIPE_MENU_EDIT && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Edit.png`)} />}
-        {id === constants.RECIPE_MENU_FAVORITE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Favorite.png`)} />}
-        {id === constants.RECIPE_MENU_UNFAVORITE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Unfavorite.png`)} />}
-        {id === constants.RECIPE_MENU_DELETE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Delete.png`)} />}
-        {id === constants.RECIPE_MENU_CANCEL && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Cancel.png`)} />}
+        {title === constants.RECIPE_MENU_EDIT && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Edit.png`)} />}
+        {title === constants.RECIPE_MENU_FAVORITE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Favorite.png`)} />}
+        {title === constants.RECIPE_MENU_UNFAVORITE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Unfavorite.png`)} />}
+        {title === constants.RECIPE_MENU_DELETE && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Delete.png`)} />}
+        {title === constants.RECIPE_MENU_CANCEL && <Image style={styles.icon} source={require(`${baseButtonPath}Menu_Cancel.png`)} />}
         <Text style={styles.listtitle}>{title}</Text>
       </View>
     </TouchableOpacity>

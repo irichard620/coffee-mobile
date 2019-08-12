@@ -12,11 +12,11 @@ class StepList extends Component {
     } = this.props;
 
     // Check if can edit
-    const { type } = step;
+    const { title } = step;
     let canEdit = false;
-    if (type === constants.STEP_HEAT_WATER || type === constants.STEP_GRIND_COFFEE
-    || type === constants.STEP_BLOOM_GROUNDS || type === constants.STEP_POUR_WATER
-    || type === constants.STEP_WAIT) {
+    if (title === constants.STEP_HEAT_WATER || title === constants.STEP_GRIND_COFFEE
+    || title === constants.STEP_BLOOM_GROUNDS || title === constants.STEP_POUR_WATER
+    || title === constants.STEP_WAIT) {
       canEdit = true;
     }
 
@@ -32,19 +32,17 @@ class StepList extends Component {
 
     return (
       <Step
-        key={step.stepId}
-        id={step.stepId}
-        title={step.title}
+        key={idx}
         description={stepModel.getStepShortDescription(step)}
-        type={type}
+        title={title}
         canEdit={canEdit}
         canGoUp={canGoUp}
         canGoDown={canGoDown}
         selected={selected[idx]}
-        onPressEdit={() => onPressEdit(step.stepId, type)}
-        onPressDelete={() => onPressDelete(step.stepId)}
-        onPressUp={() => onPressUp(step.stepId)}
-        onPressDown={() => onPressDown(step.stepId)}
+        onPressEdit={() => onPressEdit(idx, title)}
+        onPressDelete={() => onPressDelete(idx)}
+        onPressUp={() => onPressUp(idx)}
+        onPressDown={() => onPressDown(idx)}
         onStepClick={() => onStepClick(idx, true)}
         margin={[0, 15, 15, 15]}
       />

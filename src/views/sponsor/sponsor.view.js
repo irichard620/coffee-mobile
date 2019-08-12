@@ -216,7 +216,7 @@ class SponsorPage extends Component {
               key={recipe.recipeId}
               idx={idx}
               selected={selectedRecipes[idx]}
-              vesselId={recipe.vesselId}
+              vessel={recipe.brewingVessel}
               title={recipe.recipeName}
               description={recipeModel.getRecipeDescription(recipe)}
               onEntryClick={this.onEntryClick}
