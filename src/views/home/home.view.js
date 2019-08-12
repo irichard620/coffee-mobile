@@ -147,13 +147,13 @@ class HomePage extends Component {
       'Do you really want to reset default recipes? This will bring back any you deleted and remove edits.',
       [
         {
-          text: 'OK',
+          text: 'Cancel'
+        },
+        {
+          text: 'Reset',
           onPress: () => {
             getDefaultRecipes(true);
           }
-        },
-        {
-          text: 'Cancel'
         },
       ],
     );

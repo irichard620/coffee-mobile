@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert, 
+  View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert,
   Dimensions, Platform
 } from 'react-native';
 import { fetchSponsor } from '../../actions/sponsor-actions';
@@ -161,13 +161,13 @@ class SponsorPage extends Component {
       'Do you want to open this in your maps app?',
       [
         {
+          text: 'Cancel'
+        },
+        {
           text: 'Open',
           onPress: () => {
             this.openMaps();
           }
-        },
-        {
-          text: 'Cancel'
         },
       ],
     );
@@ -178,7 +178,7 @@ class SponsorPage extends Component {
     const sponsor = navigation.getParam('sponsor', {});
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
-    let daddr = encodeURIComponent(`${sponsorStreetAddress}, ${sponsorLocation}`);
+    const daddr = encodeURIComponent(`${sponsorStreetAddress}, ${sponsorLocation}`);
 
     let urlToUse = '';
     if (Platform.OS === 'ios') {

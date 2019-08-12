@@ -92,6 +92,32 @@ export function getStepProperties(modalType, modalText, modalSelect) {
   return {};
 }
 
+export function getModalTextProperty(step) {
+  const { title, properties } = step;
+  if (title === constants.STEP_HEAT_WATER) {
+    return properties.waterTemp;
+  } if (title === constants.STEP_GRIND_COFFEE) {
+    return properties.gramsCoffee;
+  } if (title === constants.STEP_BLOOM_GROUNDS) {
+    return properties.gramsWater;
+  } if (title === constants.STEP_POUR_WATER) {
+    return properties.gramsWater;
+  } if (title === constants.STEP_WAIT) {
+    return properties.seconds;
+  } if (title === constants.STEP_ADD_ICE) {
+    return properties.gramsIce;
+  }
+  return '';
+}
+
+export function getModalSelectProperty(step) {
+  const { title, properties } = step;
+  if (title === constants.STEP_GRIND_COFFEE) {
+    return properties.grindSize;
+  }
+  return '';
+}
+
 export function validateStep(modalType, modalText) {
   // First, check it's a number
   const modalNumber = Number(modalText);

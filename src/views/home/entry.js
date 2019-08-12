@@ -106,7 +106,7 @@ export default function Entry(props) {
         </View>
         )}
         {selected && isMap && (
-        <TouchableWithoutFeedback onPress={() => onMapClick()} >
+        <TouchableWithoutFeedback onPress={() => onMapClick()}>
           <View style={styles.mapview}>
             <MapView
               provider={PROVIDER_DEFAULT}
