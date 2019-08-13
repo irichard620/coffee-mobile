@@ -1,4 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import * as RNIap from 'react-native-iap';
+import * as constants from './constants';
 
 export const REQUEST_USER = 'REQUEST_USER';
 function requestUser() {
@@ -62,5 +64,50 @@ export function saveUsername(username) {
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
         dispatch(savedUsername());
       });
+  };
+}
+
+export const FETCHING_IAP = 'FETCHING_IAP';
+function fetchingIAP() {
+  return {
+    type: FETCHING_IAP,
+  };
+}
+
+export const FETCHED_IAP = 'FETCHED_IAP';
+function fetchedIAP(purchases) {
+  let isPremium = false;
+  console.log(purchases);
+  purchases.forEach((purchase) => {
+    switch(purchase.productId) {
+      case constants.DRIPPY_PRO_IOS:
+          isPremium = true;
+    }
+  });
+  return {
+    type: FETCHED_IAP,
+    premium: isPremium,
+    receivedAt: Date.now()
+  };
+}
+
+export const ERROR_IAP = 'ERROR_IAP';
+function errorIAP(err) {
+  return {
+    type: ERROR_IAP,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
+export function fetchIAP() {
+  return function (dispatch) {
+    dispatch(fetchingIAP());
+    return RNIap.getAvailablePurchases(constants.itemSkus)
+      .then((purchases) => {
+        // RNIap.requestPurchase(purchases[0].productId, false);
+        dispatch(fetchedIAP(purchases));
+      })
+      .catch(error => dispatch(errorIAP(error)));
   };
 }

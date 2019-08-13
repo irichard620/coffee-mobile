@@ -18,6 +18,7 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* CoffeeAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* CoffeeAppTests.m */; };
+		800BD0942302041000D035CF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 800BD0932302041000D035CF /* StoreKit.framework */; };
 		807B94D322FB345500BB594A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 807B94D222FB345500BB594A /* GoogleService-Info.plist */; };
 		81BA95BEA6E3D43DA44B5E38 /* libPods-CoffeeApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AD502B1286AEB344AE79BB04 /* libPods-CoffeeApp-tvOS.a */; };
 		C6DDFF5AAB9717B3228FFB08 /* libPods-CoffeeApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9F356B7F7A803326A23F89F /* libPods-CoffeeApp.a */; };
@@ -62,6 +63,7 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C1DC8EA1B8EFDADD936E55 /* Pods-CoffeeAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoffeeAppTests.debug.xcconfig"; path = "Target Support Files/Pods-CoffeeAppTests/Pods-CoffeeAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		722FD519DE3295B084F307B8 /* Pods-CoffeeApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoffeeApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-CoffeeApp-tvOS/Pods-CoffeeApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		800BD0932302041000D035CF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		807B94D222FB345500BB594A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A9F356B7F7A803326A23F89F /* libPods-CoffeeApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoffeeApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD502B1286AEB344AE79BB04 /* libPods-CoffeeApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoffeeApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				800BD0942302041000D035CF /* StoreKit.framework in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				C6DDFF5AAB9717B3228FFB08 /* libPods-CoffeeApp.a in Frameworks */,
 			);
@@ -149,6 +152,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				800BD0932302041000D035CF /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
@@ -314,7 +318,7 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};

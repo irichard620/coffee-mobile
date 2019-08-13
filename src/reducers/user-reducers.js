@@ -4,6 +4,9 @@ import {
   ERROR_USER,
   SAVING_USERNAME,
   SAVED_USERNAME,
+  FETCHING_IAP,
+  FETCHED_IAP,
+  ERROR_IAP,
 } from '../actions/user-actions';
 
 function user(
@@ -12,6 +15,8 @@ function user(
     user: {},
     userIsSaving: false,
     error: '',
+    iapIsFetching: false,
+    premium: false
   },
   action
 ) {
@@ -43,6 +48,23 @@ function user(
         error: '',
         lastUpdated: action.receivedAt
       });
+    case FETCHING_IAP:
+      return Object.assign({}, state, {
+        iapIsFetching: true,
+      });
+    case FETCHED_IAP:
+      return Object.assign({}, state, {
+        iapIsFetching: false,
+        error: '',
+        premium: action.premium,
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_IAP:
+      return Object.assign({}, state, {
+        iapIsFetching: false,
+        error: action.error,
+        lastUpdated: action.receivedAt
+      });
     default:
       return state;
   }
@@ -55,6 +77,9 @@ function userReducer(state = {}, action) {
     case ERROR_USER:
     case SAVED_USERNAME:
     case SAVING_USERNAME:
+    case FETCHED_IAP:
+    case FETCHING_IAP:
+    case ERROR_IAP:
       return Object.assign({}, state, {
         user: user(state.user, action)
       });

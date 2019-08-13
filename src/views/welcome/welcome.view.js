@@ -8,7 +8,7 @@ import {
 import { withNavigationFocus } from 'react-navigation';
 import FastImage from 'react-native-fast-image';
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
-import { saveUsername, fetchUser } from '../../actions/user-actions';
+import { saveUsername, fetchUser, fetchIAP } from '../../actions/user-actions';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import * as constants from '../../constants';
 
@@ -52,7 +52,8 @@ class WelcomePage extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {
-      user, recipes, sponsors, navigation, getDefaultRecipes, getSponsors, isFocused
+      user, recipes, sponsors, navigation, getDefaultRecipes, getSponsors, 
+      isFocused, getIAP
     } = this.props;
     const { step } = prevState;
 
@@ -77,13 +78,8 @@ class WelcomePage extends Component {
             {
               text: 'OK',
               onPress: () => {
-                if (step === 2) {
-                  // Go to tutorial - we were in welcome
-                  navigation.navigate('Tutorial');
-                } else {
-                  // Go to home - means user there
-                  navigation.navigate('Home');
-                }
+                // Skip sponsors if our server fails
+                getIAP();
               }
             },
           ],
@@ -101,13 +97,7 @@ class WelcomePage extends Component {
             {
               text: 'OK',
               onPress: () => {
-                if (step === 2) {
-                  // Go to tutorial - we were in welcome
-                  navigation.navigate('Tutorial');
-                } else {
-                  // Go to home - means user there
-                  navigation.navigate('Home');
-                }
+                getIAP();
               }
             },
           ],
@@ -121,7 +111,30 @@ class WelcomePage extends Component {
           });
         }
         FastImage.preload(preloadList);
-
+        getIAP();
+      }
+    } else if (prevUser && prevUser.iapIsFetching && !user.iapIsFetching) {
+      if (user.error !== '') {
+        // Show alert
+        Alert.alert(
+          'Error occurred',
+          `Could not reach Apple's server. Error: ${user.error}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                if (step === 2) {
+                  // Go to tutorial - we were in welcome
+                  navigation.navigate('Tutorial');
+                } else {
+                  // Go to home - means user there
+                  navigation.navigate('Home');
+                }
+              }
+            },
+          ],
+        );
+      } else {
         if (step === 2) {
           // Go to tutorial - we were in welcome
           navigation.navigate('Tutorial');
@@ -254,6 +267,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getSponsors: fetchSponsors,
   getUser: fetchUser,
+  getIAP: fetchIAP,
   persistUsername: saveUsername,
   getDefaultRecipes: fetchDefaultRecipes
 };
