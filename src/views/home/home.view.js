@@ -134,7 +134,20 @@ class HomePage extends Component {
 
   onAddClick = () => {
     // Pull up add menu
-    const { navigation } = this.props;
+    const { navigation, user } = this.props;
+    if (('premium' in user && !user.premium)) {
+      // Block action
+      Alert.alert(
+        'Premium Only',
+        'Building recipes is a feature for premium users only.',
+        [
+          {
+            text: 'Ok'
+          },
+        ],
+      );
+      return;
+    }
     navigation.navigate('Builder');
   }
 
@@ -285,6 +298,7 @@ class HomePage extends Component {
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
+      // TODO: block action if free user
       // Close and clear modal
       this.setState({
         visibleModal: false,
@@ -415,7 +429,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   sponsors: state.sponsorsReducer.sponsors,
-  recipes: state.recipesReducer.recipes
+  recipes: state.recipesReducer.recipes,
+  user: state.userReducer.user,
 });
 
 const mapDispatchToProps = {

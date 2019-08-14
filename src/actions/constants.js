@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 // API
 export const API_URL = 'https://drippy-api.herokuapp.com';
 

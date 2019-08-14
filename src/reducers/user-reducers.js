@@ -4,9 +4,11 @@ import {
   ERROR_USER,
   SAVING_USERNAME,
   SAVED_USERNAME,
-  FETCHING_IAP,
-  FETCHED_IAP,
-  ERROR_IAP,
+  RESTORING_IAP,
+  RESTORED_IAP,
+  ERROR_RESTORE_IAP,
+  UPGRADING_IAP,
+  UPGRADED_IAP
 } from '../actions/user-actions';
 
 function user(
@@ -15,8 +17,8 @@ function user(
     user: {},
     userIsSaving: false,
     error: '',
-    iapIsFetching: false,
-    premium: false
+    iapIsRestoring: false,
+    iapIsUpgrading: false
   },
   action
 ) {
@@ -48,21 +50,33 @@ function user(
         error: '',
         lastUpdated: action.receivedAt
       });
-    case FETCHING_IAP:
+    case UPGRADING_IAP:
       return Object.assign({}, state, {
-        iapIsFetching: true,
+        iapIsUpgrading: true,
       });
-    case FETCHED_IAP:
+    case UPGRADED_IAP:
       return Object.assign({}, state, {
-        iapIsFetching: false,
+        iapIsUpgrading: false,
         error: '',
-        premium: action.premium,
+        user: action.user,
         lastUpdated: action.receivedAt
       });
-    case ERROR_IAP:
+    case RESTORING_IAP:
       return Object.assign({}, state, {
-        iapIsFetching: false,
+        iapIsRestoring: true,
+      });
+    case RESTORED_IAP:
+      return Object.assign({}, state, {
+        iapIsRestoring: false,
+        error: '',
+        user: action.user,
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_RESTORE_IAP:
+      return Object.assign({}, state, {
+        iapIsRestoring: false,
         error: action.error,
+        user: action.user,
         lastUpdated: action.receivedAt
       });
     default:
@@ -77,9 +91,11 @@ function userReducer(state = {}, action) {
     case ERROR_USER:
     case SAVED_USERNAME:
     case SAVING_USERNAME:
-    case FETCHED_IAP:
-    case FETCHING_IAP:
-    case ERROR_IAP:
+    case RESTORED_IAP:
+    case RESTORING_IAP:
+    case ERROR_RESTORE_IAP:
+    case UPGRADED_IAP:
+    case UPGRADING_IAP:
       return Object.assign({}, state, {
         user: user(state.user, action)
       });

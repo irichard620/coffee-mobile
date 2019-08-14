@@ -155,6 +155,7 @@ class BrewPage extends Component {
     const { recipe, deleteModal } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
+      // TODO: block action if free user
       this.setState({
         visibleModal: false
       });

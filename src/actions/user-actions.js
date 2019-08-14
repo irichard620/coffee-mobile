@@ -61,53 +61,98 @@ export function saveUsername(username) {
       .then((user) => {
         const userDetails = user ? JSON.parse(user) : {};
         userDetails.name = username;
+        userDetails.premium = false; // Initialize premium to false - first time open
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
         dispatch(savedUsername());
       });
   };
 }
 
-export const FETCHING_IAP = 'FETCHING_IAP';
-function fetchingIAP() {
+export const UPGRADING_IAP = 'UPGRADING_IAP';
+function upgradingIAP() {
   return {
-    type: FETCHING_IAP,
+    type: UPGRADING_IAP,
   };
 }
 
-export const FETCHED_IAP = 'FETCHED_IAP';
-function fetchedIAP(purchases) {
-  let isPremium = false;
-  console.log(purchases);
-  purchases.forEach((purchase) => {
-    switch(purchase.productId) {
-      case constants.DRIPPY_PRO_IOS:
-          isPremium = true;
-    }
-  });
+export const UPGRADED_IAP = 'UPGRADED_IAP';
+function upgradedIAP(userDetails) {
   return {
-    type: FETCHED_IAP,
-    premium: isPremium,
+    type: UPGRADED_IAP,
+    user: userDetails,
     receivedAt: Date.now()
   };
 }
 
-export const ERROR_IAP = 'ERROR_IAP';
-function errorIAP(err) {
+export function upgradeIAP() {
+  return function (dispatch) {
+    dispatch(upgradingIAP());
+    return AsyncStorage.getItem('user')
+      .then((user) => {
+        const userDetails = user ? JSON.parse(user) : {};
+        userDetails.premium = true;
+        AsyncStorage.setItem('user', JSON.stringify(userDetails));
+        dispatch(upgradedIAP(userDetails));
+      });
+  };
+}
+
+export const RESTORING_IAP = 'RESTORING_IAP';
+function restoringIAP() {
   return {
-    type: ERROR_IAP,
+    type: RESTORING_IAP,
+  };
+}
+
+export const RESTORED_IAP = 'RESTORED_IAP';
+function restoredIAP(userDetails) {
+  return {
+    type: RESTORED_IAP,
+    user: userDetails,
+    receivedAt: Date.now()
+  };
+}
+
+export const ERROR_RESTORE_IAP = 'ERROR_RESTORE_IAP';
+function errorRestoreIAP(userDetails, err) {
+  return {
+    type: ERROR_RESTORE_IAP,
+    user: userDetails,
     error: err,
     receivedAt: Date.now()
   };
 }
 
-export function fetchIAP() {
+export function restoreIAP() {
   return function (dispatch) {
-    dispatch(fetchingIAP());
-    return RNIap.getAvailablePurchases(constants.itemSkus)
-      .then((purchases) => {
-        // RNIap.requestPurchase(purchases[0].productId, false);
-        dispatch(fetchedIAP(purchases));
-      })
-      .catch(error => dispatch(errorIAP(error)));
+    dispatch(restoringIAP());
+    return AsyncStorage.getItem('user')
+      .then((user) => {
+        const userDetails = user ? JSON.parse(user) : {};
+        RNIap.getAvailablePurchases(constants.itemSkus)
+          .then((purchases) => {
+            // Check if user has premium
+            let isPremium = false;
+            purchases.forEach((purchase) => {
+              switch (purchase.productId) {
+                case constants.DRIPPY_PRO_IOS:
+                  isPremium = true;
+                  break;
+                default:
+                  break;
+              }
+            });
+            // Update user
+            userDetails.premium = isPremium;
+            AsyncStorage.setItem('user', JSON.stringify(userDetails));
+            dispatch(restoredIAP(userDetails));
+          })
+          .catch((error) => {
+            // Assume premium false in error
+            userDetails.premium = false;
+            AsyncStorage.setItem('user', JSON.stringify(userDetails));
+            dispatch(errorRestoreIAP(userDetails, error));
+          });
+      });
   };
 }
