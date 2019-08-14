@@ -5,6 +5,11 @@ export function Step(stepObj) {
 
   // Assign other values
   step.title = stepObj.title;
+  if (!('notes' in stepObj)) {
+    step.notes = '';
+  } else {
+    step.notes = stepObj.notes;
+  }
   step.properties = stepObj.properties;
 
   return step;

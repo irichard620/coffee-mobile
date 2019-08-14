@@ -370,10 +370,16 @@ class BrewPage extends Component {
 
     // Description
     let description = '';
+    let stepNote = '';
     if (step === -1) {
       description = recipeModel.getRecipeDescription(recipe);
     } else if (step < steps.length) {
-      description = stepModel.getStepDescription(steps[step]);
+      const currentStepObj = steps[step];
+      description = stepModel.getStepDescription(currentStepObj);
+      // Optional step notes
+      if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
+        stepNote = currentStepObj.notes;
+      }
     } else {
       description = 'Enjoy your coffee!';
     }
@@ -398,7 +404,12 @@ class BrewPage extends Component {
             index={step}
             activeColor="#1D5E9E"
           />
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>
+            {description}
+            {'\n'}
+            {stepNote !== '' && <Text style={{ fontWeight: 'bold' }}>Note: </Text>}
+            {stepNote}
+          </Text>
           <View style={styles.buttonview}>
             {step !== -1
                 && (
