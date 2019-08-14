@@ -140,6 +140,12 @@ class HomePage extends Component {
     navigation.navigate('Builder');
   }
 
+  onSettingsClick = () => {
+    // Pull up settings menu
+    const { navigation } = this.props;
+    navigation.navigate('Settings');
+  }
+
   onAddHold = () => {
     const { getDefaultRecipes } = this.props;
 
@@ -331,6 +337,8 @@ class HomePage extends Component {
       this.setState({ menuSelected: !menuSelected })
     } else if (type === 1) {
       // TODO: settings page
+      this.setState({ menuSelected: false });
+      this.onSettingsClick();
     } else {
       // New recipe
       this.setState({ menuSelected: false });
