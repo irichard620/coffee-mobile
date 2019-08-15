@@ -1,21 +1,103 @@
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation
+  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert,
+  Keyboard
 } from 'react-native';
 import {
-  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions
+  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions, OPTION_NAME,
+  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, USER_NAME_ELEM
 } from '../../constants';
 import Back from '../../components/back';
 import SettingsCard from './settings-card';
+import BuilderModal from '../builder/builder-modal';
+import {
+  fetchDefaultRecipes, hideDefaultRecipes
+} from '../../actions/recipe-actions';
+import { saveUsername } from '../../actions/user-actions';
 
 class SettingsPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selected: [false, false, false]
+      selected: [false, false, false],
+      visibleModal: false,
+      username: '',
+      modalText: ''
     };
+  }
+
+  componentDidMount() {
+    const { user } = this.props;
+    if (user && Object.keys(user.user).length !== 0 && ('name' in user.user)) {
+      this.setState({
+        username: user.user.name
+      });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { recipes, user } = this.props;
+    const nextRecipes = nextProps.recipes;
+    const nextUser = nextProps.user;
+
+    // Check if restore default worked
+    if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
+      if (nextRecipes.error !== '') {
+        // Show fail alert
+        Alert.alert(
+          'Error occurred',
+          'Could not reach Drippy server. Please try again later.',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      } else {
+        // Show success alert
+        Alert.alert(
+          'Success',
+          'Default recipes were successfully restored.',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
+    } else if (recipes && recipes.recipeIsDeleting && !nextRecipes.recipeIsDeleting) {
+      // Show success alert
+      Alert.alert(
+        'Success',
+        'Default recipes were successfully hidden.',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+    } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
+      // Show success alert
+      Alert.alert(
+        'Success',
+        'Your name was successfully updated.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              this.setState({
+                visibleModal: false,
+                modalText: '',
+                username: nextUser.user.name
+              });
+            }
+          },
+        ],
+      );
+    }
   }
 
   onBackClick = () => {
@@ -33,7 +115,90 @@ class SettingsPage extends Component {
   }
 
   onPressItem = (item) => {
+    const { getDefaultRecipes, deleteDefaultRecipes } = this.props;
+    const { username } = this.state;
 
+    if (item === OPTION_NAME) {
+      // Bring up builder modal with name field prepopulated
+      this.setState({
+        visibleModal: true,
+        modalText: username
+      });
+    } else if (item === OPTION_TEMP_UNITS) {
+      // TODO: how to toggle?
+    } else if (item === OPTION_HIDE_DEFAULT) {
+      // Prompt if they want to hide default recipes
+      Alert.alert(
+        'Are you sure?',
+        'Do you really want to hide default recipes? This will remove them from the homepage and reverse any edits you made on them.',
+        [
+          {
+            text: 'Cancel'
+          },
+          {
+            text: 'Hide',
+            onPress: () => {
+              deleteDefaultRecipes();
+            }
+          },
+        ],
+      );
+    } else if (item === OPTION_RESTORE_DEFAULT) {
+      // Prompt if they want to reset default recipes
+      Alert.alert(
+        'Are you sure?',
+        'Do you really want to restore default recipes? This will bring back any you deleted and remove edits.',
+        [
+          {
+            text: 'Cancel'
+          },
+          {
+            text: 'Restore',
+            onPress: () => {
+              getDefaultRecipes(true);
+            }
+          },
+        ],
+      );
+    }
+  }
+
+  onCloseClick = () => {
+    // Close and clear modal
+    this.setState({
+      visibleModal: false,
+      modalText: '',
+    });
+  }
+
+  onChangeText = (text) => {
+    this.setState({
+      modalText: text
+    });
+  }
+
+  onModalSave = () => {
+    const { persistUsername } = this.props;
+    const { modalText } = this.state;
+
+    // Dismiss keyboard for modal
+    Keyboard.dismiss();
+
+    if (modalText === '') {
+      Alert.alert(
+        'Name Missing',
+        'You must enter a name in the field.',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+      return;
+    }
+
+    // Call redux action to update name
+    persistUsername(modalText);
   }
 
   renderSettingCard = (idx, setting) => {
@@ -54,6 +219,7 @@ class SettingsPage extends Component {
   }
 
   render() {
+    const { visibleModal, modalText } = this.state;
     // Top margin - dynamic
     const { height } = Dimensions.get('window');
     const marginTopStyle = {
@@ -72,6 +238,14 @@ class SettingsPage extends Component {
         {settings.map((setting, idx) => (
           this.renderSettingCard(idx, setting)
         ))}
+        <BuilderModal
+          visibleModal={visibleModal}
+          modalType={USER_NAME_ELEM}
+          modalText={modalText}
+          onCloseClick={this.onCloseClick}
+          onChangeText={this.onChangeText}
+          onModalSave={this.onModalSave}
+        />
       </ScrollView>
     );
   }
@@ -96,4 +270,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SettingsPage;
+const mapStateToProps = state => ({
+  recipes: state.recipesReducer.recipes,
+  user: state.userReducer.user,
+});
+
+const mapDispatchToProps = {
+  getDefaultRecipes: fetchDefaultRecipes,
+  deleteDefaultRecipes: hideDefaultRecipes,
+  persistUsername: saveUsername,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

@@ -8,7 +8,7 @@ import Add from '../../components/add';
 
 export default function MenuButtons(props) {
   const {
-    selected, onFavoritesClick, onCustomClick, onAddClick, onAddHold
+    selected, onFavoritesClick, onCustomClick, onAddClick
   } = props;
 
   // Get button styles
@@ -36,7 +36,6 @@ export default function MenuButtons(props) {
       />
       <Add
         onAddClick={onAddClick}
-        onAddHold={onAddHold}
         type={1}
       />
     </View>

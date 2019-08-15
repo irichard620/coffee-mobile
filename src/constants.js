@@ -63,6 +63,7 @@ export const VESSEL_ELEM = 'vessel';
 export const FILTER_ELEM = 'filter';
 export const ORIENTATION_ELEM = 'orientation';
 export const BEAN_ELEM = 'bean';
+export const USER_NAME_ELEM = 'username';
 
 // recipe menu options
 export const RECIPE_MENU_EDIT = 'Edit recipe';
@@ -84,10 +85,16 @@ export const settingsDescriptions = {
   [SETTINGS_PROFILE]: '',
   [SETTINGS_DEFAULT_RECIPES]: ''
 };
+export const OPTION_GET_DRIPPY_PRO = 'Get Drippy Pro';
+export const OPTION_RESTORE_PURCHASE = 'Restore Purchase';
+export const OPTION_NAME = 'Name';
+export const OPTION_TEMP_UNITS = 'Temperature Units';
+export const OPTION_HIDE_DEFAULT = 'Hide Default Recipes';
+export const OPTION_RESTORE_DEFAULT = 'Restore Default Recipes';
 export const settingsOptions = {
-  [SETTINGS_PRO]: [{ title: 'Get Drippy Pro' }, { title: 'Restore Purchase' }],
-  [SETTINGS_PROFILE]: [{ title: 'Name' }, { title: 'Temperature Units' }],
-  [SETTINGS_DEFAULT_RECIPES]: [{ title: 'Hide Default Recipes' }, { title: 'Restore Default Recipes' }],
+  [SETTINGS_PRO]: [{ title: OPTION_GET_DRIPPY_PRO }, { title: OPTION_RESTORE_PURCHASE }],
+  [SETTINGS_PROFILE]: [{ title: OPTION_NAME }, { title: OPTION_TEMP_UNITS }],
+  [SETTINGS_DEFAULT_RECIPES]: [{ title: OPTION_HIDE_DEFAULT }, { title: OPTION_RESTORE_DEFAULT }],
 };
 
 // Animation

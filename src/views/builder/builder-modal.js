@@ -65,6 +65,8 @@ class BuilderModal extends Component {
       return 'Grams of Ice';
     } if (modalType === constants.RECIPE_NAME_ELEM) {
       return 'Recipe Name';
+    } if (modalType === constants.USER_NAME_ELEM) {
+      return 'Name';
     }
     return '';
   }
@@ -98,6 +100,9 @@ class BuilderModal extends Component {
     } else if (modalType === constants.RECIPE_NAME_ELEM) {
       titleToDisplay = 'Recipe Name';
       charLimit = 30;
+    } else if (modalType === constants.USER_NAME_ELEM) {
+      titleToDisplay = "What's your name?";
+      charLimit = 20;
     } else {
       titleToDisplay = modalType;
     }

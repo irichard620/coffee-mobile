@@ -2,9 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions, Alert
+  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions
 } from 'react-native';
-import { withNavigationFocus } from 'react-navigation';
 import Entry from './entry';
 import FloatingButton from '../../components/floating-button';
 import MenuButtons from './menu-buttons';
@@ -12,7 +11,7 @@ import SponsorCarousel from './sponsor-carousel';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import { brewStartAnalytics } from '../../actions/analytics-actions';
 import {
-  fetchRecipes, fetchDefaultRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
+  fetchRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
 } from '../../actions/recipe-actions';
 import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
@@ -46,7 +45,6 @@ class HomePage extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextRecipes = nextProps.recipes;
-    const isFocused = nextProps.isFocused;
 
     if (nextRecipes && !prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
@@ -63,24 +61,6 @@ class HomePage extends Component {
     } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
     || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
-      if (nextRecipes.error !== '') {
-        if (isFocused) {
-          Alert.alert(
-            'Error occurred',
-            'Could not reset default recipes from server.',
-            [
-              {
-                text: 'OK'
-              },
-            ],
-          );
-        }
-        return {
-          recipesIsFetching: false,
-          recipeIsSaving: false,
-          recipeIsDeleting: false
-        };
-      }
       const newSelectedFavorites = [];
       const newSelectedCustoms = [];
       const newFavorites = [];
@@ -144,27 +124,6 @@ class HomePage extends Component {
     // Pull up settings menu
     const { navigation } = this.props;
     navigation.navigate('Settings');
-  }
-
-  onAddHold = () => {
-    const { getDefaultRecipes } = this.props;
-
-    // Prompt if they want to reset default recipes
-    Alert.alert(
-      'Are you sure?',
-      'Do you really want to reset default recipes? This will bring back any you deleted and remove edits.',
-      [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Reset',
-          onPress: () => {
-            getDefaultRecipes(true);
-          }
-        },
-      ],
-    );
   }
 
   onSponsorClick = (sponsor) => {
@@ -483,10 +442,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getSponsors: fetchSponsors,
   getRecipes: fetchRecipes,
-  getDefaultRecipes: fetchDefaultRecipes,
   favRecipe: favoriteRecipe,
   unfavRecipe: unfavoriteRecipe,
   delRecipe: deleteRecipe
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(HomePage));
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
