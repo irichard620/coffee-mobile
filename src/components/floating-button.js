@@ -1,7 +1,8 @@
 
 import React from 'react';
 import {
-  View, StyleSheet, TouchableOpacity, Image, Text, Dimensions
+  View, StyleSheet, TouchableOpacity, Image, Text, Dimensions,
+  TouchableWithoutFeedback
 } from 'react-native';
 
 export default function FloatingButton(props) {
@@ -13,9 +14,9 @@ export default function FloatingButton(props) {
 
   let transformStyle = {};
   if (transform) {
-      transformStyle = {
-          transform: [{ rotate: '45deg' }]
-      };
+    transformStyle = {
+      transform: [{ rotate: '45deg' }]
+    };
   }
 
   const { width } = Dimensions.get('window');
@@ -24,15 +25,25 @@ export default function FloatingButton(props) {
   };
 
   return (
-    <TouchableOpacity onPress={() => onFloatingClick(type)} disabled={disabled}>
-      <View style={[styles.container, marginLeftContainer]}>
-        {type === 0 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Add_Button.png`)} />}
-        {type === 1 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Add_Button_White.png`)} />}
-        {type === 1 && <Text style={styles.textStyle}>{'Settings'}</Text>}
-        {type === 2 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Add_Button_White.png`)} />}
-        {type === 2 && <Text style={styles.textStyle}>{'New Recipe'}</Text>}
-      </View>
-    </TouchableOpacity>
+    <React.Fragment>
+      {type === 0 && (
+      <TouchableWithoutFeedback onPress={() => onFloatingClick(type)} disabled={disabled}>
+        <View style={[styles.container, marginLeftContainer]}>
+          {type === 0 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Menu_Main.png`)} />}
+        </View>
+      </TouchableWithoutFeedback>
+      )}
+      {type !== 0 && (
+      <TouchableOpacity onPress={() => onFloatingClick(type)} disabled={disabled}>
+        <View style={[styles.container, marginLeftContainer]}>
+          {type === 1 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Menu_Settings.png`)} />}
+          {type === 1 && <Text style={styles.textStyle}>Settings</Text>}
+          {type === 2 && <Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}Menu_NewRecipe.png`)} />}
+          {type === 2 && <Text style={styles.textStyle}>New Recipe</Text>}
+        </View>
+      </TouchableOpacity>
+      )}
+    </React.Fragment>
   );
 }
 
@@ -44,7 +55,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: 62,
-    height: 62
+    height: 62,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
   },
   textStyle: {
     color: '#FFFFFF',

@@ -334,7 +334,7 @@ class HomePage extends Component {
 
     if (type === 0) {
       // Update to menu selected or not selected
-      this.setState({ menuSelected: !menuSelected })
+      this.setState({ menuSelected: !menuSelected });
     } else if (type === 1) {
       // TODO: settings page
       this.setState({ menuSelected: false });
@@ -427,14 +427,18 @@ class HomePage extends Component {
         </ScrollView>
         {menuSelected && <View style={styles.darkBackground} />}
         <View style={styles.floatingButtons}>
-          {menuSelected && <FloatingButton
+          {menuSelected && (
+          <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={2}
-          />}
-          {menuSelected && <FloatingButton
+          />
+          )}
+          {menuSelected && (
+          <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={1}
-          />}
+          />
+          )}
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={0}
@@ -459,7 +463,7 @@ const styles = StyleSheet.create({
   },
   floatingButtons: {
     position: 'absolute',
-    bottom: '10%',
+    bottom: '5.6%',
   },
   darkBackground: {
     position: 'absolute',
@@ -467,7 +471,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#00000060'
+    backgroundColor: '#00000070'
   }
 });
 

@@ -71,6 +71,25 @@ export const RECIPE_MENU_UNFAVORITE = 'Unfavorite recipe';
 export const RECIPE_MENU_DELETE = 'Delete';
 export const RECIPE_MENU_CANCEL = 'Cancel';
 
+// Settings options
+export const SETTINGS_PRO = 'Drippy Pro';
+export const SETTINGS_PROFILE = 'Profile';
+export const SETTINGS_DEFAULT_RECIPES = 'Default Recipes';
+export const settings = [SETTINGS_PROFILE, SETTINGS_DEFAULT_RECIPES];
+export const settingsDescriptions = {
+  [SETTINGS_PRO]: 'Love Drippy? Support our two person team by getting our next cup of coffee!'
+    + ' As a Drippy Pro user, you’ll get unlimited recipe storage and access to the builder,'
+    + ' where you can create and edit recipes to your liking. You’ll have access to all the'
+    + ' special Drippy Pro features we have planned for the future, too. (And that’s a lot, we promise.)',
+  [SETTINGS_PROFILE]: '',
+  [SETTINGS_DEFAULT_RECIPES]: ''
+};
+export const settingsOptions = {
+  [SETTINGS_PRO]: [{ title: 'Get Drippy Pro' }, { title: 'Restore Purchase' }],
+  [SETTINGS_PROFILE]: [{ title: 'Name' }, { title: 'Temperature Units' }],
+  [SETTINGS_DEFAULT_RECIPES]: [{ title: 'Hide Default Recipes' }, { title: 'Restore Default Recipes' }],
+};
+
 // Animation
 export const CustomLayoutSpring = {
   duration: 325,

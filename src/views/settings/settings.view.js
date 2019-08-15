@@ -1,14 +1,56 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, Dimensions
+  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation
 } from 'react-native';
+import {
+  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions
+} from '../../constants';
 import Back from '../../components/back';
+import SettingsCard from './settings-card';
 
 class SettingsPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selected: [false, false, false]
+    };
+  }
+
   onBackClick = () => {
     const { navigation } = this.props;
     navigation.goBack();
+  }
+
+  onCardClick = (idx) => {
+    const { selected } = this.state;
+
+    LayoutAnimation.configureNext(CustomLayoutSpring);
+    this.setState({
+      selected: selected.map((val, i) => (i === idx ? !val : false))
+    });
+  }
+
+  onPressItem = (item) => {
+
+  }
+
+  renderSettingCard = (idx, setting) => {
+    const { selected } = this.state;
+
+    return (
+      <SettingsCard
+        key={idx}
+        idx={idx}
+        type={setting}
+        description={settingsDescriptions[setting]}
+        options={settingsOptions[setting]}
+        selected={selected[idx]}
+        onCardClick={this.onCardClick}
+        onPressItem={this.onPressItem}
+      />
+    );
   }
 
   render() {
@@ -27,6 +69,9 @@ class SettingsPage extends Component {
           />
         </View>
         <Text style={styles.title}>Settings</Text>
+        {settings.map((setting, idx) => (
+          this.renderSettingCard(idx, setting)
+        ))}
       </ScrollView>
     );
   }
