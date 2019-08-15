@@ -2,16 +2,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions, Alert
+  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions
 } from 'react-native';
-import { withNavigationFocus } from 'react-navigation';
 import Entry from './entry';
+import FloatingButton from '../../components/floating-button';
 import MenuButtons from './menu-buttons';
 import SponsorCarousel from './sponsor-carousel';
 import { fetchSponsors } from '../../actions/sponsor-actions';
 import { brewStartAnalytics } from '../../actions/analytics-actions';
 import {
-  fetchRecipes, fetchDefaultRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
+  fetchRecipes, favoriteRecipe, unfavoriteRecipe, deleteRecipe
 } from '../../actions/recipe-actions';
 import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
@@ -33,7 +33,8 @@ class HomePage extends Component {
       sponsorIndex: 0,
       recipesIsFetching: false,
       recipeIsSaving: false,
-      recipeIsDeleting: false
+      recipeIsDeleting: false,
+      menuSelected: false
     };
   }
 
@@ -44,7 +45,6 @@ class HomePage extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextRecipes = nextProps.recipes;
-    const isFocused = nextProps.isFocused;
 
     if (nextRecipes && !prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
@@ -61,24 +61,6 @@ class HomePage extends Component {
     } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
     || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
-      if (nextRecipes.error !== '') {
-        if (isFocused) {
-          Alert.alert(
-            'Error occurred',
-            'Could not reset default recipes from server.',
-            [
-              {
-                text: 'OK'
-              },
-            ],
-          );
-        }
-        return {
-          recipesIsFetching: false,
-          recipeIsSaving: false,
-          recipeIsDeleting: false
-        };
-      }
       const newSelectedFavorites = [];
       const newSelectedCustoms = [];
       const newFavorites = [];
@@ -138,25 +120,10 @@ class HomePage extends Component {
     navigation.navigate('Builder');
   }
 
-  onAddHold = () => {
-    const { getDefaultRecipes } = this.props;
-
-    // Prompt if they want to reset default recipes
-    Alert.alert(
-      'Are you sure?',
-      'Do you really want to reset default recipes? This will bring back any you deleted and remove edits.',
-      [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Reset',
-          onPress: () => {
-            getDefaultRecipes(true);
-          }
-        },
-      ],
-    );
+  onSettingsClick = () => {
+    // Pull up settings menu
+    const { navigation } = this.props;
+    navigation.navigate('Settings');
   }
 
   onSponsorClick = (sponsor) => {
@@ -321,6 +288,24 @@ class HomePage extends Component {
     }
   }
 
+  onFloatingClick = (type) => {
+    const { menuSelected } = this.state;
+
+    if (type === 0) {
+      // Update to menu selected or not selected
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      this.setState({ menuSelected: !menuSelected });
+    } else if (type === 1) {
+      // TODO: settings page
+      this.setState({ menuSelected: false });
+      this.onSettingsClick();
+    } else {
+      // New recipe
+      this.setState({ menuSelected: false });
+      this.onAddClick();
+    }
+  }
+
   renderEntry = (idx, item) => {
     const { tab, selectedFavorites, selectedCustoms } = this.state;
     let selected = false;
@@ -347,7 +332,8 @@ class HomePage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      tab, customs, favorites, visibleModal, deleteModal, sponsorIndex
+      tab, customs, favorites, visibleModal, deleteModal, sponsorIndex,
+      menuSelected
     } = this.state;
 
     let modalTitle = '';
@@ -362,54 +348,89 @@ class HomePage extends Component {
     };
 
     return (
-      <ScrollView style={[styles.container, topPaddingStyle]}>
-        {sponsors && !sponsors.sponsorsIsFetching
-        && sponsors.sponsors.length !== 0 && (
-        <SponsorCarousel
-          onSponsorClick={this.onSponsorClick}
-          sponsors={sponsors}
-          onSnapToItem={this.onSnapToItem}
-          index={sponsorIndex}
-        />
-        )}
-        <MenuButtons
-          onFavoritesClick={this.onFavoritesClick}
-          onCustomClick={this.onCustomClick}
-          onAddClick={this.onAddClick}
-          onAddHold={this.onAddHold}
-          selected={tab}
-        />
+      <View style={styles.outerContainer}>
+        <ScrollView style={[styles.container, topPaddingStyle]}>
+          {sponsors && !sponsors.sponsorsIsFetching
+          && sponsors.sponsors.length !== 0 && (
+          <SponsorCarousel
+            onSponsorClick={this.onSponsorClick}
+            sponsors={sponsors}
+            onSnapToItem={this.onSnapToItem}
+            index={sponsorIndex}
+          />
+          )}
+          <MenuButtons
+            onFavoritesClick={this.onFavoritesClick}
+            onCustomClick={this.onCustomClick}
+            onAddHold={this.onAddHold}
+            selected={tab}
+          />
 
-        <View style={styles.entrycontainer}>
-          {tab === 0 && favorites.map((favorite, idx) => (
-            this.renderEntry(idx, favorite)
-          ))}
-          {tab === 1 && customs.map((custom, idx) => (
-            this.renderEntry(idx, custom)
-          ))}
+          <View style={styles.entrycontainer}>
+            {tab === 0 && favorites.map((favorite, idx) => (
+              this.renderEntry(idx, favorite)
+            ))}
+            {tab === 1 && customs.map((custom, idx) => (
+              this.renderEntry(idx, custom)
+            ))}
+          </View>
+          <CustomModal
+            visibleModal={visibleModal}
+            title={modalTitle}
+            onCloseClick={this.onCloseClick}
+            onPressItem={this.onPressItem}
+            isListModal
+            isSelectInput={false}
+            options={this.getModalOptions()}
+          />
+        </ScrollView>
+        {menuSelected && <View style={styles.darkBackground} />}
+        <View style={styles.floatingButtons}>
+          {menuSelected && (
+          <FloatingButton
+            onFloatingClick={this.onFloatingClick}
+            type={2}
+          />
+          )}
+          {menuSelected && (
+          <FloatingButton
+            onFloatingClick={this.onFloatingClick}
+            type={1}
+          />
+          )}
+          <FloatingButton
+            onFloatingClick={this.onFloatingClick}
+            type={0}
+            transform={menuSelected}
+          />
         </View>
-
-        <CustomModal
-          visibleModal={visibleModal}
-          title={modalTitle}
-          onCloseClick={this.onCloseClick}
-          onPressItem={this.onPressItem}
-          isListModal
-          isSelectInput={false}
-          options={this.getModalOptions()}
-        />
-      </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',
   },
   entrycontainer: {
     marginBottom: 90
+  },
+  floatingButtons: {
+    position: 'absolute',
+    bottom: '5.6%',
+  },
+  darkBackground: {
+    position: 'absolute',
+    bottom: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#00000070'
   }
 });
 
@@ -421,10 +442,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getSponsors: fetchSponsors,
   getRecipes: fetchRecipes,
-  getDefaultRecipes: fetchDefaultRecipes,
   favRecipe: favoriteRecipe,
   unfavRecipe: unfavoriteRecipe,
   delRecipe: deleteRecipe
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(HomePage));
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

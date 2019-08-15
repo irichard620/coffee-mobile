@@ -9,11 +9,14 @@ import {
   ERROR_SAVING_RECIPE,
   DELETING_RECIPE,
   DELETED_RECIPE,
+  HIDING_DEFAULT_RECIPES,
+  HIDED_DEFAULT_RECIPES
 } from '../actions/recipe-actions';
 
 function recipes(
   state = {
     recipesIsFetching: false,
+    recipeIsDeleting: false,
     recipes: [],
     recipeIsSaving: false,
     defaultRecipes: [],
@@ -37,6 +40,17 @@ function recipes(
       return Object.assign({}, state, {
         recipesIsFetching: false,
         error: action.error,
+        lastUpdated: action.receivedAt
+      });
+    case HIDING_DEFAULT_RECIPES:
+      return Object.assign({}, state, {
+        recipeIsDeleting: true,
+      });
+    case HIDED_DEFAULT_RECIPES:
+      return Object.assign({}, state, {
+        recipeIsDeleting: false,
+        recipes: action.recipes,
+        error: '',
         lastUpdated: action.receivedAt
       });
     case REQUEST_RECIPES:
@@ -116,6 +130,8 @@ function recipesReducer(state = {}, action) {
     case ERROR_SAVING_RECIPE:
     case DELETING_RECIPE:
     case DELETED_RECIPE:
+    case HIDED_DEFAULT_RECIPES:
+    case HIDING_DEFAULT_RECIPES:
       return Object.assign({}, state, {
         recipes: recipes(state.recipes, action)
       });

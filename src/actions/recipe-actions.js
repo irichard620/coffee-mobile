@@ -71,6 +71,44 @@ export function fetchDefaultRecipes(reset) {
   };
 }
 
+export const HIDING_DEFAULT_RECIPES = 'HIDING_DEFAULT_RECIPES';
+function hidingDefaultRecipes() {
+  return {
+    type: HIDING_DEFAULT_RECIPES
+  };
+}
+
+export const HIDED_DEFAULT_RECIPES = 'HIDED_DEFAULT_RECIPES';
+function hidedDefaultRecipes(r) {
+  return {
+    type: HIDED_DEFAULT_RECIPES,
+    recipes: r,
+    receivedAt: Date.now()
+  };
+}
+
+export function hideDefaultRecipes() {
+  return function (dispatch) {
+    dispatch(hidingDefaultRecipes());
+    return AsyncStorage.getItem('recipes')
+      .then((recipes) => {
+        const result = [];
+        const r = recipes ? JSON.parse(recipes) : [];
+        for (let i = 0; i < r.length; i += 1) {
+          const recipe = Recipe(r[i]);
+          if (recipe.default) {
+            // Hide
+            r[i].status = 'DELETED';
+          } else {
+            result.push(recipe);
+          }
+        }
+        AsyncStorage.setItem('recipes', JSON.stringify(r));
+        dispatch(hidedDefaultRecipes(result));
+      });
+  };
+}
+
 export const REQUEST_RECIPES = 'REQUEST_RECIPES';
 function requestRecipes() {
   return {

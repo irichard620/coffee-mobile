@@ -6,6 +6,7 @@ import SponsorPage from './src/views/sponsor/sponsor.view';
 import BrewPage from './src/views/brew/brew.view';
 import WelcomePage from './src/views/welcome/welcome.view';
 import TutorialPage from './src/views/tutorial/tutorial.view';
+import SettingsPage from './src/views/settings/settings.view';
 
 const MainStack = createStackNavigator(
   {
@@ -37,6 +38,12 @@ const MainStack = createStackNavigator(
       screen: BuilderPage,
       navigationOptions: {
         gesturesEnabled: false
+      }
+    },
+    Settings: {
+      screen: SettingsPage,
+      navigationOptions: {
+        gesturesEnabled: true
       }
     },
   },

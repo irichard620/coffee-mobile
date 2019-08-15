@@ -26,8 +26,8 @@ export default function Back(props) {
 
 const styles = StyleSheet.create({
   back: {
-    width: 10,
     height: 20,
+    resizeMode: 'contain',
     alignItems: 'center',
     justifyContent: 'center',
   },
