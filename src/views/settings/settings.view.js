@@ -126,6 +126,15 @@ class SettingsPage extends Component {
       });
     } else if (item === OPTION_TEMP_UNITS) {
       // TODO: how to toggle?
+      Alert.alert(
+        'Coming soon',
+        'Ability to toggle temperature units is an upcoming feature',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
     } else if (item === OPTION_HIDE_DEFAULT) {
       // Prompt if they want to hide default recipes
       Alert.alert(

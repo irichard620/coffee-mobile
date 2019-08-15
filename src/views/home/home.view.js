@@ -293,6 +293,7 @@ class HomePage extends Component {
 
     if (type === 0) {
       // Update to menu selected or not selected
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       this.setState({ menuSelected: !menuSelected });
     } else if (type === 1) {
       // TODO: settings page
@@ -361,7 +362,6 @@ class HomePage extends Component {
           <MenuButtons
             onFavoritesClick={this.onFavoritesClick}
             onCustomClick={this.onCustomClick}
-            onAddClick={this.onAddClick}
             onAddHold={this.onAddHold}
             selected={tab}
           />
