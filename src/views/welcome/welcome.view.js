@@ -146,7 +146,7 @@ class WelcomePage extends Component {
       if (name === '') {
         Alert.alert(
           'Name Missing',
-          `You must enter a name in the field.`,
+          'You must enter a name in the field.',
           [
             {
               text: 'OK',

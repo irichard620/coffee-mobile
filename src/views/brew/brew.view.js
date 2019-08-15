@@ -406,8 +406,7 @@ class BrewPage extends Component {
           />
           <Text style={styles.description}>
             {description}
-            {'\n'}
-            {stepNote !== '' && <Text style={{ fontWeight: 'bold' }}>Note: </Text>}
+            {' '}
             {stepNote}
           </Text>
           <View style={styles.buttonview}>
