@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity
+  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
 } from 'react-native';
 
 import Button from '../../components/button';
@@ -54,11 +54,20 @@ class TutorialPage extends Component {
       entrySelected = true;
     }
 
+    // Entry width
+    const { width } = Dimensions.get('window');
+    const showViewWidth = {
+      width: width * 1
+    };
+    const alignCenter = {
+      alignItems: 'center'
+    };
+
     return (
       <View style={styles.container}>
         {step === 1
             && (
-              <View style={styles.showview}>
+              <View style={[styles.showview, showViewWidth, alignCenter]}>
                 <Button
                   type={1}
                   title="Favorites"
@@ -81,7 +90,7 @@ class TutorialPage extends Component {
             )}
         {(step === 2 || step === 3)
             && (
-              <View style={styles.showview}>
+              <View style={[styles.showview, showViewWidth]}>
                 <Entry
                   disabled
                   idx={0}
@@ -112,10 +121,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   showview: {
-    width: '100%',
     position: 'absolute',
     top: '10%',
-    alignItems: 'center'
   },
   textview: {
     width: '90%',
