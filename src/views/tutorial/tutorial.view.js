@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   showview: {
     width: '100%',
     position: 'absolute',
-    top: '14%',
+    top: '10%',
     alignItems: 'center'
   },
   textview: {

@@ -142,6 +142,19 @@ class WelcomePage extends Component {
         step: 1
       });
     } else if (step === 1) {
+      // Validate name
+      if (name === '') {
+        Alert.alert(
+          'Name Missing',
+          `You must enter a name in the field.`,
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+        return;
+      }
       persistUsername(name);
       this.setState({
         step: 2
