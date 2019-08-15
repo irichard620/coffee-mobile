@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions
+  ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
+  Animated, Easing
 } from 'react-native';
 import Entry from './entry';
 import FloatingButton from '../../components/floating-button';
@@ -34,7 +35,8 @@ class HomePage extends Component {
       recipesIsFetching: false,
       recipeIsSaving: false,
       recipeIsDeleting: false,
-      menuSelected: false
+      menuSelected: false,
+      spinValue: new Animated.Value(0)
     };
   }
 
@@ -288,19 +290,39 @@ class HomePage extends Component {
     }
   }
 
+  startRotateAnimation = (endVal, durationVal) => {
+    const { spinValue } = this.state;
+    Animated.timing(
+        spinValue,
+      {
+        toValue: endVal,
+        duration: durationVal,
+        easing: Easing.linear,
+        useNativeDriver: true
+      }
+    ).start();
+  }
+
   onFloatingClick = (type) => {
-    const { menuSelected } = this.state;
+    const { menuSelected, spinValue } = this.state;
 
     if (type === 0) {
       // Update to menu selected or not selected
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      if (!menuSelected) {
+        this.startRotateAnimation(1, 300);
+      } else {
+        this.startRotateAnimation(0, 300);
+      }
       this.setState({ menuSelected: !menuSelected });
     } else if (type === 1) {
-      // TODO: settings page
+      // Settings page
+      this.startRotateAnimation(0, 1);
       this.setState({ menuSelected: false });
       this.onSettingsClick();
     } else {
       // New recipe
+      this.startRotateAnimation(0, 1);
       this.setState({ menuSelected: false });
       this.onAddClick();
     }
@@ -333,7 +355,7 @@ class HomePage extends Component {
     const { sponsors } = this.props;
     const {
       tab, customs, favorites, visibleModal, deleteModal, sponsorIndex,
-      menuSelected
+      menuSelected, spinValue
     } = this.state;
 
     let modalTitle = '';
@@ -346,6 +368,17 @@ class HomePage extends Component {
     const topPaddingStyle = {
       paddingTop: height * 0.07
     };
+
+    // Floating left margin
+    const { width } = Dimensions.get('window');
+    const marginLeftContainer = {
+      left: (width / 2.0) - 31
+    };
+
+    const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '45deg']
+    })
 
     return (
       <View style={styles.outerContainer}>
@@ -385,23 +418,21 @@ class HomePage extends Component {
           />
         </ScrollView>
         {menuSelected && <View style={styles.darkBackground} />}
-        <View style={styles.floatingButtons}>
-          {menuSelected && (
+        <View style={[styles.floatingButtons, marginLeftContainer]}>
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={2}
+            disabled={!menuSelected}
           />
-          )}
-          {menuSelected && (
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={1}
+            disabled={!menuSelected}
           />
-          )}
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={0}
-            transform={menuSelected}
+            spinValue={spin}
           />
         </View>
       </View>
@@ -430,7 +461,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#00000070'
+    opacity: 0.7,
+    backgroundColor: 'black',
   }
 });
 

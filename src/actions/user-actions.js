@@ -45,9 +45,10 @@ function savingUsername() {
 }
 
 export const SAVED_USERNAME = 'SAVED_USERNAME';
-function savedUsername() {
+function savedUsername(userDetails) {
   return {
     type: SAVED_USERNAME,
+    user: userDetails,
     receivedAt: Date.now()
   };
 }
@@ -60,7 +61,7 @@ export function saveUsername(username) {
         const userDetails = user ? JSON.parse(user) : {};
         userDetails.name = username;
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
-        dispatch(savedUsername());
+        dispatch(savedUsername(userDetails));
       });
   };
 }

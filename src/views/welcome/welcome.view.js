@@ -33,7 +33,7 @@ class WelcomePage extends Component {
 
     if (user && userIsFetching && !user.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
-      if (Object.keys(user.user).length === 0 || user.user.name !== '') {
+      if (Object.keys(user.user).length === 0 || user.user.name === '') {
         // Go to welcome page
         LayoutAnimation.configureNext(constants.CustomLayoutSpring);
         return {

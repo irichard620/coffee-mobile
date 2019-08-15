@@ -41,6 +41,7 @@ function user(
       return Object.assign({}, state, {
         userIsSaving: false,
         error: '',
+        user: action.user,
         lastUpdated: action.receivedAt
       });
     default:
