@@ -19,7 +19,7 @@ export function getStepShortDescription(step) {
   if (step.title === constants.STEP_HEAT_WATER) {
     return `Heat water to ${step.properties.waterTemp}\u2109.`;
   } if (step.title === constants.STEP_GRIND_COFFEE) {
-    return `${step.properties.gramsCoffee} grams of coffee ground  ${step.properties.grindSize}`;
+    return `${step.properties.gramsCoffee} grams of coffee ground ${step.properties.grindSize}`;
   } if (step.title === constants.STEP_RINSE_FILTER) {
     return 'Rinse filter with water. Discard water.';
   } if (step.title === constants.STEP_ADD_GROUNDS) {

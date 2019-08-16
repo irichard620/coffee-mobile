@@ -28,9 +28,15 @@ export default function SettingsCard(props) {
     backgroundColor: logoBackgroundColor
   };
 
+  let cardPaddingBottom = {};
+  if (!selected) {
+    cardPaddingBottom = {
+      paddingBottom: 15
+    }
+  }
   return (
     <TouchableWithoutFeedback onPress={() => onCardClick(idx)} disabled={disabled}>
-      <View style={styles.outline}>
+      <View style={[styles.outline, cardPaddingBottom]}>
         <View style={styles.topview}>
           <View style={[styles.logoview, logoBackgroundStyle]}>
             {type === SETTINGS_PRO
@@ -55,7 +61,7 @@ export default function SettingsCard(props) {
             <Text style={styles.description}>{description}</Text>
           </View>
         )}
-        <View style={styles.listSeparator} />
+        {selected && <View style={styles.listSeparator} />}
         {selected && (
           <List
             options={options}

@@ -5,6 +5,7 @@ import {
   View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import KeepAwake from 'react-native-keep-awake';
 import Button from '../../components/button';
 import PullDown from '../../components/pulldown';
 import * as constants from '../../constants';
@@ -439,6 +440,7 @@ class BrewPage extends Component {
           isSelectInput={false}
           options={this.getModalOptions()}
         />
+        <KeepAwake />
       </React.Fragment>
     );
   }
