@@ -15,7 +15,7 @@ import BuilderModal from '../builder/builder-modal';
 import {
   fetchDefaultRecipes, hideDefaultRecipes
 } from '../../actions/recipe-actions';
-import { saveUsername } from '../../actions/user-actions';
+import { saveUsername, updateTemperatureUnits } from '../../actions/user-actions';
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -25,7 +25,8 @@ class SettingsPage extends Component {
       selected: [false, false, false],
       visibleModal: false,
       username: '',
-      modalText: ''
+      modalText: '',
+      useMetric: false
     };
   }
 
@@ -33,7 +34,8 @@ class SettingsPage extends Component {
     const { user } = this.props;
     if (user && Object.keys(user.user).length !== 0 && ('name' in user.user)) {
       this.setState({
-        username: user.user.name
+        username: user.user.name,
+        useMetric: user.user.useMetric
       });
     }
   }
@@ -83,7 +85,7 @@ class SettingsPage extends Component {
       // Show success alert
       Alert.alert(
         'Success',
-        'Your name was successfully updated.',
+        'User settings successfully updated.',
         [
           {
             text: 'OK',
@@ -91,7 +93,8 @@ class SettingsPage extends Component {
               this.setState({
                 visibleModal: false,
                 modalText: '',
-                username: nextUser.user.name
+                username: nextUser.user.name,
+                useMetric: nextUser.user.useMetric
               });
             }
           },
@@ -115,8 +118,8 @@ class SettingsPage extends Component {
   }
 
   onPressItem = (item) => {
-    const { getDefaultRecipes, deleteDefaultRecipes } = this.props;
-    const { username } = this.state;
+    const { getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits } = this.props;
+    const { username, useMetric } = this.state;
 
     if (item === OPTION_NAME) {
       // Bring up builder modal with name field prepopulated
@@ -125,13 +128,23 @@ class SettingsPage extends Component {
         modalText: username
       });
     } else if (item === OPTION_TEMP_UNITS) {
-      // TODO: how to toggle?
+      // Prompt if they want to toggle temp unit
+      let newUnit = 'Celsius';
+      if (useMetric) {
+        newUnit = 'Fahrenheit';
+      }
       Alert.alert(
-        'Coming soon',
-        'Ability to toggle temperature units is an upcoming feature',
+        'Toggle Temperature Units',
+        `Would you like to toggle your temperature unit to ${newUnit}?`,
         [
           {
-            text: 'OK',
+            text: 'Cancel'
+          },
+          {
+            text: 'Toggle',
+            onPress: () => {
+              changeTemperatureUnits(!useMetric);
+            }
           },
         ],
       );
@@ -207,7 +220,7 @@ class SettingsPage extends Component {
     }
 
     // Call redux action to update name
-    persistUsername(modalText);
+    persistUsername(modalText, false);
   }
 
   renderSettingCard = (idx, setting) => {
@@ -288,6 +301,7 @@ const mapDispatchToProps = {
   getDefaultRecipes: fetchDefaultRecipes,
   deleteDefaultRecipes: hideDefaultRecipes,
   persistUsername: saveUsername,
+  changeTemperatureUnits: updateTemperatureUnits
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

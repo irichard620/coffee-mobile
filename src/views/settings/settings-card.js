@@ -32,7 +32,7 @@ export default function SettingsCard(props) {
   if (!selected) {
     cardPaddingBottom = {
       paddingBottom: 15
-    }
+    };
   }
   return (
     <TouchableWithoutFeedback onPress={() => onCardClick(idx)} disabled={disabled}>

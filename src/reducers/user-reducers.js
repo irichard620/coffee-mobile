@@ -2,8 +2,8 @@ import {
   REQUEST_USER,
   RECEIVE_USER,
   ERROR_USER,
-  SAVING_USERNAME,
-  SAVED_USERNAME,
+  SAVING_USER,
+  SAVED_USER,
 } from '../actions/user-actions';
 
 function user(
@@ -33,11 +33,11 @@ function user(
         error: action.error,
         lastUpdated: action.receivedAt
       });
-    case SAVING_USERNAME:
+    case SAVING_USER:
       return Object.assign({}, state, {
         userIsSaving: true,
       });
-    case SAVED_USERNAME:
+    case SAVED_USER:
       return Object.assign({}, state, {
         userIsSaving: false,
         error: '',
@@ -54,8 +54,8 @@ function userReducer(state = {}, action) {
     case RECEIVE_USER:
     case REQUEST_USER:
     case ERROR_USER:
-    case SAVED_USERNAME:
-    case SAVING_USERNAME:
+    case SAVING_USER:
+    case SAVED_USER:
       return Object.assign({}, state, {
         user: user(state.user, action)
       });

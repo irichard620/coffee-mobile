@@ -155,7 +155,7 @@ class WelcomePage extends Component {
         );
         return;
       }
-      persistUsername(name);
+      persistUsername(name, true);
       this.setState({
         step: 2
       });
