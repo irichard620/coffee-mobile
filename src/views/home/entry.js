@@ -144,7 +144,6 @@ export default function Entry(props) {
 const styles = StyleSheet.create({
   outline: {
     borderRadius: 20,
-    width: '90%',
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 15,

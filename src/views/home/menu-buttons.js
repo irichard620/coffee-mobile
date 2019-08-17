@@ -1,14 +1,13 @@
 
 import React from 'react';
 import {
-  View, StyleSheet
+  View, StyleSheet, Dimensions
 } from 'react-native';
 import Button from '../../components/button';
-import Add from '../../components/add';
 
 export default function MenuButtons(props) {
   const {
-    selected, onFavoritesClick, onCustomClick, onAddClick, onAddHold
+    selected, onFavoritesClick, onCustomClick
   } = props;
 
   // Get button styles
@@ -18,26 +17,26 @@ export default function MenuButtons(props) {
     favoritesStyle = 1;
     customStyle = 0;
   }
+
+  // Get button widths
+  const { width } = Dimensions.get('window');
+  const buttonWidth = (width - 45) / 2;
+
   return (
     <View style={styles.outline}>
       <Button
         onButtonClick={onFavoritesClick}
         type={favoritesStyle}
         title="Favorites"
-        width="39%"
-        margin={[0, '5%', 0, 0]}
+        width={buttonWidth}
+        margin={[0, 15, 0, 0]}
       />
       <Button
         onButtonClick={onCustomClick}
         type={customStyle}
         title="All Recipes"
-        width="39%"
-        margin={[0, '5%', 0, 0]}
-      />
-      <Add
-        onAddClick={onAddClick}
-        onAddHold={onAddHold}
-        type={1}
+        width={buttonWidth}
+        margin={[0, 0, 0, 0]}
       />
     </View>
   );

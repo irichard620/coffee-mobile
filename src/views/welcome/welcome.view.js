@@ -136,7 +136,20 @@ class WelcomePage extends Component {
         step: 1
       });
     } else if (step === 1) {
-      persistUsername(name);
+      // Validate name
+      if (name === '') {
+        Alert.alert(
+          'Name Missing',
+          'You must enter a name in the field.',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+        return;
+      }
+      persistUsername(name, true);
       this.setState({
         step: 2
       });
@@ -187,6 +200,7 @@ class WelcomePage extends Component {
             placeholder="First Name"
             placeholderTextColor="#b7b3b3"
             style={styles.textinput}
+            maxLength={20}
           />
           )}
           <View style={styles.buttonview}>

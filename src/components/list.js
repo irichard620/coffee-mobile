@@ -9,11 +9,12 @@ class List extends Component {
   keyExtractor = item => item.title;
 
   renderItem = ({ item }) => {
-    const { onPressItem } = this.props;
+    const { onPressItem, isSettings } = this.props;
     return (
       <ListItem
         onPressItem={onPressItem}
         title={item.title}
+        isSettings={isSettings}
       />
     );
   }

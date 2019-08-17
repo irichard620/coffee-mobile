@@ -230,6 +230,7 @@ class SponsorPage extends Component {
     const sponsorLocation = sponsor.location ? sponsor.location : '';
     const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
     const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
+    const sponsorHasAddress = sponsor.hasAddress ? sponsor.hasAddress : false;
     const sponsorVisitDescription = sponsor.visitDescription ? sponsor.visitDescription : `the ${sponsorCompany}`;
     const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
     const sponsorLatitude = sponsor.latitude ? sponsor.latitude : 37.78825;
@@ -247,6 +248,9 @@ class SponsorPage extends Component {
       marginTop: height * 0.03
     };
 
+    // Temp units
+    const useMetric = navigation.getParam('useMetric', false);
+
     return (
       <ScrollView style={styles.container}>
         <View style={[styles.backcontainer, marginTopStyle]}>
@@ -260,6 +264,7 @@ class SponsorPage extends Component {
           type={1}
         />
         <View style={styles.separator} />
+        {sponsorHasAddress && (
         <Entry
           idx={-1}
           selected={selectedMap}
@@ -272,6 +277,7 @@ class SponsorPage extends Component {
           onEntryClick={this.onEntryClick}
           onMapClick={this.onMapClick}
         />
+        )}
         <View style={styles.entrycontainer}>
           {beans.map((bean, idx) => (
             <Entry
@@ -292,7 +298,7 @@ class SponsorPage extends Component {
               selected={selectedRecipes[idx]}
               vessel={recipe.brewingVessel}
               title={recipe.recipeName}
-              description={recipeModel.getRecipeDescription(recipe)}
+              description={recipeModel.getRecipeDescription(recipe, useMetric)}
               onEntryClick={this.onEntryClick}
               isSponsor
               onDownloadClick={this.onDownloadClick}

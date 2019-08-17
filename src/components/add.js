@@ -6,13 +6,13 @@ import {
 
 export default function Add(props) {
   const {
-    type, onAddClick, onAddHold, disabled
+    type, onAddClick, disabled
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
 
   return (
-    <TouchableOpacity onPress={onAddClick} onLongPress={onAddHold} disabled={disabled}>
+    <TouchableOpacity onPress={onAddClick} disabled={disabled}>
       <View>
         {type === 0 && <Image style={styles.add} source={require(`${baseButtonPath}Add_Button.png`)} />}
         {type === 1 && <Image style={styles.add} source={require(`${baseButtonPath}Add_Button_White.png`)} />}

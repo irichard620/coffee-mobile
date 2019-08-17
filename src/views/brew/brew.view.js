@@ -5,6 +5,7 @@ import {
   View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import KeepAwake from 'react-native-keep-awake';
 import Button from '../../components/button';
 import PullDown from '../../components/pulldown';
 import * as constants from '../../constants';
@@ -314,6 +315,7 @@ class BrewPage extends Component {
   }
 
   render() {
+    const { navigation } = this.props;
     const {
       step, visibleModal, recipe, deleteModal
     } = this.state;
@@ -369,12 +371,21 @@ class BrewPage extends Component {
       title = 'Serve';
     }
 
+    // Temp units
+    const useMetric = navigation.getParam('useMetric', false);
+
     // Description
     let description = '';
+    let stepNote = '';
     if (step === -1) {
-      description = recipeModel.getRecipeDescription(recipe);
+      description = recipeModel.getRecipeDescription(recipe, useMetric);
     } else if (step < steps.length) {
-      description = stepModel.getStepDescription(steps[step]);
+      const currentStepObj = steps[step];
+      description = stepModel.getStepDescription(currentStepObj, useMetric);
+      // Optional step notes
+      if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
+        stepNote = currentStepObj.notes;
+      }
     } else {
       description = 'Enjoy your coffee!';
     }
@@ -399,7 +410,11 @@ class BrewPage extends Component {
             index={step}
             activeColor="#1D5E9E"
           />
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>
+            {description}
+            {' '}
+            {stepNote}
+          </Text>
           <View style={styles.buttonview}>
             {step !== -1
                 && (
@@ -430,6 +445,7 @@ class BrewPage extends Component {
           isSelectInput={false}
           options={this.getModalOptions()}
         />
+        <KeepAwake />
       </React.Fragment>
     );
   }

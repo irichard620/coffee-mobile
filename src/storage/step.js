@@ -1,20 +1,29 @@
 import * as constants from '../constants';
+import { getTempUnit, translateTempToCelsius, translateTempToFahrenheit } from './helper';
 
 export function Step(stepObj) {
   const step = {};
 
   // Assign other values
   step.title = stepObj.title;
+  if (!('notes' in stepObj)) {
+    step.notes = '';
+  } else {
+    step.notes = stepObj.notes;
+  }
   step.properties = stepObj.properties;
 
   return step;
 }
 
-export function getStepShortDescription(step) {
+export function getStepShortDescription(step, useMetric) {
   if (step.title === constants.STEP_HEAT_WATER) {
-    return `Heat water to ${step.properties.waterTemp}\u2109.`;
+    const tempUnit = getTempUnit(useMetric);
+    const tempToUse = useMetric
+      ? translateTempToCelsius(step.properties.waterTemp) : step.properties.waterTemp;
+    return `Heat water to ${tempToUse}${tempUnit}`;
   } if (step.title === constants.STEP_GRIND_COFFEE) {
-    return `${step.properties.gramsCoffee} grams of coffee ground  ${step.properties.grindSize}`;
+    return `${step.properties.gramsCoffee} grams of coffee ground ${step.properties.grindSize}`;
   } if (step.title === constants.STEP_RINSE_FILTER) {
     return 'Rinse filter with water. Discard water.';
   } if (step.title === constants.STEP_ADD_GROUNDS) {
@@ -40,9 +49,12 @@ export function getStepShortDescription(step) {
   return '';
 }
 
-export function getStepDescription(step) {
+export function getStepDescription(step, useMetric) {
   if (step.title === constants.STEP_HEAT_WATER) {
-    return `Heat your water to ${step.properties.waterTemp}\u2109.`;
+    const tempUnit = getTempUnit(useMetric);
+    const tempToUse = useMetric
+      ? translateTempToCelsius(step.properties.waterTemp) : step.properties.waterTemp;
+    return `Heat your water to ${tempToUse}${tempUnit}.`;
   } if (step.title === constants.STEP_GRIND_COFFEE) {
     return `Grind ${step.properties.gramsCoffee
     } grams of coffee to a ${step.properties.grindSize} consistency.`;
@@ -74,10 +86,12 @@ export function getStepDescription(step) {
   return '';
 }
 
-export function getStepProperties(modalType, modalText, modalSelect) {
+export function getStepProperties(modalType, modalText, modalSelect, useMetric) {
   // Get description
   if (modalType === constants.STEP_HEAT_WATER) {
-    return { waterTemp: modalText };
+    const tempToUse = useMetric
+      ? translateTempToFahrenheit(modalText) : modalText;
+    return { waterTemp: tempToUse };
   } if (modalType === constants.STEP_GRIND_COFFEE) {
     return { gramsCoffee: modalText, grindSize: modalSelect };
   } if (modalType === constants.STEP_BLOOM_GROUNDS) {
@@ -92,10 +106,12 @@ export function getStepProperties(modalType, modalText, modalSelect) {
   return {};
 }
 
-export function getModalTextProperty(step) {
+export function getModalTextProperty(step, useMetric) {
   const { title, properties } = step;
   if (title === constants.STEP_HEAT_WATER) {
-    return properties.waterTemp;
+    const tempToUse = useMetric
+      ? translateTempToCelsius(properties.waterTemp) : properties.waterTemp;
+    return tempToUse;
   } if (title === constants.STEP_GRIND_COFFEE) {
     return properties.gramsCoffee;
   } if (title === constants.STEP_BLOOM_GROUNDS) {
@@ -118,7 +134,7 @@ export function getModalSelectProperty(step) {
   return '';
 }
 
-export function validateStep(modalType, modalText) {
+export function validateStep(modalType, modalText, useMetric) {
   // First, check it's a number
   const modalNumber = Number(modalText);
   if (modalText === ''
@@ -134,8 +150,12 @@ export function validateStep(modalType, modalText) {
   }
 
   // Check temp
-  if (modalType === constants.STEP_HEAT_WATER && (x < 0 || x > 212)) {
-    return 'Water temperature must not be above boiling or below 0 degrees.';
+  if (modalType === constants.STEP_HEAT_WATER) {
+    if (useMetric && (x < 0 || x > 100)) {
+      return 'Water temperature must not be above boiling or below 0 degrees.';
+    } if (!useMetric && (x < 0 || x > 212)) {
+      return 'Water temperature must not be above boiling or below 0 degrees.';
+    }
   }
 
   return '';

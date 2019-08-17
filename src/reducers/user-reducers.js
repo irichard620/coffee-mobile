@@ -2,13 +2,13 @@ import {
   REQUEST_USER,
   RECEIVE_USER,
   ERROR_USER,
-  SAVING_USERNAME,
-  SAVED_USERNAME,
   RESTORING_IAP,
   RESTORED_IAP,
   ERROR_RESTORE_IAP,
   UPGRADING_IAP,
-  UPGRADED_IAP
+  UPGRADED_IAP,
+  SAVING_USER,
+  SAVED_USER,
 } from '../actions/user-actions';
 
 function user(
@@ -40,14 +40,15 @@ function user(
         error: action.error,
         lastUpdated: action.receivedAt
       });
-    case SAVING_USERNAME:
+    case SAVING_USER:
       return Object.assign({}, state, {
         userIsSaving: true,
       });
-    case SAVED_USERNAME:
+    case SAVED_USER:
       return Object.assign({}, state, {
         userIsSaving: false,
         error: '',
+        user: action.user,
         lastUpdated: action.receivedAt
       });
     case UPGRADING_IAP:
@@ -89,13 +90,13 @@ function userReducer(state = {}, action) {
     case RECEIVE_USER:
     case REQUEST_USER:
     case ERROR_USER:
-    case SAVED_USERNAME:
-    case SAVING_USERNAME:
     case RESTORED_IAP:
     case RESTORING_IAP:
     case ERROR_RESTORE_IAP:
     case UPGRADED_IAP:
     case UPGRADING_IAP:
+    case SAVING_USER:
+    case SAVED_USER:
       return Object.assign({}, state, {
         user: user(state.user, action)
       });

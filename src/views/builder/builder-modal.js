@@ -50,8 +50,11 @@ class BuilderModal extends Component {
     return arrToUse;
   }
 
-  getTextPlaceholder = (modalType) => {
+  getTextPlaceholder = (modalType, useMetric) => {
     if (modalType === constants.STEP_HEAT_WATER) {
+      if (useMetric) {
+        return 'Degrees Celsius';
+      }
       return 'Degrees Fahrenheit';
     } if (modalType === constants.STEP_GRIND_COFFEE) {
       return 'Grams of Coffee';
@@ -65,6 +68,8 @@ class BuilderModal extends Component {
       return 'Grams of Ice';
     } if (modalType === constants.RECIPE_NAME_ELEM) {
       return 'Recipe Name';
+    } if (modalType === constants.USER_NAME_ELEM) {
+      return 'Name';
     }
     return '';
   }
@@ -72,7 +77,7 @@ class BuilderModal extends Component {
   render() {
     const {
       visibleModal, modalType, modalText, modalSelect, onCloseClick, onPressItem,
-      onChangeText, onModalSave, onChangePicker, vessel
+      onChangeText, onModalSave, onChangePicker, vessel, useMetric
     } = this.props;
 
     // Get content
@@ -98,6 +103,9 @@ class BuilderModal extends Component {
     } else if (modalType === constants.RECIPE_NAME_ELEM) {
       titleToDisplay = 'Recipe Name';
       charLimit = 30;
+    } else if (modalType === constants.USER_NAME_ELEM) {
+      titleToDisplay = "What's your name?";
+      charLimit = 20;
     } else {
       titleToDisplay = modalType;
     }
@@ -107,7 +115,7 @@ class BuilderModal extends Component {
         visibleModal={visibleModal}
         onCloseClick={onCloseClick}
         modalText={modalText}
-        textPlaceholder={this.getTextPlaceholder(modalType)}
+        textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
         modalSelect={modalSelect}
         isListModal={isListModal}
         isSelectInput={isSelectInput}
