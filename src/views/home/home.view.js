@@ -35,18 +35,27 @@ class HomePage extends Component {
       recipesIsFetching: false,
       recipeIsSaving: false,
       recipeIsDeleting: false,
+      userIsSaving: false,
       menuSelected: false,
-      spinValue: new Animated.Value(0)
+      spinValue: new Animated.Value(0),
+      useMetric: false
     };
   }
 
   componentDidMount() {
-    const { getRecipes } = this.props;
+    const { getRecipes, user } = this.props;
     getRecipes();
+    // Get temp preference
+    if (user && Object.keys(user.user).length !== 0 && ('useMetric' in user.user)) {
+      this.setState({
+        useMetric: user.user.useMetric
+      });
+    }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextRecipes = nextProps.recipes;
+    const nextUser = nextProps.user;
 
     if (nextRecipes && !prevState.recipesIsFetching && nextRecipes.recipesIsFetching) {
       return {
@@ -59,6 +68,10 @@ class HomePage extends Component {
     } if (nextRecipes && !prevState.recipeIsDeleting && nextRecipes.recipeIsDeleting) {
       return {
         recipeIsDeleting: true
+      };
+    } if (nextUser && !prevState.userIsSaving && nextUser.userIsSaving) {
+      return {
+        userIsSaving: true
       };
     } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
@@ -92,6 +105,10 @@ class HomePage extends Component {
         recipeIsSaving: false,
         recipeIsDeleting: false
       };
+    } if (nextUser && prevState.userIsSaving && !nextUser.userIsSaving) {
+      return {
+        useMetric: nextUser.user.useMetric
+      };
     }
     return null;
   }
@@ -119,7 +136,10 @@ class HomePage extends Component {
   onAddClick = () => {
     // Pull up add menu
     const { navigation } = this.props;
-    navigation.navigate('Builder');
+    const { useMetric } = this.state;
+    navigation.navigate('Builder', {
+      useMetric
+    });
   }
 
   onSettingsClick = () => {
@@ -131,8 +151,10 @@ class HomePage extends Component {
   onSponsorClick = (sponsor) => {
     // Pull up sponsor page
     const { navigation } = this.props;
+    const { useMetric } = this.state;
     navigation.navigate('Sponsor', {
-      sponsor
+      sponsor,
+      useMetric
     });
   }
 
@@ -174,7 +196,9 @@ class HomePage extends Component {
 
   onGoClick = (idx) => {
     const { navigation } = this.props;
-    const { tab, favorites, customs } = this.state;
+    const {
+      tab, favorites, customs, useMetric
+    } = this.state;
     let recipeToBrew = {};
     if (tab === 0) {
       recipeToBrew = favorites[idx];
@@ -188,7 +212,8 @@ class HomePage extends Component {
 
     // Navigate
     navigation.navigate('Brew', {
-      recipe: recipeToBrew
+      recipe: recipeToBrew,
+      useMetric
     });
   }
 
@@ -250,7 +275,8 @@ class HomePage extends Component {
       navigation, favRecipe, unfavRecipe, delRecipe
     } = this.props;
     const {
-      tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites, customs
+      tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites,
+      customs, useMetric
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
@@ -262,11 +288,13 @@ class HomePage extends Component {
       });
       if (tab === 0) {
         navigation.navigate('Builder', {
-          recipe: favorites[modalRecipeIndex]
+          recipe: favorites[modalRecipeIndex],
+          useMetric
         });
       } else {
         navigation.navigate('Builder', {
-          recipe: customs[modalRecipeIndex]
+          recipe: customs[modalRecipeIndex],
+          useMetric
         });
       }
     } else if (item === constants.RECIPE_MENU_FAVORITE) {
@@ -293,7 +321,7 @@ class HomePage extends Component {
   startRotateAnimation = (endVal, durationVal) => {
     const { spinValue } = this.state;
     Animated.timing(
-        spinValue,
+      spinValue,
       {
         toValue: endVal,
         duration: durationVal,
@@ -304,7 +332,7 @@ class HomePage extends Component {
   }
 
   onFloatingClick = (type) => {
-    const { menuSelected, spinValue } = this.state;
+    const { menuSelected } = this.state;
 
     if (type === 0) {
       // Update to menu selected or not selected
@@ -329,7 +357,9 @@ class HomePage extends Component {
   }
 
   renderEntry = (idx, item) => {
-    const { tab, selectedFavorites, selectedCustoms } = this.state;
+    const {
+      tab, selectedFavorites, selectedCustoms, useMetric
+    } = this.state;
     let selected = false;
     if (tab === 0) {
       selected = selectedFavorites[idx];
@@ -343,7 +373,7 @@ class HomePage extends Component {
         selected={selected}
         vessel={item.brewingVessel}
         title={item.recipeName}
-        description={recipeModel.getRecipeDescription(item)}
+        description={recipeModel.getRecipeDescription(item, useMetric)}
         onEntryClick={this.onEntryClick}
         onEditClick={this.onEditClick}
         onGoClick={this.onGoClick}
@@ -378,7 +408,7 @@ class HomePage extends Component {
     const spin = spinValue.interpolate({
       inputRange: [0, 1],
       outputRange: ['0deg', '45deg']
-    })
+    });
 
     return (
       <View style={styles.outerContainer}>
@@ -468,7 +498,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   sponsors: state.sponsorsReducer.sponsors,
-  recipes: state.recipesReducer.recipes
+  recipes: state.recipesReducer.recipes,
+  user: state.userReducer.user
 });
 
 const mapDispatchToProps = {

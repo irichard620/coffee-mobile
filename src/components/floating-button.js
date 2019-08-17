@@ -11,7 +11,6 @@ export default function FloatingButton(props) {
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
-  console.log(spinValue);
   let transformStyle = {};
   if (type === 0) {
     transformStyle = {

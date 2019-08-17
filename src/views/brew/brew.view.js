@@ -314,6 +314,7 @@ class BrewPage extends Component {
   }
 
   render() {
+    const { navigation } = this.props;
     const {
       step, visibleModal, recipe, deleteModal
     } = this.state;
@@ -369,14 +370,17 @@ class BrewPage extends Component {
       title = 'Serve';
     }
 
+    // Temp units
+    const useMetric = navigation.getParam('useMetric', false);
+
     // Description
     let description = '';
     let stepNote = '';
     if (step === -1) {
-      description = recipeModel.getRecipeDescription(recipe);
+      description = recipeModel.getRecipeDescription(recipe, useMetric);
     } else if (step < steps.length) {
       const currentStepObj = steps[step];
-      description = stepModel.getStepDescription(currentStepObj);
+      description = stepModel.getStepDescription(currentStepObj, useMetric);
       // Optional step notes
       if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
         stepNote = currentStepObj.notes;

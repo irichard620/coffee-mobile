@@ -50,8 +50,11 @@ class BuilderModal extends Component {
     return arrToUse;
   }
 
-  getTextPlaceholder = (modalType) => {
+  getTextPlaceholder = (modalType, useMetric) => {
     if (modalType === constants.STEP_HEAT_WATER) {
+      if (useMetric) {
+        return 'Degrees Celsius';
+      }
       return 'Degrees Fahrenheit';
     } if (modalType === constants.STEP_GRIND_COFFEE) {
       return 'Grams of Coffee';
@@ -74,7 +77,7 @@ class BuilderModal extends Component {
   render() {
     const {
       visibleModal, modalType, modalText, modalSelect, onCloseClick, onPressItem,
-      onChangeText, onModalSave, onChangePicker, vessel
+      onChangeText, onModalSave, onChangePicker, vessel, useMetric
     } = this.props;
 
     // Get content
@@ -112,7 +115,7 @@ class BuilderModal extends Component {
         visibleModal={visibleModal}
         onCloseClick={onCloseClick}
         modalText={modalText}
-        textPlaceholder={this.getTextPlaceholder(modalType)}
+        textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
         modalSelect={modalSelect}
         isListModal={isListModal}
         isSelectInput={isSelectInput}

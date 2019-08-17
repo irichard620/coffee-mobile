@@ -8,7 +8,8 @@ import Step from './step';
 class StepList extends Component {
   renderItem = (step, idx) => {
     const {
-      onPressEdit, onPressDelete, onPressUp, onPressDown, onStepClick, steps, selected
+      onPressEdit, onPressDelete, onPressUp, onPressDown, onStepClick, steps, selected,
+      useMetric
     } = this.props;
 
     // Check if can edit
@@ -33,7 +34,7 @@ class StepList extends Component {
     return (
       <Step
         key={idx}
-        description={stepModel.getStepShortDescription(step)}
+        description={stepModel.getStepShortDescription(step, useMetric)}
         title={title}
         canEdit={canEdit}
         canGoUp={canGoUp}

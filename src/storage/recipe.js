@@ -1,4 +1,5 @@
 import uuidv4 from 'uuid/v4';
+import { getTempUnit, translateTempToCelsius } from './helper';
 
 const camelcaseKeys = require('camelcase-keys');
 
@@ -48,7 +49,7 @@ export function Recipe(recipeObj) {
   return recipe;
 }
 
-export function getRecipeDescription(recipe) {
+export function getRecipeDescription(recipe, useMetric) {
   // Line 1
   let description = '';
   if (recipe.orientation !== '') {
@@ -63,7 +64,9 @@ export function getRecipeDescription(recipe) {
   description += `${recipe.totalCoffee}g coffee, ${recipe.grindSize} grind\n`;
 
   // Line 3
-  description += `${recipe.totalWater}g of water, ${recipe.waterTemp}\u2109`;
+  const tempUnit = getTempUnit(useMetric);
+  const tempToUse = useMetric ? translateTempToCelsius(recipe.waterTemp) : recipe.waterTemp;
+  description += `${recipe.totalWater}g of water, ${tempToUse}${tempUnit}`;
 
   return description;
 }

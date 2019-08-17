@@ -37,13 +37,15 @@ class BuilderPage extends Component {
       grindSize: '',
       waterTemp: '',
       steps: [],
-      selected: []
+      selected: [],
+      useMetric: false
     };
   }
 
   componentDidMount() {
     const { navigation } = this.props;
     const recipe = navigation.getParam('recipe', {});
+    const useMetric = navigation.getParam('useMetric', false);
     if (Object.keys(recipe).length !== 0) {
       // Update params
       const selected = [];
@@ -58,7 +60,12 @@ class BuilderPage extends Component {
         filterType: recipe.filterType,
         orientation: recipe.orientation,
         steps: recipe.steps,
-        selected
+        selected,
+        useMetric
+      });
+    } else {
+      this.setState({
+        useMetric
       });
     }
   }
@@ -205,7 +212,7 @@ class BuilderPage extends Component {
 
   onModalSave = () => {
     const {
-      modalType, modalText, modalIdx, modalSelect, steps, selected
+      modalType, modalText, modalIdx, modalSelect, steps, selected, useMetric
     } = this.state;
 
     // Dismiss keyboard for modal
@@ -221,7 +228,7 @@ class BuilderPage extends Component {
       });
     } else {
       // Validate step
-      const result = stepModel.validateStep(modalType, modalText);
+      const result = stepModel.validateStep(modalType, modalText, useMetric);
       if (result !== '') {
         // Show alert
         Alert.alert(
@@ -241,7 +248,7 @@ class BuilderPage extends Component {
         // Add new step and update state
         const newStep = stepModel.Step({
           title: modalType,
-          properties: stepModel.getStepProperties(modalType, modalText, modalSelect)
+          properties: stepModel.getStepProperties(modalType, modalText, modalSelect, useMetric)
         });
         this.setState({
           visibleModal: false,
@@ -267,7 +274,7 @@ class BuilderPage extends Component {
           steps: update(steps, {
             [modalIdx]: {
               properties: {
-                $set: stepModel.getStepProperties(modalType, modalText, modalSelect)
+                $set: stepModel.getStepProperties(modalType, modalText, modalSelect, useMetric)
               },
             }
           }),
@@ -293,14 +300,14 @@ class BuilderPage extends Component {
   }
 
   onPressEdit = (stepIdx, title) => {
-    const { steps } = this.state;
+    const { steps, useMetric } = this.state;
     if (stepIdx !== -1) {
       const currentStep = steps[stepIdx];
       this.setState({
         visibleModal: true,
         modalType: title,
         modalIdx: stepIdx,
-        modalText: stepModel.getModalTextProperty(currentStep),
+        modalText: stepModel.getModalTextProperty(currentStep, useMetric),
         modalSelect: stepModel.getModalSelectProperty(currentStep)
       });
     }
@@ -399,7 +406,7 @@ class BuilderPage extends Component {
   render() {
     const {
       recipeName, brewingVessel, filterType, orientation, modalIdx, modalType,
-      modalText, modalSelect, steps, selected, visibleModal
+      modalText, modalSelect, steps, selected, visibleModal, useMetric
     } = this.state;
 
     // Check if we should disable certain fields
@@ -466,6 +473,7 @@ class BuilderPage extends Component {
           onStepClick={this.onStepClick}
           steps={steps}
           selected={selected}
+          useMetric={useMetric}
         />
         <View style={styles.addandsave}>
           <Add
@@ -492,6 +500,7 @@ class BuilderPage extends Component {
           onChangeText={this.onChangeText}
           onChangePicker={this.onChangePicker}
           onModalSave={this.onModalSave}
+          useMetric={useMetric}
         />
       </ScrollView>
     );

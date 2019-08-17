@@ -248,6 +248,9 @@ class SponsorPage extends Component {
       marginTop: height * 0.03
     };
 
+    // Temp units
+    const useMetric = navigation.getParam('useMetric', false);
+
     return (
       <ScrollView style={styles.container}>
         <View style={[styles.backcontainer, marginTopStyle]}>
@@ -295,7 +298,7 @@ class SponsorPage extends Component {
               selected={selectedRecipes[idx]}
               vessel={recipe.brewingVessel}
               title={recipe.recipeName}
-              description={recipeModel.getRecipeDescription(recipe)}
+              description={recipeModel.getRecipeDescription(recipe, useMetric)}
               onEntryClick={this.onEntryClick}
               isSponsor
               onDownloadClick={this.onDownloadClick}
