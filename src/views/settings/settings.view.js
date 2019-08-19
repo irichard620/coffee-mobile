@@ -3,11 +3,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert,
-  Keyboard
+  Keyboard, Platform
 } from 'react-native';
+import RNIap, {
+  purchaseErrorListener,
+  purchaseUpdatedListener
+} from 'react-native-iap';
 import {
   settings, settingsOptions, CustomLayoutSpring, settingsDescriptions, OPTION_NAME,
-  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, USER_NAME_ELEM
+  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, USER_NAME_ELEM,
+  OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS, SETTINGS_PRO
 } from '../../constants';
 import Back from '../../components/back';
 import SettingsCard from './settings-card';
@@ -15,9 +20,16 @@ import BuilderModal from '../builder/builder-modal';
 import {
   fetchDefaultRecipes, hideDefaultRecipes
 } from '../../actions/recipe-actions';
-import { saveUsername, updateTemperatureUnits } from '../../actions/user-actions';
+import {
+  saveUsername, updateTemperatureUnits, requestPurchaseIAP, restoreIAP,
+  upgradeIAP
+} from '../../actions/user-actions';
 
 class SettingsPage extends Component {
+  purchaseUpdatePro = null;
+
+  purchaseErrorPro = null;
+
   constructor(props) {
     super(props);
 
@@ -26,16 +38,43 @@ class SettingsPage extends Component {
       visibleModal: false,
       username: '',
       modalText: '',
-      useMetric: false
+      useMetric: false,
+      premium: false
     };
   }
 
   componentDidMount() {
-    const { user } = this.props;
+    const { user, upgradeDrippyPro } = this.props;
+
+    // Purchase updated handler
+    this.purchaseUpdatePro = purchaseUpdatedListener((purchase) => {
+      const receipt = purchase.transactionReceipt;
+      if (receipt) {
+        // Update in our system - wait for callback
+        upgradeDrippyPro(purchase);
+      }
+    });
+
+    // Purchase error handler
+    this.purchaseErrorPro = purchaseErrorListener(() => {
+      // Show alert
+      Alert.alert(
+        'Error purchasing Drippy Pro',
+        'An error occurred purchasing pro version of Drippy.',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+    });
+
+    // Add user details to state
     if (user && Object.keys(user.user).length !== 0 && ('name' in user.user)) {
       this.setState({
         username: user.user.name,
-        useMetric: user.user.useMetric
+        useMetric: user.user.useMetric,
+        premium: user.user.premium
       });
     }
   }
@@ -100,6 +139,55 @@ class SettingsPage extends Component {
           },
         ],
       );
+    } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
+      // Finish transaction
+      if (Platform.OS === 'ios') {
+        RNIap.finishTransactionIOS(nextUser.purchase.transactionId);
+      } else if (Platform.OS === 'android') {
+        RNIap.acknowledgePurchaseAndroid(nextUser.purchase.purchaseToken);
+      }
+      this.setState({
+        premium: nextUser.user.premium
+      });
+    } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
+      // Update user
+      if (!nextUser.user.premium) {
+        Alert.alert(
+          'Could not Restore Drippy Pro',
+          'We were not able to finy any purchases to restore.',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      } else if (nextUser.user.premium) {
+        Alert.alert(
+          'Success',
+          'Drippy Pro successfully restored.',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                this.setState({
+                  premium: true
+                });
+              }
+            },
+          ],
+        );
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.purchaseUpdatePro) {
+      this.purchaseUpdatePro.remove();
+      this.purchaseUpdatePro = null;
+    }
+    if (this.purchaseErrorPro) {
+      this.purchaseErrorPro.remove();
+      this.purchaseErrorPro = null;
     }
   }
 
@@ -118,10 +206,48 @@ class SettingsPage extends Component {
   }
 
   onPressItem = (item) => {
-    const { getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits } = this.props;
+    const {
+      getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, buyDrippyPro,
+      restoreDrippyPro
+    } = this.props;
     const { username, useMetric } = this.state;
 
-    if (item === OPTION_NAME) {
+    if (item === OPTION_GET_DRIPPY_PRO) {
+      // Prompt if they want to purchase
+      Alert.alert(
+        'Buy Drippy Pro',
+        'Would you like to purchase the pro version of Drippy? This will give you '
+        + 'the ability to create and edit recipes, and will unlock unlimited recipe storage.',
+        [
+          {
+            text: 'Cancel'
+          },
+          {
+            text: 'Buy',
+            onPress: () => {
+              buyDrippyPro();
+            }
+          },
+        ],
+      );
+    } else if (item === OPTION_RESTORE_PURCHASE) {
+      // prompt if they want to restore
+      Alert.alert(
+        'Restore Drippy Pro',
+        'Would you like to restore the pro version of Drippy?',
+        [
+          {
+            text: 'Cancel'
+          },
+          {
+            text: 'Restore',
+            onPress: () => {
+              restoreDrippyPro();
+            }
+          },
+        ],
+      );
+    } else if (item === OPTION_NAME) {
       // Bring up builder modal with name field prepopulated
       this.setState({
         visibleModal: true,
@@ -224,15 +350,25 @@ class SettingsPage extends Component {
   }
 
   renderSettingCard = (idx, setting) => {
-    const { selected } = this.state;
+    const { selected, premium } = this.state;
+
+    let descriptionToUse = '';
+    let optionsToUse = [];
+    if (setting === SETTINGS_PRO && premium) {
+      descriptionToUse = settingsDescriptions[SETTINGS_PRO_EXISTS];
+      optionsToUse = settingsOptions[SETTINGS_PRO_EXISTS];
+    } else {
+      descriptionToUse = settingsDescriptions[setting];
+      optionsToUse = settingsOptions[setting];
+    }
 
     return (
       <SettingsCard
         key={idx}
         idx={idx}
         type={setting}
-        description={settingsDescriptions[setting]}
-        options={settingsOptions[setting]}
+        description={descriptionToUse}
+        options={optionsToUse}
         selected={selected[idx]}
         onCardClick={this.onCardClick}
         onPressItem={this.onPressItem}
@@ -301,7 +437,10 @@ const mapDispatchToProps = {
   getDefaultRecipes: fetchDefaultRecipes,
   deleteDefaultRecipes: hideDefaultRecipes,
   persistUsername: saveUsername,
-  changeTemperatureUnits: updateTemperatureUnits
+  changeTemperatureUnits: updateTemperatureUnits,
+  buyDrippyPro: requestPurchaseIAP,
+  restoreDrippyPro: restoreIAP,
+  upgradeDrippyPro: upgradeIAP
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

@@ -34,8 +34,13 @@ export function fetchUser() {
       .then((user) => {
         const userDetails = user ? JSON.parse(user) : {};
         // Add metric variable if needed
-        if (('name' in userDetails) && !('useMetric' in userDetails)) {
-          userDetails.useMetric = false;
+        if (('name' in userDetails)) {
+          if (!('useMetric' in userDetails)) {
+            userDetails.useMetric = false;
+          }
+          if (!('premium' in userDetails)) {
+            userDetails.premium = false;
+          }
           AsyncStorage.setItem('user', JSON.stringify(userDetails));
         }
         dispatch(receiveUser(userDetails));
@@ -98,15 +103,16 @@ function upgradingIAP() {
 }
 
 export const UPGRADED_IAP = 'UPGRADED_IAP';
-function upgradedIAP(userDetails) {
+function upgradedIAP(userDetails, purchasePassed) {
   return {
     type: UPGRADED_IAP,
     user: userDetails,
+    purchase: purchasePassed,
     receivedAt: Date.now()
   };
 }
 
-export function upgradeIAP() {
+export function upgradeIAP(purchase) {
   return function (dispatch) {
     dispatch(upgradingIAP());
     return AsyncStorage.getItem('user')
@@ -114,7 +120,7 @@ export function upgradeIAP() {
         const userDetails = user ? JSON.parse(user) : {};
         userDetails.premium = true;
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
-        dispatch(upgradedIAP(userDetails));
+        dispatch(upgradedIAP(userDetails, purchase));
       });
   };
 }
@@ -175,6 +181,49 @@ export function restoreIAP() {
             AsyncStorage.setItem('user', JSON.stringify(userDetails));
             dispatch(errorRestoreIAP(userDetails, error));
           });
+      });
+  };
+}
+
+export const PURCHASING_IAP = 'PURCHASING_IAP';
+function purchasingIAP() {
+  return {
+    type: PURCHASING_IAP,
+  };
+}
+
+export const PURCHASED_IAP = 'PURCHASED_IAP';
+function purchasedIAP() {
+  return {
+    type: PURCHASED_IAP,
+    receivedAt: Date.now()
+  };
+}
+
+export const ERROR_PURCHASING_IAP = 'ERROR_PURCHASING_IAP';
+function errorPurchasingIAP(err) {
+  return {
+    type: ERROR_PURCHASING_IAP,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
+export function requestPurchaseIAP() {
+  return function (dispatch) {
+    dispatch(purchasingIAP());
+    return RNIap.getProducts(constants.itemSkus)
+      .then(() => {
+        RNIap.requestPurchase(constants.DRIPPY_PRO_IOS, false)
+          .then(() => {
+            dispatch(purchasedIAP());
+          })
+          .catch((error) => {
+            dispatch(errorPurchasingIAP(error));
+          });
+      })
+      .catch((error) => {
+        dispatch(errorPurchasingIAP(error));
       });
   };
 }
