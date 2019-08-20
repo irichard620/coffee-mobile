@@ -54,8 +54,8 @@ class SponsorPage extends Component {
       if (nextSponsors.error !== '') {
         // Show alert
         Alert.alert(
-          'Error occurred',
-          'Could not fetch sponsor beans/recipes from server.',
+          'Error Occurred',
+          'Could not fetch featured beans/recipes from server.',
           [
             {
               text: 'OK'
@@ -68,9 +68,8 @@ class SponsorPage extends Component {
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
       // Tell user it was saved
       Alert.alert(
-        'Recipe saved',
-        `Recipe was successfully downloaded to your device.
-        Go back to home page to use it`,
+        'Recipe Added',
+        'The recipe has been added to your library. Visit your dashboard to start brewing!',
         [
           {
             text: 'OK'
@@ -143,8 +142,8 @@ class SponsorPage extends Component {
       } else {
         // Open error alert
         Alert.alert(
-          'Error occurred',
-          'Could not open url',
+          'Error Occurred',
+          'The URL could not be opened.',
           [
             {
               text: 'OK'
@@ -157,8 +156,8 @@ class SponsorPage extends Component {
 
   onMapClick = () => {
     Alert.alert(
-      'Open in maps',
-      'Do you want to open this in your maps app?',
+      'Open Maps',
+      'Do you want to open this location in maps?',
       [
         {
           text: 'Cancel'
@@ -193,8 +192,8 @@ class SponsorPage extends Component {
       } else {
         // Open error alert
         Alert.alert(
-          'Error occurred',
-          'Could not open address',
+          'Error Occurred',
+          'The address could not be opened.',
           [
             {
               text: 'OK'

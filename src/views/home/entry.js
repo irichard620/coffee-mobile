@@ -22,7 +22,7 @@ export default function Entry(props) {
   if (selected) {
     textviewDynamic.flexDirection = 'column';
     textviewDynamic.flex = 1;
-    titleMargin = 10;
+    titleMargin = 5;
   } else {
     textviewDynamic.justifyContent = 'center';
     textviewDynamic.height = 55;
@@ -188,14 +188,14 @@ const styles = StyleSheet.create({
     lineHeight: 18
   },
   buttonview: {
-    marginTop: 20,
+    marginTop: 15,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   beanbuttonview: {
-    marginTop: 20,
+    marginTop: 15,
     alignItems: 'center'
   },
   rightbuttonview: {

@@ -365,7 +365,8 @@ class BrewPage extends Component {
     if (step === -1) {
       title = recipeName;
     } else if (step < steps.length) {
-      title = steps[step].title;
+      const { currentTitle } = steps[step];
+      title = currentTitle;
     } else {
       title = 'Serve';
     }
