@@ -22,11 +22,14 @@ class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 0,
+      tab: 1,
+      tabMenuSelected: false,
       selectedFavorites: [],
       selectedCustoms: [],
+      selectedFeatured: [],
       favorites: [],
       customs: [],
+      featured: [],
       modalRecipeId: '',
       modalRecipeIndex: -1,
       visibleModal: false,
@@ -78,18 +81,26 @@ class HomePage extends Component {
     || (prevState.recipeIsDeleting && !nextRecipes.recipeIsDeleting))) {
       const newSelectedFavorites = [];
       const newSelectedCustoms = [];
+      const newSelectedFeatured = [];
       const newFavorites = [];
       const newCustoms = [];
+      const newFeatured = [];
 
       for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
+        const nextRecipe = nextRecipes.recipes[i];
         // Push to favorite
-        if (nextRecipes.recipes[i].favorited) {
+        if (nextRecipe.favorited) {
           newSelectedFavorites.push(false);
-          newFavorites.push(nextRecipes.recipes[i]);
+          newFavorites.push(nextRecipe);
+        }
+        // Push to featured
+        if (nextRecipe.sponsorId && nextRecipe.sponsorId !== '') {
+          newSelectedFeatured.push(false);
+          newFeatured.push(nextRecipe);
         }
         // Push to all recipes
         newSelectedCustoms.push(false);
-        newCustoms.push(nextRecipes.recipes[i]);
+        newCustoms.push(nextRecipe);
       }
 
       return {
@@ -101,6 +112,8 @@ class HomePage extends Component {
         favorites: newFavorites,
         selectedCustoms: newSelectedCustoms,
         customs: newCustoms,
+        selectedFeatured: newSelectedFeatured,
+        featured: newFeatured,
         recipesIsFetching: false,
         recipeIsSaving: false,
         recipeIsDeleting: false
@@ -113,22 +126,21 @@ class HomePage extends Component {
     return null;
   }
 
-  onFavoritesClick = () => {
-    // Switch to favorites tab if not there
-    const { tab } = this.state;
-    if (tab !== 0) {
+  switchTab = (index) => {
+    const { tab, tabMenuSelected } = this.state;
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
+    if (!tabMenuSelected) {
       this.setState({
-        tab: 0
+        tabMenuSelected: true
       });
-    }
-  }
-
-  onCustomClick = () => {
-    // Switch to custom tab if not there
-    const { tab } = this.state;
-    if (tab !== 1) {
+    } else if (tab !== index) {
       this.setState({
-        tab: 1
+        tab: index,
+        tabMenuSelected: false
+      });
+    } else {
+      this.setState({
+        tabMenuSelected: false
       });
     }
   }
@@ -164,27 +176,37 @@ class HomePage extends Component {
   }
 
   onEntryClick = (idx) => {
-    const { tab, selectedFavorites, selectedCustoms } = this.state;
+    const {
+      tab, selectedFavorites, selectedCustoms, selectedFeatured
+    } = this.state;
 
     LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     if (tab === 0) {
+      this.setState({
+        selectedCustoms: selectedCustoms.map((val, i) => (i === idx ? !val : false))
+      });
+    } else if (tab === 1) {
       this.setState({
         selectedFavorites: selectedFavorites.map((val, i) => (i === idx ? !val : false))
       });
     } else {
       this.setState({
-        selectedCustoms: selectedCustoms.map((val, i) => (i === idx ? !val : false))
+        selectedFeatured: selectedFeatured.map((val, i) => (i === idx ? !val : false))
       });
     }
   }
 
   onEditClick = (idx) => {
-    const { tab, favorites, customs } = this.state;
+    const {
+      tab, favorites, customs, featured
+    } = this.state;
     let arrToUse = [];
     if (tab === 0) {
+      arrToUse = customs;
+    } else if (tab === 1) {
       arrToUse = favorites;
     } else {
-      arrToUse = customs;
+      arrToUse = featured;
     }
     this.setState({
       visibleModal: true,
@@ -197,13 +219,15 @@ class HomePage extends Component {
   onGoClick = (idx) => {
     const { navigation } = this.props;
     const {
-      tab, favorites, customs, useMetric
+      tab, favorites, customs, featured, useMetric
     } = this.state;
     let recipeToBrew = {};
     if (tab === 0) {
+      recipeToBrew = customs[idx];
+    } else if (tab === 1) {
       recipeToBrew = favorites[idx];
     } else {
-      recipeToBrew = customs[idx];
+      recipeToBrew = featured[idx];
     }
 
     // Analytics
@@ -219,7 +243,7 @@ class HomePage extends Component {
 
   getModalOptions = () => {
     const {
-      tab, favorites, customs, deleteModal, modalRecipeIndex
+      tab, favorites, customs, featured, deleteModal, modalRecipeIndex
     } = this.state;
 
     if (deleteModal) {
@@ -239,9 +263,11 @@ class HomePage extends Component {
 
     let arrToSearch = [];
     if (tab === 0) {
+      arrToSearch = customs;
+    } else if (tab === 1) {
       arrToSearch = favorites;
     } else {
-      arrToSearch = customs;
+      arrToSearch = featured;
     }
     if (modalRecipeIndex !== -1) {
       const recipe = arrToSearch[modalRecipeIndex];
@@ -276,7 +302,7 @@ class HomePage extends Component {
     } = this.props;
     const {
       tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites,
-      customs, useMetric
+      customs, featured, useMetric
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
@@ -288,12 +314,17 @@ class HomePage extends Component {
       });
       if (tab === 0) {
         navigation.navigate('Builder', {
+          recipe: customs[modalRecipeIndex],
+          useMetric
+        });
+      } else if (tab === 1) {
+        navigation.navigate('Builder', {
           recipe: favorites[modalRecipeIndex],
           useMetric
         });
       } else {
         navigation.navigate('Builder', {
-          recipe: customs[modalRecipeIndex],
+          recipe: featured[modalRecipeIndex],
           useMetric
         });
       }
@@ -336,11 +367,11 @@ class HomePage extends Component {
 
     if (type === 0) {
       // Update to menu selected or not selected
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
       if (!menuSelected) {
-        this.startRotateAnimation(1, 300);
+        this.startRotateAnimation(1, 100);
       } else {
-        this.startRotateAnimation(0, 300);
+        this.startRotateAnimation(0, 100);
       }
       this.setState({ menuSelected: !menuSelected });
     } else if (type === 1) {
@@ -358,13 +389,15 @@ class HomePage extends Component {
 
   renderEntry = (idx, item) => {
     const {
-      tab, selectedFavorites, selectedCustoms, useMetric
+      tab, selectedFavorites, selectedCustoms, useMetric, selectedFeatured
     } = this.state;
     let selected = false;
     if (tab === 0) {
+      selected = selectedCustoms[idx];
+    } else if (tab === 1) {
       selected = selectedFavorites[idx];
     } else {
-      selected = selectedCustoms[idx];
+      selected = selectedFeatured[idx];
     }
     return (
       <Entry
@@ -384,8 +417,8 @@ class HomePage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      tab, customs, favorites, visibleModal, deleteModal, sponsorIndex,
-      menuSelected, spinValue
+      tab, customs, favorites, featured, visibleModal, deleteModal, sponsorIndex,
+      menuSelected, spinValue, tabMenuSelected
     } = this.state;
 
     let modalTitle = '';
@@ -423,18 +456,21 @@ class HomePage extends Component {
           />
           )}
           <MenuButtons
-            onFavoritesClick={this.onFavoritesClick}
-            onCustomClick={this.onCustomClick}
+            onItemClick={this.switchTab}
             onAddHold={this.onAddHold}
             selected={tab}
+            menuSelected={tabMenuSelected}
           />
 
           <View style={styles.entrycontainer}>
-            {tab === 0 && favorites.map((favorite, idx) => (
+            {tab === 0 && customs.map((custom, idx) => (
+              this.renderEntry(idx, custom)
+            ))}
+            {tab === 1 && favorites.map((favorite, idx) => (
               this.renderEntry(idx, favorite)
             ))}
-            {tab === 1 && customs.map((custom, idx) => (
-              this.renderEntry(idx, custom)
+            {tab === 2 && featured.map((feature, idx) => (
+              this.renderEntry(idx, feature)
             ))}
           </View>
           <CustomModal

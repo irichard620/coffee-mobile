@@ -111,3 +111,18 @@ export const CustomLayoutSpring = {
     springDamping: 0.6,
   },
 };
+export const CustomLayoutEaseIn = {
+  duration: 200,
+  create: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity,
+  },
+  update: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity
+  },
+  delete: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity,
+  }
+};
