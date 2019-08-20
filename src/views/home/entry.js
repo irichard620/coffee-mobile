@@ -188,14 +188,14 @@ const styles = StyleSheet.create({
     lineHeight: 18
   },
   buttonview: {
-    marginTop: 15,
+    marginTop: 20,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   beanbuttonview: {
-    marginTop: 15,
+    marginTop: 20,
     alignItems: 'center'
   },
   rightbuttonview: {
