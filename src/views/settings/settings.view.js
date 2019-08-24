@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 import {
   settings, settingsOptions, CustomLayoutSpring, settingsDescriptions, OPTION_NAME,
-  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, USER_NAME_ELEM
+  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, OPTION_REPLAY_TUTORIAL,
+  USER_NAME_ELEM
 } from '../../constants';
 import Back from '../../components/back';
 import SettingsCard from './settings-card';
@@ -118,7 +119,9 @@ class SettingsPage extends Component {
   }
 
   onPressItem = (item) => {
-    const { getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits } = this.props;
+    const {
+      getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, navigation
+    } = this.props;
     const { username, useMetric } = this.state;
 
     if (item === OPTION_NAME) {
@@ -148,6 +151,15 @@ class SettingsPage extends Component {
           },
         ],
       );
+    } else if (item === OPTION_REPLAY_TUTORIAL) {
+      // Pull up tutorial, pass in flag
+      navigation.navigate({
+        routeName: 'Tutorial',
+        params: {
+          fromSettings: true,
+        },
+        key: 'fromSettings'
+      });
     } else if (item === OPTION_HIDE_DEFAULT) {
       // Prompt if they want to hide default recipes
       Alert.alert(

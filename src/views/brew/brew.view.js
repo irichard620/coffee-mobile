@@ -361,14 +361,14 @@ class BrewPage extends Component {
     }
 
     // Title
-    let title = '';
+    let titleToUse = '';
     if (step === -1) {
-      title = recipeName;
+      titleToUse = recipeName;
     } else if (step < steps.length) {
-      const { currentTitle } = steps[step];
-      title = currentTitle;
+      const { title } = steps[step];
+      titleToUse = title;
     } else {
-      title = 'Serve';
+      titleToUse = 'Serve';
     }
 
     // Temp units
@@ -401,7 +401,7 @@ class BrewPage extends Component {
         <View style={[styles.backdrop, backdropTop]} />
         <View style={[styles.container, brewTopMargin]}>
           <PullDown />
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{titleToUse}</Text>
           <View style={[styles.iconview, iconViewSize]}>
             {this.getIcon(recipe)}
           </View>
