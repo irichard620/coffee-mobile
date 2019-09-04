@@ -1,69 +1,80 @@
 
 import React from 'react';
 import {
-  View, StyleSheet, Text, TouchableOpacity
+  View, StyleSheet, Text, TouchableWithoutFeedback
 } from 'react-native';
 
 export default function MenuButtons(props) {
   const {
-    selected, menuSelected, onItemClick
+    selected, onItemClick
   } = props;
 
-  let renderOrder = [selected];
-  if (menuSelected) {
-    if (selected === 0) {
-      renderOrder = [0, 1, 2];
-    } else if (selected === 1) {
-      renderOrder = [1, 0, 2];
-    } else {
-      renderOrder = [2, 0, 1];
-    }
-  }
+  const renderOrder = [1, 0, 2];
 
   return (
     <View style={styles.outline}>
-      {renderOrder.map((item, idx) => (
-        <TouchableOpacity key={item} style={styles.touchable} onPress={() => onItemClick(item)}>
-          {(idx === 1 || idx === 2) && <View style={styles.separator} />}
-          <View style={styles.textOutline}>
-            <Text style={styles.text}>
-              {item === 0 && 'All Recipes'}
-              {item === 1 && 'Favorites'}
-              {item === 2 && 'Featured'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ))}
+      {renderOrder.map((item) => {
+        // style of button
+        let titleStyle = {
+          color: '#B1B1B1'
+        };
+        let buttonStyle = {
+          backgroundColor: '#F4F4F4',
+          marginRight: 0
+        };
+        if (selected === item) {
+          titleStyle = {
+            color: '#399DFF'
+          };
+          buttonStyle = {
+            backgroundColor: '#DAE8F5'
+          };
+        }
+
+        // Add margin
+        if (item !== 2) {
+          buttonStyle.marginRight = 5;
+        }
+
+        // Title of button
+        let title = '';
+        if (item === 1) {
+          title = 'Favorites';
+        } else if (item === 0) {
+          title = 'All Recipes';
+        } else {
+          title = 'Featured';
+        }
+        return (
+          <TouchableWithoutFeedback
+            onPress={() => onItemClick(item)}
+          >
+            <View style={[styles.buttonOutline, buttonStyle]}>
+              <Text style={[styles.title, titleStyle]}>{title}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   outline: {
-    marginBottom: 20,
+    marginBottom: 15,
     alignSelf: 'center',
-    borderRadius: 20,
-    width: 125,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-  },
-  textOutline: {
-    height: 40,
     alignItems: 'center',
-    justifyContent: 'center'
+    flexDirection: 'row'
   },
-  text: {
+  buttonOutline: {
+    borderRadius: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  title: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1D5E9E'
+    fontWeight: '500',
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#E3E3E3',
-    marginLeft: 10,
-    marginRight: 10
-  }
 });

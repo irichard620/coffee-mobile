@@ -127,20 +127,11 @@ class HomePage extends Component {
   }
 
   switchTab = (index) => {
-    const { tab, tabMenuSelected } = this.state;
-    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
-    if (!tabMenuSelected) {
-      this.setState({
-        tabMenuSelected: true
-      });
-    } else if (tab !== index) {
+    const { tab } = this.state;
+    if (tab !== index) {
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         tab: index,
-        tabMenuSelected: false
-      });
-    } else {
-      this.setState({
-        tabMenuSelected: false
       });
     }
   }
@@ -171,7 +162,6 @@ class HomePage extends Component {
   }
 
   onSnapToItem = (idx) => {
-    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     this.setState({ sponsorIndex: idx });
   }
 
@@ -427,13 +417,12 @@ class HomePage extends Component {
     }
 
     // Top margin
-    const { height } = Dimensions.get('window');
+    const { width, height } = Dimensions.get('window');
     const topPaddingStyle = {
       paddingTop: height * 0.07
     };
 
     // Floating left margin
-    const { width } = Dimensions.get('window');
     const marginLeftContainer = {
       left: (width / 2.0) - 31
     };
@@ -442,6 +431,11 @@ class HomePage extends Component {
       inputRange: [0, 1],
       outputRange: ['0deg', '45deg']
     });
+
+    // Bottom dynamic
+    const entryContainerBottom = {
+      marginBottom: height * 0.2
+    };
 
     return (
       <View style={styles.outerContainer}>
@@ -462,7 +456,7 @@ class HomePage extends Component {
             menuSelected={tabMenuSelected}
           />
 
-          <View style={styles.entrycontainer}>
+          <View style={entryContainerBottom}>
             {tab === 0 && customs.map((custom, idx) => (
               this.renderEntry(idx, custom)
             ))}

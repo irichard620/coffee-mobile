@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   activeDot: {
-    width: 15,
+    width: 5,
     height: 5,
     borderRadius: 3
   }

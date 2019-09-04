@@ -51,7 +51,11 @@ class SponsorCarousel extends Component {
           contentContainerCustomStyle={styles.sliderContentContainer}
           loop
           loopClonesPerSide={2}
-          autoplay={false}
+          autoplay
+          autoplayDelay={6000}
+          autoplayInterval={6000}
+          enableMomentum={false}
+          lockScrollWhileSnapping
           onSnapToItem={snapIdx => onSnapToItem(snapIdx)}
         />
         <Pagination
