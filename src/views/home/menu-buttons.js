@@ -1,54 +1,80 @@
 
 import React from 'react';
 import {
-  View, StyleSheet, Dimensions
+  View, StyleSheet, Text, TouchableWithoutFeedback
 } from 'react-native';
-import Button from '../../components/button';
 
 export default function MenuButtons(props) {
   const {
-    selected, onFavoritesClick, onCustomClick
+    selected, onItemClick
   } = props;
 
-  // Get button styles
-  let favoritesStyle = 0;
-  let customStyle = 1;
-  if (selected !== 0) {
-    favoritesStyle = 1;
-    customStyle = 0;
-  }
-
-  // Get button widths
-  const { width } = Dimensions.get('window');
-  const buttonWidth = (width - 45) / 2;
+  const renderOrder = [1, 0, 2];
 
   return (
     <View style={styles.outline}>
-      <Button
-        onButtonClick={onFavoritesClick}
-        type={favoritesStyle}
-        title="Favorites"
-        width={buttonWidth}
-        margin={[0, 15, 0, 0]}
-      />
-      <Button
-        onButtonClick={onCustomClick}
-        type={customStyle}
-        title="All Recipes"
-        width={buttonWidth}
-        margin={[0, 0, 0, 0]}
-      />
+      {renderOrder.map((item) => {
+        // style of button
+        let titleStyle = {
+          color: '#B1B1B1'
+        };
+        let buttonStyle = {
+          backgroundColor: '#F4F4F4',
+          marginRight: 0
+        };
+        if (selected === item) {
+          titleStyle = {
+            color: '#399DFF'
+          };
+          buttonStyle = {
+            backgroundColor: '#DAE8F5'
+          };
+        }
+
+        // Add margin
+        if (item !== 2) {
+          buttonStyle.marginRight = 5;
+        }
+
+        // Title of button
+        let title = '';
+        if (item === 1) {
+          title = 'Favorites';
+        } else if (item === 0) {
+          title = 'All Recipes';
+        } else {
+          title = 'Featured';
+        }
+        return (
+          <TouchableWithoutFeedback
+            onPress={() => onItemClick(item)}
+          >
+            <View style={[styles.buttonOutline, buttonStyle]}>
+              <Text style={[styles.title, titleStyle]}>{title}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   outline: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginLeft: 15,
-    marginRight: 15,
     marginBottom: 15,
-    alignSelf: 'flex-start',
-  }
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  buttonOutline: {
+    borderRadius: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
 });

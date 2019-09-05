@@ -11,8 +11,9 @@ import RNIap, {
 } from 'react-native-iap';
 import {
   settings, settingsOptions, CustomLayoutSpring, settingsDescriptions, OPTION_NAME,
-  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, USER_NAME_ELEM,
-  OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS, SETTINGS_PRO
+  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, OPTION_REPLAY_TUTORIAL,
+  USER_NAME_ELEM, OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS,
+  SETTINGS_PRO
 } from '../../constants';
 import Back from '../../components/back';
 import SettingsCard from './settings-card';
@@ -89,8 +90,8 @@ class SettingsPage extends Component {
       if (nextRecipes.error !== '') {
         // Show fail alert
         Alert.alert(
-          'Error occurred',
-          'Could not reach Drippy server. Please try again later.',
+          'Error Occurred',
+          'Could not reach Drippy servers. Please try again later.',
           [
             {
               text: 'OK',
@@ -100,8 +101,8 @@ class SettingsPage extends Component {
       } else {
         // Show success alert
         Alert.alert(
-          'Success',
-          'Default recipes were successfully restored.',
+          'Default Recipes Restored',
+          'The Drippy default recipes have been re-added to your library.',
           [
             {
               text: 'OK',
@@ -112,8 +113,8 @@ class SettingsPage extends Component {
     } else if (recipes && recipes.recipeIsDeleting && !nextRecipes.recipeIsDeleting) {
       // Show success alert
       Alert.alert(
-        'Success',
-        'Default recipes were successfully hidden.',
+        'Default Recipes Hidden',
+        'All default recipes have been hidden from your library.',
         [
           {
             text: 'OK',
@@ -123,8 +124,8 @@ class SettingsPage extends Component {
     } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
       // Show success alert
       Alert.alert(
-        'Success',
-        'User settings successfully updated.',
+        'Settings Updated',
+        'Your changes have been saved.',
         [
           {
             text: 'OK',
@@ -207,8 +208,8 @@ class SettingsPage extends Component {
 
   onPressItem = (item) => {
     const {
-      getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, buyDrippyPro,
-      restoreDrippyPro
+      getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, navigation,
+      buyDrippyPro, restoreDrippyPro
     } = this.props;
     const { username, useMetric } = this.state;
 
@@ -260,7 +261,7 @@ class SettingsPage extends Component {
         newUnit = 'Fahrenheit';
       }
       Alert.alert(
-        'Toggle Temperature Units',
+        'Change Temperature Units',
         `Would you like to toggle your temperature unit to ${newUnit}?`,
         [
           {
@@ -274,11 +275,20 @@ class SettingsPage extends Component {
           },
         ],
       );
+    } else if (item === OPTION_REPLAY_TUTORIAL) {
+      // Pull up tutorial, pass in flag
+      navigation.navigate({
+        routeName: 'Tutorial',
+        params: {
+          fromSettings: true,
+        },
+        key: 'fromSettings'
+      });
     } else if (item === OPTION_HIDE_DEFAULT) {
       // Prompt if they want to hide default recipes
       Alert.alert(
         'Are you sure?',
-        'Do you really want to hide default recipes? This will remove them from the homepage and reverse any edits you made on them.',
+        'Do you want to hide the default recipes? This will remove them from your library, and any edits you made will be lost.',
         [
           {
             text: 'Cancel'
@@ -295,7 +305,7 @@ class SettingsPage extends Component {
       // Prompt if they want to reset default recipes
       Alert.alert(
         'Are you sure?',
-        'Do you really want to restore default recipes? This will bring back any you deleted and remove edits.',
+        "Do you want to restore the default recipes? This will bring back any that have been deleted and undo any edits you've made to them.",
         [
           {
             text: 'Cancel'
@@ -334,8 +344,8 @@ class SettingsPage extends Component {
 
     if (modalText === '') {
       Alert.alert(
-        'Name Missing',
-        'You must enter a name in the field.',
+        'Enter Name',
+        'You need to enter a name. You do have a name, right?',
         [
           {
             text: 'OK',

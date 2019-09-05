@@ -79,7 +79,7 @@ class BuilderPage extends Component {
       if (nextRecipes.error !== '') {
         // Show error in alert
         Alert.alert(
-          'Could not Save Recipe',
+          'Could Not Save Recipe',
           nextRecipes.error,
           [
             {
@@ -105,8 +105,8 @@ class BuilderPage extends Component {
     // If no vessel, show alert
     if (brewingVessel === '' || brewingVessel === '-') {
       Alert.alert(
-        'Must select vessel',
-        'Must select brewing vessel before creating recipe steps',
+        'Choose a Brew Method',
+        'You need to select a brewing vessel before you can add any steps.',
         [
           {
             text: 'OK',
@@ -153,7 +153,7 @@ class BuilderPage extends Component {
       // Send alert that this resets steps
       Alert.alert(
         'Are you sure?',
-        'Changing the brew vessel will remove all current steps',
+        'Changing the brewing vessel will clear all current steps.',
         [
           {
             text: 'OK',
@@ -232,7 +232,7 @@ class BuilderPage extends Component {
       if (result !== '') {
         // Show alert
         Alert.alert(
-          'Could not save',
+          'Could Not Save',
           `${result}`,
           [
             {

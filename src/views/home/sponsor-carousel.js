@@ -51,7 +51,11 @@ class SponsorCarousel extends Component {
           contentContainerCustomStyle={styles.sliderContentContainer}
           loop
           loopClonesPerSide={2}
-          autoplay={false}
+          autoplay
+          autoplayDelay={6000}
+          autoplayInterval={6000}
+          enableMomentum={false}
+          lockScrollWhileSnapping
           onSnapToItem={snapIdx => onSnapToItem(snapIdx)}
         />
         <Pagination
@@ -66,7 +70,7 @@ class SponsorCarousel extends Component {
 
 const styles = StyleSheet.create({
   outline: {
-    marginBottom: 20
+    marginBottom: 15
   },
   slider: {
     overflow: 'visible' // for custom animations

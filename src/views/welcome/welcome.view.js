@@ -71,8 +71,8 @@ class WelcomePage extends Component {
       if (recipes.error !== '') {
         // Show alert
         Alert.alert(
-          'Error occurred',
-          `Could not reach Drippy server. Error: ${recipes.error}`,
+          'Error Occurred',
+          'Could not reach Drippy servers.',
           [
             {
               text: 'OK',
@@ -90,8 +90,8 @@ class WelcomePage extends Component {
       if (sponsors.error !== '') {
         // Show alert
         Alert.alert(
-          'Error occurred',
-          `Could not reach Drippy server. Error: ${sponsors.error}`,
+          'Error Occurred',
+          'Could not reach Drippy servers.',
           [
             {
               text: 'OK',
@@ -139,8 +139,8 @@ class WelcomePage extends Component {
       // Validate name
       if (name === '') {
         Alert.alert(
-          'Name Missing',
-          'You must enter a name in the field.',
+          'Enter Name',
+          'You need to enter a name. You do have a name, right?',
           [
             {
               text: 'OK',

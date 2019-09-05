@@ -22,7 +22,7 @@ export default function Entry(props) {
   if (selected) {
     textviewDynamic.flexDirection = 'column';
     textviewDynamic.flex = 1;
-    titleMargin = 10;
+    titleMargin = 5;
   } else {
     textviewDynamic.justifyContent = 'center';
     textviewDynamic.height = 55;

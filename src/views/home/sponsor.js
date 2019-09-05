@@ -11,7 +11,7 @@ export default function Sponsor(props) {
   // Take care of sponsors
   const sponsorImage = sponsor.imageLink ? sponsor.imageLink : '';
   const sponsorTextColor = sponsor.textColor ? sponsor.textColor : '#F46F69';
-  const disabled = sponsor.disabled;
+  const { disabled } = sponsor;
 
   const { width } = Dimensions.get('window');
 
