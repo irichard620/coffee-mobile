@@ -190,9 +190,10 @@ class HomePage extends Component {
   onSponsorClick = (sponsor) => {
     // Pull up sponsor page
     const { navigation } = this.props;
-    const { useMetric } = this.state;
+    const { useMetric, premium } = this.state;
     navigation.navigate('Sponsor', {
       sponsor,
+      premium,
       useMetric
     });
   }
@@ -245,7 +246,7 @@ class HomePage extends Component {
   onGoClick = (idx) => {
     const { navigation } = this.props;
     const {
-      tab, favorites, customs, featured, useMetric
+      tab, favorites, customs, featured, useMetric, premium
     } = this.state;
     let recipeToBrew = {};
     if (tab === 0) {
@@ -263,7 +264,8 @@ class HomePage extends Component {
     // Navigate
     navigation.navigate('Brew', {
       recipe: recipeToBrew,
-      useMetric
+      useMetric,
+      premium
     });
   }
 

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
+  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, Alert
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import KeepAwake from 'react-native-keep-awake';
@@ -154,10 +154,24 @@ class BrewPage extends Component {
     const {
       navigation, favRecipe, unfavRecipe, delRecipe
     } = this.props;
+    const premium = navigation.getParam('premium', false);
     const { recipe, deleteModal } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
-      // TODO: block action if free user
+      // block action if free user
+      if (!premium) {
+        // Block action
+        Alert.alert(
+          'Premium Only',
+          'Editing recipes is a feature for premium users only.',
+          [
+            {
+              text: 'Ok'
+            },
+          ],
+        );
+        return;
+      }
       this.setState({
         visibleModal: false
       });

@@ -66,16 +66,29 @@ class SponsorPage extends Component {
         this.addBeansAndRecipesToState(nextSponsors.sponsor.beans, nextSponsors.sponsor.recipes);
       }
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
-      // Tell user it was saved
-      Alert.alert(
-        'Recipe Added',
-        'The recipe has been added to your library. Visit your dashboard to start brewing!',
-        [
-          {
-            text: 'OK'
-          },
-        ],
-      );
+      if (nextRecipes.error !== '') {
+        // Show error in alert
+        Alert.alert(
+          'Recipe Library Full',
+          nextRecipes.error,
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      } else {
+        // Tell user it was saved
+        Alert.alert(
+          'Recipe Added',
+          'The recipe has been added to your library. Visit your dashboard to start brewing!',
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      }
     }
   }
 
@@ -205,8 +218,10 @@ class SponsorPage extends Component {
   }
 
   onDownloadClick = (idx) => {
-    const { persistRecipe } = this.props;
+    const { persistRecipe, navigation } = this.props;
     const { recipes } = this.state;
+    const premium = navigation.getParam('premium', false);
+
     // Get our recipe
     const recipe = recipes[idx];
 
@@ -214,7 +229,7 @@ class SponsorPage extends Component {
     sponsorRecipeAnalytics(recipe.recipeId, recipe.recipeName,
       recipe.brewingVessel, recipe.sponsorId);
 
-    persistRecipe(recipeModel.Recipe(recipe));
+    persistRecipe(recipeModel.Recipe(recipe), premium);
   }
 
   render() {
