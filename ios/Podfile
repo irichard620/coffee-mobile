@@ -35,6 +35,10 @@ target 'CoffeeApp' do
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
 
+  # Pods for PodTest
+  pod 'Fabric', '~> 1.10.2'
+  pod 'Crashlytics', '~> 3.13.4'
+
   target 'CoffeeAppTests' do
     inherit! :search_paths
     # Pods for testing
