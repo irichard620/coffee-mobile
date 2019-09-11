@@ -166,8 +166,8 @@ class HomePage extends Component {
     if (!premium) {
       // Block action
       Alert.alert(
-        'Premium Only',
-        'Building recipes is a feature for premium users only.',
+        'Drippy Pro Feature',
+        'Creating recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
         [
           {
             text: 'Ok'
@@ -338,8 +338,8 @@ class HomePage extends Component {
       if (!premium) {
         // Block action
         Alert.alert(
-          'Premium Only',
-          'Editing recipes is a feature for premium users only.',
+          'Drippy Pro Feature',
+          'Editing recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
           [
             {
               text: 'Ok'

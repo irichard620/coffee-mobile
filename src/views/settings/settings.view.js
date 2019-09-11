@@ -154,8 +154,9 @@ class SettingsPage extends Component {
       // Update user
       if (!nextUser.user.premium) {
         Alert.alert(
-          'Could not Restore Drippy Pro',
-          'We were not able to finy any purchases to restore.',
+          'Problem restoring Drippy Pro',
+          'There was an issue restoring your Drippy Pro. '
+          + 'It might be an issue with your connection, or no past purchase was found.',
           [
             {
               text: 'OK',
@@ -164,8 +165,8 @@ class SettingsPage extends Component {
         );
       } else if (nextUser.user.premium) {
         Alert.alert(
-          'Success',
-          'Drippy Pro successfully restored.',
+          'Drippy Pro Restored',
+          'Thanks for your continued support as a Drippy Pro user!',
           [
             {
               text: 'OK',

@@ -157,7 +157,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 10,
     backgroundColor: '#FFFFFF',
-    overflow: 'hidden'
   },
   topview: {
     alignItems: 'flex-start',
