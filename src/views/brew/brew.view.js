@@ -55,6 +55,7 @@ class BrewPage extends Component {
     if (timerRemaining === 0) {
       // Clear and enable next button
       clearInterval(this.interval);
+      // TODO: vibrate
     }
   }
 

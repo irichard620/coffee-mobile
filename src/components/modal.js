@@ -36,6 +36,7 @@ export default function CustomModal(props) {
       swipeDirection={['down']}
       propagateSwipe
       style={styles.bottomModal}
+      onBackdropPress={onCloseClick}
     >
       <KeyboardAvoidingView
         behavior="position"
