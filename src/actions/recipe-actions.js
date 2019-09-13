@@ -169,7 +169,7 @@ function errorSavingRecipe(err) {
   };
 }
 
-export function saveRecipe(recipeToSave) {
+export function saveRecipe(recipeToSave, premium = false) {
   return function (dispatch) {
     dispatch(savingRecipe());
     // Validation for save - fields
@@ -182,6 +182,7 @@ export function saveRecipe(recipeToSave) {
         const r = recipes ? JSON.parse(recipes) : [];
         let found = false;
         let duplicateName = false;
+        let nonDefaults = 0;
         for (let i = 0; i < r.length; i += 1) {
           if (r[i].recipeId === recipeToSave.recipeId) {
             r[i] = recipeToSave;
@@ -189,11 +190,19 @@ export function saveRecipe(recipeToSave) {
             break;
           } else if (r[i].recipeName === recipeToSave.recipeName) {
             duplicateName = true;
-            dispatch(errorSavingRecipe('A recipe with this name already exists'));
             break;
+          } else if (!r[i].default) {
+            nonDefaults += 1;
           }
         }
-        if (!duplicateName) {
+        if (duplicateName) {
+          // Handle duplicate name error
+          dispatch(errorSavingRecipe('A recipe with this name already exists'));
+        } else if (!found && !premium && nonDefaults > 5) {
+          // Handle paywall
+          dispatch(errorSavingRecipe('For unlimited recipe storage, become a Drippy Pro user from the Settings menu.'));
+        } else {
+          // Handle success
           if (!found) {
             if (recipeToSave.sponsorId !== '') {
               // Download sponsor analytics

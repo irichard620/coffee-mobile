@@ -48,6 +48,7 @@ export default function MenuButtons(props) {
         return (
           <TouchableWithoutFeedback
             onPress={() => onItemClick(item)}
+            key={title}
           >
             <View style={[styles.buttonOutline, buttonStyle]}>
               <Text style={[styles.title, titleStyle]}>{title}</Text>

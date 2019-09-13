@@ -61,7 +61,7 @@ export default function SettingsCard(props) {
             <Text style={styles.description}>{description}</Text>
           </View>
         )}
-        {selected && <View style={styles.listSeparator} />}
+        {selected && options.length > 0 && <View style={styles.listSeparator} />}
         {selected && (
           <List
             options={options}
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 10,
     backgroundColor: '#FFFFFF',
-    overflow: 'hidden'
   },
   topview: {
     alignItems: 'flex-start',

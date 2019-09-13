@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
-  Animated, Easing
+  Animated, Easing, Alert
 } from 'react-native';
 import Entry from './entry';
 import FloatingButton from '../../components/floating-button';
@@ -41,18 +41,25 @@ class HomePage extends Component {
       userIsSaving: false,
       menuSelected: false,
       spinValue: new Animated.Value(0),
-      useMetric: false
+      useMetric: false,
+      iapIsRestoring: false,
+      iapIsUpgrading: false,
+      premium: false
     };
   }
 
   componentDidMount() {
     const { getRecipes, user } = this.props;
     getRecipes();
-    // Get temp preference
+    // Get temp and premium preference
     if (user && Object.keys(user.user).length !== 0 && ('useMetric' in user.user)) {
-      this.setState({
-        useMetric: user.user.useMetric
-      });
+      const stateToSet = {};
+      if (('useMetric' in user.user)) {
+        stateToSet.useMetric = user.user.useMetric;
+      } if (('premium' in user.user)) {
+        stateToSet.premium = user.user.premium;
+      }
+      this.setState(stateToSet);
     }
   }
 
@@ -75,6 +82,14 @@ class HomePage extends Component {
     } if (nextUser && !prevState.userIsSaving && nextUser.userIsSaving) {
       return {
         userIsSaving: true
+      };
+    } if (nextUser && !prevState.iapIsRestoring && nextUser.iapIsRestoring) {
+      return {
+        iapIsRestoring: true
+      };
+    } if (nextUser && !prevState.iapIsUpgrading && nextUser.iapIsUpgrading) {
+      return {
+        iapIsUpgrading: true
       };
     } if (nextRecipes && ((prevState.recipesIsFetching && !nextRecipes.recipesIsFetching)
     || (prevState.recipeIsSaving && !nextRecipes.recipeIsSaving)
@@ -122,6 +137,14 @@ class HomePage extends Component {
       return {
         useMetric: nextUser.user.useMetric
       };
+    } if (nextUser && prevState.iapIsRestoring && !nextUser.iapIsRestoring) {
+      return {
+        premium: nextUser.user.premium
+      };
+    } if (nextUser && prevState.iapIsUpgrading && !nextUser.iapIsUpgrading) {
+      return {
+        premium: nextUser.user.premium
+      };
     }
     return null;
   }
@@ -139,7 +162,20 @@ class HomePage extends Component {
   onAddClick = () => {
     // Pull up add menu
     const { navigation } = this.props;
-    const { useMetric } = this.state;
+    const { useMetric, premium } = this.state;
+    if (!premium) {
+      // Block action
+      Alert.alert(
+        'Drippy Pro Feature',
+        'Creating recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
+        [
+          {
+            text: 'Ok'
+          },
+        ],
+      );
+      return;
+    }
     navigation.navigate('Builder', {
       useMetric
     });
@@ -154,9 +190,10 @@ class HomePage extends Component {
   onSponsorClick = (sponsor) => {
     // Pull up sponsor page
     const { navigation } = this.props;
-    const { useMetric } = this.state;
+    const { useMetric, premium } = this.state;
     navigation.navigate('Sponsor', {
       sponsor,
+      premium,
       useMetric
     });
   }
@@ -209,7 +246,7 @@ class HomePage extends Component {
   onGoClick = (idx) => {
     const { navigation } = this.props;
     const {
-      tab, favorites, customs, featured, useMetric
+      tab, favorites, customs, featured, useMetric, premium
     } = this.state;
     let recipeToBrew = {};
     if (tab === 0) {
@@ -227,7 +264,8 @@ class HomePage extends Component {
     // Navigate
     navigation.navigate('Brew', {
       recipe: recipeToBrew,
-      useMetric
+      useMetric,
+      premium
     });
   }
 
@@ -292,10 +330,24 @@ class HomePage extends Component {
     } = this.props;
     const {
       tab, deleteModal, modalRecipeId, modalRecipeIndex, favorites,
-      customs, featured, useMetric
+      customs, featured, useMetric, premium
     } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
+      // block action if free user
+      if (!premium) {
+        // Block action
+        Alert.alert(
+          'Drippy Pro Feature',
+          'Editing recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
+          [
+            {
+              text: 'Ok'
+            },
+          ],
+        );
+        return;
+      }
       // Close and clear modal
       this.setState({
         visibleModal: false,

@@ -50,11 +50,11 @@ class WelcomePage extends Component {
     return null;
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const {
-      user, recipes, sponsors, navigation, getDefaultRecipes, getSponsors, isFocused
+      user, recipes, sponsors, getDefaultRecipes, getSponsors,
+      isFocused
     } = this.props;
-    const { step } = prevState;
 
     if (!isFocused) {
       return;
@@ -77,13 +77,8 @@ class WelcomePage extends Component {
             {
               text: 'OK',
               onPress: () => {
-                if (step === 2) {
-                  // Go to tutorial - we were in welcome
-                  navigation.navigate('Tutorial');
-                } else {
-                  // Go to home - means user there
-                  navigation.navigate('Home');
-                }
+                // Skip sponsors if our server fails
+                this.navigateNext();
               }
             },
           ],
@@ -101,13 +96,7 @@ class WelcomePage extends Component {
             {
               text: 'OK',
               onPress: () => {
-                if (step === 2) {
-                  // Go to tutorial - we were in welcome
-                  navigation.navigate('Tutorial');
-                } else {
-                  // Go to home - means user there
-                  navigation.navigate('Home');
-                }
+                this.navigateNext();
               }
             },
           ],
@@ -121,15 +110,20 @@ class WelcomePage extends Component {
           });
         }
         FastImage.preload(preloadList);
-
-        if (step === 2) {
-          // Go to tutorial - we were in welcome
-          navigation.navigate('Tutorial');
-        } else {
-          // Go to home - means user there
-          navigation.navigate('Home');
-        }
+        this.navigateNext();
       }
+    }
+  }
+
+  navigateNext = () => {
+    const { navigation } = this.props;
+    const { step } = this.state;
+    if (step === 2) {
+      // Go to tutorial - we were in welcome
+      navigation.navigate('Tutorial');
+    } else {
+      // Go to home - means user there
+      navigation.navigate('Home');
     }
   }
 

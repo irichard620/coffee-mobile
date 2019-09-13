@@ -400,7 +400,7 @@ class BuilderPage extends Component {
       }
     }
     const newRecipe = recipeModel.Recipe(objToUse);
-    persistRecipe(newRecipe);
+    persistRecipe(newRecipe, true);
   }
 
   render() {
