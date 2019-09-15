@@ -2,23 +2,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, Dimensions, StyleSheet, Image, TouchableOpacity,
-  TextInput, LayoutAnimation, Alert, Keyboard, TouchableWithoutFeedback
+  View, Dimensions, StyleSheet, Image,
+  Alert, Keyboard, TouchableWithoutFeedback
 } from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
 import FastImage from 'react-native-fast-image';
 import { fetchDefaultRecipes } from '../../actions/recipe-actions';
 import { saveUsername, fetchUser } from '../../actions/user-actions';
 import { fetchSponsors } from '../../actions/sponsor-actions';
-import * as constants from '../../constants';
 
 class WelcomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       step: -1,
-      name: '',
-      userIsFetching: true
+      userIsFetching: true,
+      isFirstTime: false
     };
   }
 
@@ -29,16 +28,16 @@ class WelcomePage extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { userIsFetching } = prevState;
-    const { user, getDefaultRecipes } = nextProps;
+    const { user, getDefaultRecipes, persistUsername } = nextProps;
 
     if (user && userIsFetching && !user.userIsFetching) {
       // If finished fetching, check if we should go to welcome page
       if (Object.keys(user.user).length === 0 || user.user.name === '') {
         // Go to welcome page
-        LayoutAnimation.configureNext(constants.CustomLayoutSpring);
+        persistUsername('test', true);
         return {
-          step: 0,
-          userIsFetching: false
+          userIsFetching: false,
+          isFirstTime: true
         };
       }
       // Do default recipes if user there
@@ -117,8 +116,8 @@ class WelcomePage extends Component {
 
   navigateNext = () => {
     const { navigation } = this.props;
-    const { step } = this.state;
-    if (step === 2) {
+    const { isFirstTime } = this.state;
+    if (isFirstTime) {
       // Go to tutorial - we were in welcome
       navigation.navigate('Tutorial');
     } else {
@@ -127,90 +126,18 @@ class WelcomePage extends Component {
     }
   }
 
-  onNextClick = () => {
-    const { navigation, persistUsername } = this.props;
-    const { step, name } = this.state;
-
-    if (step === 0) {
-      this.setState({
-        step: 1
-      });
-    } else if (step === 1) {
-      // Validate name
-      if (name === '') {
-        Alert.alert(
-          'Enter Name',
-          'You need to enter a name. You do have a name, right?',
-          [
-            {
-              text: 'OK',
-            },
-          ],
-        );
-        return;
-      }
-      persistUsername(name, true);
-      this.setState({
-        step: 2
-      });
-    } else {
-      navigation.goBack();
-    }
-  }
-
-  onChangeText = (text) => {
-    this.setState({
-      name: text
-    });
-  }
-
   render() {
-    const { step, name } = this.state;
-
     const basePath = '../../assets/splash/';
-    const baseButtonPath = '../../assets/buttons/';
 
     const { height } = Dimensions.get('window');
-    let multiplier = 0.16;
-    if (step === -1) {
-      multiplier = 0.35;
-    }
     const imageContainerMargin = {
-      marginTop: height * multiplier
+      marginTop: height * 0.35
     };
-
-    let title = '';
-    if (step === 0) {
-      title = 'Welcome to Drippy!';
-    } else if (step === 1) {
-      title = "What's your first name?";
-    } else if (step === 2) {
-      title = "Great! Let's get brewing...";
-    }
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
           <Image style={[styles.logo, imageContainerMargin]} source={require(`${basePath}Splash_Logo.png`)} />
-          {step !== -1 && <Text style={styles.title}>{title}</Text>}
-          {step === 1 && (
-          <TextInput
-            onChangeText={text => this.onChangeText(text)}
-            value={name}
-            placeholder="First Name"
-            placeholderTextColor="#b7b3b3"
-            style={styles.textinput}
-            maxLength={20}
-          />
-          )}
-          <View style={styles.buttonview}>
-            {(step === 0 || step === 1)
-                && (
-                  <TouchableOpacity onPress={this.onNextClick}>
-                    <Image style={[styles.mini]} source={require(`${baseButtonPath}Go.png`)} />
-                  </TouchableOpacity>
-                )}
-          </View>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -223,34 +150,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4',
     alignItems: 'center'
   },
-  buttonview: {
-    position: 'absolute',
-    top: '80%',
-    width: 40,
-  },
   logo: {
     height: '18%',
     resizeMode: 'contain',
     marginBottom: 50
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#1D5E9E',
-    marginBottom: 15
-  },
-  textinput: {
-    alignSelf: 'flex-start',
-    width: '90%',
-    marginLeft: '5%',
-    padding: 15,
-    borderRadius: 20,
-    backgroundColor: '#F1F1F1'
-  },
-  mini: {
-    height: 40,
-    width: 40
-  }
 });
 
 const mapStateToProps = state => ({

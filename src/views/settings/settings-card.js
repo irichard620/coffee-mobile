@@ -62,6 +62,7 @@ export default function SettingsCard(props) {
           </View>
         )}
         {selected && options.length > 0 && <View style={styles.listSeparator} />}
+        {selected && options.length === 0 && <View style={styles.emptySeparator} />}
         {selected && (
           <List
             options={options}
@@ -134,6 +135,12 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#E3E3E3',
+    marginTop: 15,
+  },
+  emptySeparator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
     marginTop: 15,
   },
   description: {

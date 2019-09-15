@@ -3,21 +3,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert,
-  Keyboard, Platform
+  Platform
 } from 'react-native';
 import RNIap, {
   purchaseErrorListener,
   purchaseUpdatedListener
 } from 'react-native-iap';
 import {
-  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions, OPTION_NAME,
+  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions,
   OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, OPTION_REPLAY_TUTORIAL,
-  USER_NAME_ELEM, OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS,
+  OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS,
   SETTINGS_PRO
 } from '../../constants';
 import Back from '../../components/back';
 import SettingsCard from './settings-card';
-import BuilderModal from '../builder/builder-modal';
 import {
   fetchDefaultRecipes, hideDefaultRecipes
 } from '../../actions/recipe-actions';
@@ -36,9 +35,6 @@ class SettingsPage extends Component {
 
     this.state = {
       selected: [false, false, false],
-      visibleModal: false,
-      username: '',
-      modalText: '',
       useMetric: false,
       premium: false
     };
@@ -71,9 +67,8 @@ class SettingsPage extends Component {
     });
 
     // Add user details to state
-    if (user && Object.keys(user.user).length !== 0 && ('name' in user.user)) {
+    if (user && Object.keys(user.user).length !== 0) {
       this.setState({
-        username: user.user.name,
         useMetric: user.user.useMetric,
         premium: user.user.premium
       });
@@ -131,9 +126,6 @@ class SettingsPage extends Component {
             text: 'OK',
             onPress: () => {
               this.setState({
-                visibleModal: false,
-                modalText: '',
-                username: nextUser.user.name,
                 useMetric: nextUser.user.useMetric
               });
             }
@@ -212,7 +204,7 @@ class SettingsPage extends Component {
       getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, navigation,
       buyDrippyPro, restoreDrippyPro
     } = this.props;
-    const { username, useMetric } = this.state;
+    const { useMetric } = this.state;
 
     if (item === OPTION_GET_DRIPPY_PRO) {
       // Prompt if they want to purchase
@@ -249,12 +241,6 @@ class SettingsPage extends Component {
           },
         ],
       );
-    } else if (item === OPTION_NAME) {
-      // Bring up builder modal with name field prepopulated
-      this.setState({
-        visibleModal: true,
-        modalText: username
-      });
     } else if (item === OPTION_TEMP_UNITS) {
       // Prompt if they want to toggle temp unit
       let newUnit = 'Celsius';
@@ -322,44 +308,6 @@ class SettingsPage extends Component {
     }
   }
 
-  onCloseClick = () => {
-    // Close and clear modal
-    this.setState({
-      visibleModal: false,
-      modalText: '',
-    });
-  }
-
-  onChangeText = (text) => {
-    this.setState({
-      modalText: text
-    });
-  }
-
-  onModalSave = () => {
-    const { persistUsername } = this.props;
-    const { modalText } = this.state;
-
-    // Dismiss keyboard for modal
-    Keyboard.dismiss();
-
-    if (modalText === '') {
-      Alert.alert(
-        'Enter Name',
-        'You need to enter a name. You do have a name, right?',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
-      return;
-    }
-
-    // Call redux action to update name
-    persistUsername(modalText, false);
-  }
-
   renderSettingCard = (idx, setting) => {
     const { selected, premium } = this.state;
 
@@ -388,7 +336,6 @@ class SettingsPage extends Component {
   }
 
   render() {
-    const { visibleModal, modalText } = this.state;
     // Top margin - dynamic
     const { height } = Dimensions.get('window');
     const marginTopStyle = {
@@ -407,14 +354,6 @@ class SettingsPage extends Component {
         {settings.map((setting, idx) => (
           this.renderSettingCard(idx, setting)
         ))}
-        <BuilderModal
-          visibleModal={visibleModal}
-          modalType={USER_NAME_ELEM}
-          modalText={modalText}
-          onCloseClick={this.onCloseClick}
-          onChangeText={this.onChangeText}
-          onModalSave={this.onModalSave}
-        />
       </ScrollView>
     );
   }

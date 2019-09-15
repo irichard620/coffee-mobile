@@ -89,7 +89,6 @@ export const settingsDescriptions = {
 };
 export const OPTION_GET_DRIPPY_PRO = 'Get Drippy Pro';
 export const OPTION_RESTORE_PURCHASE = 'Restore Purchase';
-export const OPTION_NAME = 'Name';
 export const OPTION_TEMP_UNITS = 'Temperature Units';
 export const OPTION_REPLAY_TUTORIAL = 'Replay Tutorial';
 export const OPTION_HIDE_DEFAULT = 'Hide Default Recipes';
@@ -97,7 +96,7 @@ export const OPTION_RESTORE_DEFAULT = 'Restore Default Recipes';
 export const settingsOptions = {
   [SETTINGS_PRO_EXISTS]: [],
   [SETTINGS_PRO]: [{ title: OPTION_GET_DRIPPY_PRO }, { title: OPTION_RESTORE_PURCHASE }],
-  [SETTINGS_PROFILE]: [{ title: OPTION_NAME }, { title: OPTION_TEMP_UNITS },
+  [SETTINGS_PROFILE]: [{ title: OPTION_TEMP_UNITS },
     { title: OPTION_REPLAY_TUTORIAL }],
   [SETTINGS_DEFAULT_RECIPES]: [{ title: OPTION_HIDE_DEFAULT }, { title: OPTION_RESTORE_DEFAULT }],
 };
