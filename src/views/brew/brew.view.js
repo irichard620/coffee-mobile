@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, Alert
+  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import KeepAwake from 'react-native-keep-awake';
@@ -14,6 +14,8 @@ import * as stepModel from '../../storage/step';
 import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
 import { brewFinishAnalytics } from '../../actions/analytics-actions';
 import CustomModal from '../../components/modal';
+import ModalContentBottom from '../../components/modal-content-bottom';
+import ModalContentCenter from '../../components/modal-content-center';
 import Pagination from '../../components/pagination';
 
 class BrewPage extends Component {
@@ -25,6 +27,7 @@ class BrewPage extends Component {
       timerRemaining: -1,
       timerTotal: -1,
       visibleModal: false,
+      modalType: '',
       deleteModal: false
     };
   }
@@ -95,6 +98,7 @@ class BrewPage extends Component {
   onEditClick = () => {
     this.setState({
       visibleModal: true,
+      modalType: constants.MODAL_TYPE_BOTTOM,
       deleteModal: false
     });
   }
@@ -161,15 +165,10 @@ class BrewPage extends Component {
       // block action if free user
       if (!premium) {
         // Block action
-        Alert.alert(
-          'Premium Only',
-          'Editing recipes is a feature for premium users only.',
-          [
-            {
-              text: 'Ok'
-            },
-          ],
-        );
+        this.setState({
+          visibleModal: true,
+          modalType: constants.MODAL_TYPE_CENTER
+        });
         return;
       }
       this.setState({
@@ -332,7 +331,7 @@ class BrewPage extends Component {
   render() {
     const { navigation } = this.props;
     const {
-      step, visibleModal, recipe, deleteModal
+      step, visibleModal, recipe, deleteModal, modalType
     } = this.state;
     const { recipeName, steps } = recipe;
 
@@ -442,7 +441,6 @@ class BrewPage extends Component {
               onButtonClick={this.onBrewClick}
               type={0}
               title={buttonTitle}
-              width={120}
               margin={[0, buttonMarginRight, 0, 0]}
             />
             {step === -1 && (
@@ -455,12 +453,32 @@ class BrewPage extends Component {
         <CustomModal
           visibleModal={visibleModal}
           onCloseClick={this.onCloseModalClick}
-          onPressItem={this.onPressItem}
-          title={modalTitle}
-          isListModal
-          isSelectInput={false}
-          options={this.getModalOptions()}
-        />
+          type={modalType}
+        >
+          {modalType === constants.MODAL_TYPE_BOTTOM
+          && (
+          <ModalContentBottom
+            onPressItem={this.onPressItem}
+            title={modalTitle}
+            isListModal
+            isSelectInput={false}
+            options={this.getModalOptions()}
+          />
+          )}
+          {modalType === constants.MODAL_TYPE_CENTER
+          && (
+          <ModalContentCenter
+            title={constants.POPUP_TITLE_DRIPPY_PRO}
+            description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
+            type={0}
+            primaryButtonTitle="Get Drippy Pro"
+            secondaryButtonTitle="Restore Previous Purchase"
+            onCloseClick={this.onCloseModalClick}
+            onPrimaryButtonClick={this.onCloseModalClick}
+            onSecondaryButtonClick={this.onCloseModalClick}
+          />
+          )}
+        </CustomModal>
         <KeepAwake />
       </React.Fragment>
     );
@@ -514,6 +532,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '90%',
     alignSelf: 'center',
+    justifyContent: 'center',
     width: 175,
     flexDirection: 'row',
     flexWrap: 'nowrap',

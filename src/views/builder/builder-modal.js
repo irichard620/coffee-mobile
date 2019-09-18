@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
 import CustomModal from '../../components/modal';
+import ModalContentBottom from '../../components/modal-content-bottom';
 import * as constants from '../../constants';
 
 class BuilderModal extends Component {
@@ -114,20 +115,24 @@ class BuilderModal extends Component {
       <CustomModal
         visibleModal={visibleModal}
         onCloseClick={onCloseClick}
-        modalText={modalText}
-        textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
-        modalSelect={modalSelect}
-        isListModal={isListModal}
-        isSelectInput={isSelectInput}
-        options={options}
-        title={titleToDisplay}
-        charLimit={charLimit}
-        pickerValues={constants.grindSizes}
-        onPressItem={onPressItem}
-        onChangeText={onChangeText}
-        onModalSave={onModalSave}
-        onChangePicker={onChangePicker}
-      />
+        type={constants.MODAL_TYPE_BOTTOM}
+      >
+        <ModalContentBottom
+          modalText={modalText}
+          textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
+          modalSelect={modalSelect}
+          isListModal={isListModal}
+          isSelectInput={isSelectInput}
+          options={options}
+          title={titleToDisplay}
+          charLimit={charLimit}
+          pickerValues={constants.grindSizes}
+          onPressItem={onPressItem}
+          onChangeText={onChangeText}
+          onModalSave={onModalSave}
+          onChangePicker={onChangePicker}
+        />
+      </CustomModal>
     );
   }
 }

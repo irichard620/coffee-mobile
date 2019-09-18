@@ -100,7 +100,6 @@ export default function Entry(props) {
             onButtonClick={() => onExploreClick(idx)}
             type={0}
             title="Explore the coffee"
-            width="56%"
             margin={[0, 0, 0, 0]}
           />
         </View>

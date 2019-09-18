@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
   },
   buttonOutline: {
     borderRadius: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 18,
+    paddingRight: 18,
   },
   title: {
     fontSize: 14,

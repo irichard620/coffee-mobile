@@ -4,9 +4,9 @@ import {
   View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
 
-export default function ButtonMini(props) {
+export default function ButtonLarge(props) {
   const {
-    onButtonClick, type, title, width, margin
+    onButtonClick, type, title, margin, disabled
   } = props;
 
   const backgroundStyle = {
@@ -14,7 +14,6 @@ export default function ButtonMini(props) {
     marginRight: margin[1],
     marginBottom: margin[2],
     marginLeft: margin[3],
-    width,
   };
   let titleStyle = {};
   if (type === 0) {
@@ -29,7 +28,11 @@ export default function ButtonMini(props) {
     };
   }
   return (
-    <TouchableOpacity style={[styles.button, backgroundStyle]} onPress={onButtonClick}>
+    <TouchableOpacity
+      style={[styles.button, backgroundStyle]}
+      onPress={onButtonClick}
+      disabled={disabled}
+    >
       <View>
         <Text style={[styles.title, titleStyle]}>{title}</Text>
       </View>
@@ -39,12 +42,21 @@ export default function ButtonMini(props) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 12,
+    fontSize: 16,
+    fontWeight: '600'
   },
   button: {
-    height: 25,
-    borderRadius: 13,
+    minWidth: 128,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
   },
 });

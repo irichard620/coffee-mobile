@@ -484,7 +484,6 @@ class BuilderPage extends Component {
             onButtonClick={this.onRecipeSave}
             type={1}
             title="Save"
-            width={110}
             margin={[15, 0, 45, 0]}
           />
         </View>

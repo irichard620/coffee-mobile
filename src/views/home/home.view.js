@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
-  Animated, Easing, Alert
+  Animated, Easing
 } from 'react-native';
 import Entry from './entry';
 import FloatingButton from '../../components/floating-button';
@@ -17,6 +17,8 @@ import {
 import * as recipeModel from '../../storage/recipe';
 import * as constants from '../../constants';
 import CustomModal from '../../components/modal';
+import ModalContentBottom from '../../components/modal-content-bottom';
+import ModalContentCenter from '../../components/modal-content-center';
 
 class HomePage extends Component {
   constructor(props) {
@@ -33,6 +35,7 @@ class HomePage extends Component {
       modalRecipeId: '',
       modalRecipeIndex: -1,
       visibleModal: false,
+      modalType: '',
       deleteModal: false,
       sponsorIndex: 0,
       recipesIsFetching: false,
@@ -165,15 +168,10 @@ class HomePage extends Component {
     const { useMetric, premium } = this.state;
     if (!premium) {
       // Block action
-      Alert.alert(
-        'Drippy Pro Feature',
-        'Creating recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
-        [
-          {
-            text: 'Ok'
-          },
-        ],
-      );
+      this.setState({
+        visibleModal: true,
+        modalType: constants.MODAL_TYPE_CENTER
+      });
       return;
     }
     navigation.navigate('Builder', {
@@ -237,6 +235,7 @@ class HomePage extends Component {
     }
     this.setState({
       visibleModal: true,
+      modalType: constants.MODAL_TYPE_BOTTOM,
       modalRecipeId: arrToUse[idx].recipeId,
       modalRecipeIndex: idx,
       deleteModal: false
@@ -319,6 +318,7 @@ class HomePage extends Component {
     // Close and clear modal
     this.setState({
       visibleModal: false,
+      modalType: '',
       modalRecipeId: '',
       modalRecipeIndex: -1,
     });
@@ -337,20 +337,16 @@ class HomePage extends Component {
       // block action if free user
       if (!premium) {
         // Block action
-        Alert.alert(
-          'Drippy Pro Feature',
-          'Editing recipes is a feature for Drippy Pro users. Learn more in the Settings menu.',
-          [
-            {
-              text: 'Ok'
-            },
-          ],
-        );
+        this.setState({
+          visibleModal: true,
+          modalType: constants.MODAL_TYPE_CENTER
+        });
         return;
       }
       // Close and clear modal
       this.setState({
         visibleModal: false,
+        modalType: '',
         modalRecipeId: '',
         modalRecipeIndex: -1,
       });
@@ -459,8 +455,8 @@ class HomePage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      tab, customs, favorites, featured, visibleModal, deleteModal, sponsorIndex,
-      menuSelected, spinValue, tabMenuSelected
+      tab, customs, favorites, featured, visibleModal, modalType,
+      deleteModal, sponsorIndex, menuSelected, spinValue, tabMenuSelected
     } = this.state;
 
     let modalTitle = '';
@@ -521,13 +517,33 @@ class HomePage extends Component {
           </View>
           <CustomModal
             visibleModal={visibleModal}
-            title={modalTitle}
             onCloseClick={this.onCloseClick}
-            onPressItem={this.onPressItem}
-            isListModal
-            isSelectInput={false}
-            options={this.getModalOptions()}
-          />
+            type={modalType}
+          >
+            {modalType === constants.MODAL_TYPE_BOTTOM
+            && (
+            <ModalContentBottom
+              title={modalTitle}
+              onPressItem={this.onPressItem}
+              isListModal
+              isSelectInput={false}
+              options={this.getModalOptions()}
+            />
+            )}
+            {modalType === constants.MODAL_TYPE_CENTER
+            && (
+            <ModalContentCenter
+              title={constants.POPUP_TITLE_DRIPPY_PRO}
+              description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
+              type={0}
+              primaryButtonTitle="Get Drippy Pro"
+              secondaryButtonTitle="Restore Previous Purchase"
+              onCloseClick={this.onCloseClick}
+              onPrimaryButtonClick={this.onCloseClick}
+              onSecondaryButtonClick={this.onCloseClick}
+            />
+            )}
+          </CustomModal>
         </ScrollView>
         {menuSelected && <View style={styles.darkBackground} />}
         <View style={[styles.floatingButtons, marginLeftContainer]}>

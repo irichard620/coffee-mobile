@@ -102,6 +102,17 @@ export const settingsOptions = {
   [SETTINGS_DEFAULT_RECIPES]: [{ title: OPTION_HIDE_DEFAULT }, { title: OPTION_RESTORE_DEFAULT }],
 };
 
+// Modal types
+export const MODAL_TYPE_BOTTOM = 'bottom';
+export const MODAL_TYPE_CENTER = 'center';
+
+// Popup options
+export const POPUP_TITLE_DRIPPY_PRO = 'Drippy Pro Feature';
+export const POPUP_DESCRIPTION_DRIPPY_PRO = 'Drippy Pro comes with a whole bunch of fun, new features,'
+  + ' and it’s a one-time purchase that helps support our little team of two! Enjoy unlimited recipe'
+  + ' storage, access to the Recipe Builder to create and tweak to your heart’s desire, and a whole'
+  + 'bunch of Pro features in the works.';
+
 // Animation
 export const CustomLayoutSpring = {
   duration: 325,

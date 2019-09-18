@@ -6,7 +6,7 @@ import {
 
 export default function Button(props) {
   const {
-    onButtonClick, type, title, width, margin, disabled
+    onButtonClick, type, title, margin, disabled
   } = props;
 
   const backgroundStyle = {
@@ -14,7 +14,6 @@ export default function Button(props) {
     marginRight: margin[1],
     marginBottom: margin[2],
     marginLeft: margin[3],
-    width,
   };
   let titleStyle = {};
   if (type === 0) {
@@ -47,7 +46,10 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   button: {
-    height: 40,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 18,
+    paddingRight: 18,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',

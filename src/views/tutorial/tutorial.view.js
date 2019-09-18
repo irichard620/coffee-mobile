@@ -61,7 +61,6 @@ class TutorialPage extends Component {
             onButtonClick={this.onNextClick}
             type={1}
             title="Let's Go!"
-            width={110}
             margin={[0, 0, 0, 0]}
           />
         </View>
