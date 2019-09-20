@@ -71,10 +71,20 @@ class BrewPage extends Component {
     clearInterval(this.interval);
 
     // Check step
+    // TODO: mizudashi nav's away at last recipe step
     if (step !== recipe.steps.length) {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
-        this.clearTimer(step + 1);
+        // If cold brew, no serve step at end - skip
+        if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+          // Analytics
+          brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
+            recipe.brewingVessel, recipe.sponsorId);
+
+          navigation.goBack();
+        } else {
+          this.clearTimer(step + 1);
+        }
       } else {
         const nextStep = recipe.steps[step + 1];
         if (nextStep.title === constants.STEP_WAIT) {
@@ -281,6 +291,10 @@ class BrewPage extends Component {
       const stepObj = recipe.steps[step];
       if (stepObj.title === constants.STEP_HEAT_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
+      } if (stepObj.title === constants.STEP_CHILL_WATER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}ChillWater.png`)} />);
+      } if (stepObj.title === constants.STEP_INSERT_FILTER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertFilter.png`)} />);
       } if (stepObj.title === constants.STEP_RINSE_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
       } if (stepObj.title === constants.STEP_BLOOM_GROUNDS
@@ -299,6 +313,8 @@ class BrewPage extends Component {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_Aero.png`)} />);
       } if (stepObj.title === constants.STEP_PUSH_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_FP.png`)} />);
+      } if (stepObj.title === constants.STEP_STEEP) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}Steep.png`)} />);
       } if (stepObj.title === constants.STEP_WAIT) {
         // Get fill number
         const fill = Math.round((timerRemaining / timerTotal) * 100);
@@ -343,9 +359,16 @@ class BrewPage extends Component {
     let buttonTitle = 'Brew';
     if (!('steps' in recipe)) {
       buttonTitle = 'Loading...';
-    } else if (step >= 0 && step < recipe.steps.length) {
+    } else if (step >= 0 && step < recipe.steps.length - 1) {
       buttonMarginRight = 0;
       buttonTitle = 'Next';
+    } else if (step === recipe.steps.length - 1) {
+      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+        buttonTitle = 'Finish';
+      } else {
+        buttonMarginRight = 0;
+        buttonTitle = 'Next';
+      }
     } else if (step === recipe.steps.length) {
       buttonTitle = 'Finish';
     }
@@ -397,7 +420,7 @@ class BrewPage extends Component {
       description = recipeModel.getRecipeDescription(recipe, useMetric);
     } else if (step < steps.length) {
       const currentStepObj = steps[step];
-      description = stepModel.getStepDescription(currentStepObj, useMetric);
+      description = stepModel.getStepDescription(currentStepObj, useMetric, recipe.brewingVessel);
       // Optional step notes
       if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
         stepNote = currentStepObj.notes;
@@ -409,7 +432,11 @@ class BrewPage extends Component {
     // Pagination
     let stepsLength = 0;
     if (steps && steps.length > 0) {
-      stepsLength = steps.length + 1;
+      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+        stepsLength = steps.length;
+      } else {
+        stepsLength = steps.length + 1;
+      }
     }
 
     return (

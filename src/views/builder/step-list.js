@@ -15,9 +15,10 @@ class StepList extends Component {
     // Check if can edit
     const { title } = step;
     let canEdit = false;
-    if (title === constants.STEP_HEAT_WATER || title === constants.STEP_GRIND_COFFEE
-    || title === constants.STEP_BLOOM_GROUNDS || title === constants.STEP_POUR_WATER
-    || title === constants.STEP_WAIT) {
+    if (title === constants.STEP_HEAT_WATER || title === constants.STEP_CHILL_WATER
+    || title === constants.STEP_GRIND_COFFEE || title === constants.STEP_BLOOM_GROUNDS
+    || title === constants.STEP_POUR_WATER || title === constants.STEP_WAIT
+    || title === constants.STEP_STEEP) {
       canEdit = true;
     }
 

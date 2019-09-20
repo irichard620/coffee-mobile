@@ -22,6 +22,10 @@ export function getStepShortDescription(step, useMetric) {
     const tempToUse = useMetric
       ? translateTempToCelsius(step.properties.waterTemp) : step.properties.waterTemp;
     return `Heat water to ${tempToUse}${tempUnit}`;
+  } if (step.title === constants.STEP_CHILL_WATER) {
+    return `Chill at least ${step.properties.gramsWater} grams of filtered water.`;
+  } if (step.title === constants.STEP_INSERT_FILTER) {
+    return 'Put the mesh filter into the Mizudashi carafe.';
   } if (step.title === constants.STEP_GRIND_COFFEE) {
     return `${step.properties.gramsCoffee} grams of coffee ground ${step.properties.grindSize}`;
   } if (step.title === constants.STEP_RINSE_FILTER) {
@@ -44,17 +48,24 @@ export function getStepShortDescription(step, useMetric) {
     return 'Push down the plunger';
   } if (step.title === constants.STEP_PUSH_FILTER) {
     return 'Push down the filter';
+  } if (step.title === constants.STEP_STEEP) {
+    return `Refrigerate and allow grounds to steep for ${step.properties.hours} hours`;
   }
 
   return '';
 }
 
-export function getStepDescription(step, useMetric) {
+export function getStepDescription(step, useMetric, brewingVessel) {
   if (step.title === constants.STEP_HEAT_WATER) {
     const tempUnit = getTempUnit(useMetric);
     const tempToUse = useMetric
       ? translateTempToCelsius(step.properties.waterTemp) : step.properties.waterTemp;
     return `Heat your water to ${tempToUse}${tempUnit}.`;
+  } if (step.title === constants.STEP_CHILL_WATER) {
+    return `Chill at least ${step.properties.gramsWater} grams of filtered water.`;
+  } if (step.title === constants.STEP_INSERT_FILTER) {
+    return 'Put the mesh filter into the Mizudashi carafe. Make sure the base of the '
+      + 'filter is twisted and locked into place before adding any ground coffee.';
   } if (step.title === constants.STEP_GRIND_COFFEE) {
     return `Grind ${step.properties.gramsCoffee
     } grams of coffee to a ${step.properties.grindSize} consistency.`;
@@ -67,6 +78,10 @@ export function getStepDescription(step, useMetric) {
     return `Pour ${step.properties.gramsWater} grams of water slowly and `
       + 'evenly around your brew bed to saturate all the coffee grounds.';
   } if (step.title === constants.STEP_POUR_WATER) {
+    if (brewingVessel === constants.VESSEL_MIZUDASHI) {
+      return `Pour ${step.properties.gramsWater} grams of water into the coffee grounds. `
+        + 'Stir very gently after your first few pours to make sure all the grounds are wet.';
+    }
     return `Pour ${step.properties.gramsWater} grams of water onto the brew bed `
       + 'in an even circular motion.';
   } if (step.title === constants.STEP_WAIT) {
@@ -81,6 +96,9 @@ export function getStepDescription(step, useMetric) {
     return 'With your Aeropress on your mug, push the plunger down slowly until all the coffee is pushed out.';
   } if (step.title === constants.STEP_PUSH_FILTER) {
     return 'Push down the filter on your French Press until all the grounds are pushed to the bottom.';
+  } if (step.title === constants.STEP_STEEP) {
+    return `Put the cover on and refrigerate the cold brew, allowing the grounds to steep for ${step.properties.hours} hours. `
+      + "When time's up, just remove the filter with the ground coffee, pour a glass, and enjoy!";
   }
 
   return '';
@@ -92,6 +110,8 @@ export function getStepProperties(modalType, modalText, modalSelect, useMetric) 
     const tempToUse = useMetric
       ? translateTempToFahrenheit(modalText) : modalText;
     return { waterTemp: tempToUse };
+  } if (modalType === constants.STEP_CHILL_WATER) {
+    return { gramsWater: modalText };
   } if (modalType === constants.STEP_GRIND_COFFEE) {
     return { gramsCoffee: modalText, grindSize: modalSelect };
   } if (modalType === constants.STEP_BLOOM_GROUNDS) {
@@ -102,6 +122,8 @@ export function getStepProperties(modalType, modalText, modalSelect, useMetric) 
     return { seconds: modalText };
   } if (modalType === constants.STEP_ADD_ICE) {
     return { gramsIce: modalText };
+  } if (modalType === constants.STEP_STEEP) {
+    return { hours: modalText };
   }
   return {};
 }
@@ -112,6 +134,8 @@ export function getModalTextProperty(step, useMetric) {
     const tempToUse = useMetric
       ? translateTempToCelsius(properties.waterTemp) : properties.waterTemp;
     return tempToUse;
+  } if (title === constants.STEP_CHILL_WATER) {
+    return properties.gramsWater;
   } if (title === constants.STEP_GRIND_COFFEE) {
     return properties.gramsCoffee;
   } if (title === constants.STEP_BLOOM_GROUNDS) {
@@ -122,6 +146,8 @@ export function getModalTextProperty(step, useMetric) {
     return properties.seconds;
   } if (title === constants.STEP_ADD_ICE) {
     return properties.gramsIce;
+  } if (title === constants.STEP_STEEP) {
+    return properties.hours;
   }
   return '';
 }
@@ -156,6 +182,11 @@ export function validateStep(modalType, modalText, useMetric) {
     } if (!useMetric && (x < 0 || x > 212)) {
       return 'Water temperature must not be above boiling or below 0 degrees.';
     }
+  }
+
+  // Check steep hours
+  if (modalType === constants.STEP_STEEP && x >= 10) {
+    return 'Steep time must be less than 10 hours.';
   }
 
   return '';
