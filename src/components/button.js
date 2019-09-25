@@ -1,13 +1,15 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity
+  View, Text, StyleSheet, TouchableOpacity, Image
 } from 'react-native';
 
 export default function Button(props) {
   const {
-    onButtonClick, type, title, margin, disabled
+    onButtonClick, type, title, margin, disabled, isGlyph, glyphType
   } = props;
+
+  const baseButtonPath = '../assets/buttons/';
 
   const backgroundStyle = {
     marginTop: margin[0],
@@ -27,14 +29,20 @@ export default function Button(props) {
       color: '#1D5E9E'
     };
   }
+  if (isGlyph) {
+    titleStyle.marginRight = 8;
+  }
   return (
     <TouchableOpacity
       style={[styles.button, backgroundStyle]}
       onPress={onButtonClick}
       disabled={disabled}
     >
-      <View>
+      <View style={styles.glyphContainer}>
         <Text style={[styles.title, titleStyle]}>{title}</Text>
+        {isGlyph && glyphType === 0 && (
+          <Image style={styles.glyph} source={require(`${baseButtonPath}WhiteArrowGlyph.png`)} />
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -46,16 +54,24 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   button: {
-    paddingTop: 12,
-    paddingBottom: 12,
+    height: 40,
     paddingLeft: 18,
     paddingRight: 18,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
     shadowRadius: 10,
+    justifyContent: 'center'
   },
+  glyphContainer: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  glyph: {
+    width: 12,
+    height: 12
+  }
 });

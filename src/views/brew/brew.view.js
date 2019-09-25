@@ -338,12 +338,10 @@ class BrewPage extends Component {
     const baseButtonPath = '../../assets/buttons/';
 
     // Button styles
-    let buttonMarginRight = 15;
     let buttonTitle = 'Brew';
     if (!('steps' in recipe)) {
       buttonTitle = 'Loading...';
     } else if (step >= 0 && step < recipe.steps.length) {
-      buttonMarginRight = 0;
       buttonTitle = 'Next';
     } else if (step === recipe.steps.length) {
       buttonTitle = 'Finish';
@@ -431,23 +429,24 @@ class BrewPage extends Component {
             {stepNote}
           </Text>
           <View style={styles.buttonview}>
-            {step !== -1
-                && (
-                  <TouchableOpacity onPress={this.onBackClick}>
-                    <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Previous_Gray.png`)} />
-                  </TouchableOpacity>
-                )}
+            {step !== -1 && (
+            <TouchableOpacity onPress={this.onBackClick}>
+              <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Previous_Gray.png`)} />
+            </TouchableOpacity>
+            )}
+            {step === -1 && (
+            <TouchableOpacity onPress={this.onEditClick}>
+              <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Edit.png`)} />
+            </TouchableOpacity>
+            )}
             <Button
               onButtonClick={this.onBrewClick}
               type={0}
               title={buttonTitle}
-              margin={[0, buttonMarginRight, 0, 0]}
+              margin={[0, 0, 0, 0]}
+              isGlyph
+              glyphType={0}
             />
-            {step === -1 && (
-            <TouchableOpacity onPress={this.onEditClick}>
-              <Image style={styles.mini} source={require(`${baseButtonPath}Edit.png`)} />
-            </TouchableOpacity>
-            )}
           </View>
         </View>
         <CustomModal
@@ -532,8 +531,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '90%',
     alignSelf: 'center',
-    justifyContent: 'center',
-    width: 175,
+    justifyContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'nowrap',
   },

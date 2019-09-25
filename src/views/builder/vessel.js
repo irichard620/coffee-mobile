@@ -18,13 +18,13 @@ export default function Vessel(props) {
       <View style={styles.outline}>
         <View style={styles.logoview}>
           {vessel === VESSEL_AEROPRESS
-            && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
           {vessel === VESSEL_CHEMEX
-            && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
           {vessel === VESSEL_FRENCH_PRESS
-            && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
           {vessel === VESSEL_POUROVER
-            && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
         </View>
         <Text style={styles.title}>{vessel}</Text>
         <Text style={styles.description}>Brewing Vessel</Text>

@@ -33,32 +33,22 @@ export default function Entry(props) {
     marginBottom: titleMargin,
   };
 
-  let logoBackgroundColor = '#F1F1F1';
-  if (isMap) {
-    logoBackgroundColor = '#E8533E';
-  }
-  const logoBackgroundStyle = {
-    backgroundColor: logoBackgroundColor
-  };
-
   return (
     <TouchableWithoutFeedback onPress={() => onEntryClick(idx)} disabled={disabled}>
       <View style={styles.outline}>
         <View style={styles.topview}>
-          <View style={[styles.logoview, logoBackgroundStyle]}>
-            {vessel === constants.VESSEL_AEROPRESS
-              && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
-            {vessel === constants.VESSEL_CHEMEX
-              && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
-            {vessel === constants.VESSEL_FRENCH_PRESS
-              && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
-            {vessel === constants.VESSEL_POUROVER
-              && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
-            {isBean
-              && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}
-            {isMap
-              && <Image style={styles.image} source={require(`${basePath}Map_Pin.png`)} />}
-          </View>
+          {vessel === constants.VESSEL_AEROPRESS
+            && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
+          {vessel === constants.VESSEL_CHEMEX
+            && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
+          {vessel === constants.VESSEL_FRENCH_PRESS
+            && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
+          {vessel === constants.VESSEL_POUROVER
+            && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+          {isBean
+            && <Image style={styles.image} source={require(`${basePath}CoffeeBeans.png`)} />}
+          {isMap
+            && <Image style={styles.image} source={require(`${basePath}LocationPin.png`)} />}
           <View style={textviewDynamic}>
             {!selected && (
             <Text
@@ -82,14 +72,24 @@ export default function Entry(props) {
             </TouchableOpacity>
             )}
             {!isSponsor && (
-            <TouchableOpacity onPress={() => onGoClick(idx)} disabled={disabled}>
-              <Image style={styles.use} source={require(`${baseButtonPath}Go.png`)} />
-            </TouchableOpacity>
+            <Button
+              onButtonClick={() => onGoClick(idx)}
+              type={0}
+              title="Brew"
+              margin={[0, 0, 0, 0]}
+              isGlyph
+              glyphType={0}
+              disabled={disabled}
+            />
             )}
             {isSponsor && (
-            <TouchableOpacity onPress={() => onDownloadClick(idx)} disabled={disabled}>
-              <Image style={styles.use} source={require(`${baseButtonPath}Move_Down.png`)} />
-            </TouchableOpacity>
+            <Button
+              onButtonClick={() => onDownloadClick(idx)}
+              type={0}
+              title="Save"
+              margin={[0, 0, 0, 0]}
+              disabled={disabled}
+            />
             )}
           </View>
         </View>
@@ -162,16 +162,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
   },
-  logoview: {
-    height: 55,
-    width: 55,
+  image: {
+    height: 53,
+    width: 53,
     borderRadius: 20,
     marginRight: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    height: 35,
     resizeMode: 'contain',
   },
   title: {

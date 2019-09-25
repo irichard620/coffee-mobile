@@ -46,9 +46,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   button: {
-    minWidth: 128,
-    paddingTop: 12,
-    paddingBottom: 12,
+    height: 43,
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 20,

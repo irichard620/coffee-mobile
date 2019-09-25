@@ -22,6 +22,9 @@ export default function ModalContentCenter(props) {
   const imageHeight = {
     height: height * 0.175
   };
+  const titleWidth = {
+    width: width - 48 - 32 - 48
+  };
 
   const baseButtonPath = '../assets/buttons/';
   const baseTutorialPath = '../assets/tutorial/';
@@ -29,13 +32,12 @@ export default function ModalContentCenter(props) {
   return (
     <View style={[styles.content, modalDimensions]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.buttonContainer} onPress={onCloseClick}>
+        <TouchableOpacity onPress={onCloseClick}>
           <Image style={styles.close} source={require(`${baseButtonPath}XButton.png`)} />
         </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
-        <View style={{ width: '33%', }} />
+        <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
-      <ScrollView style={styles.ScrollView}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.containerScrollView}>
         {type === 0 && (
           <Image
             style={[styles.image, imageHeight]}
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   header: {
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     flexDirection: 'row',
     marginBottom: 16,
     width: '100%'
@@ -80,25 +82,25 @@ const styles = StyleSheet.create({
     width: '33%',
     fontSize: 18,
     fontWeight: '600',
-    color: '#1D5E9E',
-    alignSelf: 'center',
-    justifyContent: 'center'
-  },
-  buttonContainer: {
-    width: '33%',
-    alignItems: 'flex-start'
+    color: '#333333',
+    textAlign: 'center',
+    alignSelf: 'center'
   },
   description: {
     fontSize: 16,
     textAlign: 'left',
-    fontWeight: '400'
+    fontWeight: '400',
+    color: '#333333',
   },
   close: {
     height: 24,
     width: 24
   },
-  ScrollView: {
-    paddingTop: 16
+  scrollView: {
+    paddingTop: 16,
+  },
+  containerScrollView: {
+    alignItems: 'center'
   },
   image: {
     resizeMode: 'contain',
