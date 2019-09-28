@@ -31,7 +31,7 @@ export default function Sponsor(props) {
           <FastImage
             style={{
               width: width - 30,
-              height: 215,
+              height: 212,
               borderRadius: 20
             }}
             source={{
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#727272',
     borderRadius: 20,
     alignSelf: 'center',
-    height: 215,
+    height: 212,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,

@@ -41,7 +41,10 @@ export default function Button(props) {
       <View style={styles.glyphContainer}>
         <Text style={[styles.title, titleStyle]}>{title}</Text>
         {isGlyph && glyphType === 0 && (
-          <Image style={styles.glyph} source={require(`${baseButtonPath}WhiteArrowGlyph.png`)} />
+          <Image style={styles.glyph} source={require(`${baseButtonPath}WhiteArrow.png`)} />
+        )}
+        {isGlyph && glyphType === 1 && (
+          <Image style={styles.glyph} source={require(`${baseButtonPath}WhiteDownArrow.png`)} />
         )}
       </View>
     </TouchableOpacity>

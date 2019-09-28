@@ -13,6 +13,11 @@ import Sponsor from '../home/sponsor';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
+import CustomModal from '../../components/modal';
+import ModalContentCenter from '../../components/modal-content-center';
+import {
+  requestPurchaseIAP, restoreIAP
+} from '../../actions/user-actions';
 
 const camelcaseKeys = require('camelcase-keys');
 
@@ -25,30 +30,40 @@ class SponsorPage extends Component {
       selectedRecipes: [],
       beans: [],
       recipes: [],
-      selectedMap: false
+      selectedMap: false,
+      visibleModal: false,
+      premium: false
     };
   }
 
   componentDidMount() {
     const { navigation, getSponsor, sponsors } = this.props;
     const sponsorIdNav = navigation.getParam('sponsor', {}).sponsorId;
+    const premium = navigation.getParam('premium', false);
+
+    let setState = false;
     if (sponsors && Object.getOwnPropertyNames(sponsors.sponsor).length !== 0) {
       const { sponsorId, beans, recipes } = sponsors.sponsor;
       if (sponsorId !== sponsorIdNav) {
         // Only reload if not cached
         getSponsor(sponsorIdNav);
       } else {
-        this.addBeansAndRecipesToState(beans, recipes);
+        setState = true;
+        this.addBeansAndRecipesToState(beans, recipes, premium);
       }
     } else {
       getSponsor(sponsorIdNav);
     }
+    if (!setState) {
+      this.setState({ premium });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { sponsors, recipes } = this.props;
+    const { sponsors, recipes, user } = this.props;
     const nextSponsors = nextProps.sponsors;
     const nextRecipes = nextProps.recipes;
+    const nextUser = nextProps.user;
 
     if (sponsors && sponsors.sponsorIsFetching && !nextSponsors.sponsorIsFetching) {
       if (nextSponsors.error !== '') {
@@ -67,16 +82,7 @@ class SponsorPage extends Component {
       }
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
       if (nextRecipes.error !== '') {
-        // Show error in alert
-        Alert.alert(
-          'Recipe Library Full',
-          nextRecipes.error,
-          [
-            {
-              text: 'OK'
-            },
-          ],
-        );
+        this.setState({ visibleModal: true });
       } else {
         // Tell user it was saved
         Alert.alert(
@@ -89,10 +95,20 @@ class SponsorPage extends Component {
           ],
         );
       }
+    } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
+      this.setState({
+        premium: nextUser.user.premium
+      });
+    } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
+      if (nextUser.user.premium) {
+        this.setState({
+          premium: true
+        });
+      }
     }
   }
 
-  addBeansAndRecipesToState = (nextBeans, nextSponsorRecipes) => {
+  addBeansAndRecipesToState = (nextBeans, nextSponsorRecipes, premium) => {
     const newSelectedBeans = [];
     const newSelectedRecipes = [];
     const newBeans = [];
@@ -113,6 +129,7 @@ class SponsorPage extends Component {
       beans: newBeans,
       selectedRecipes: newSelectedRecipes,
       recipes: newRecipes,
+      premium
     });
   }
 
@@ -232,10 +249,58 @@ class SponsorPage extends Component {
     persistRecipe(recipeModel.Recipe(recipe), premium);
   }
 
+  onCloseModalClick = () => {
+    // Close and clear modal
+    this.setState({
+      visibleModal: false
+    });
+  }
+
+  alertBuyDrippyPro = () => {
+    const { buyDrippyPro } = this.props;
+    // Prompt if they want to purchase
+    Alert.alert(
+      'Buy Drippy Pro',
+      'Would you like to purchase the pro version of Drippy? This will give you '
+      + 'the ability to create and edit recipes, and will unlock unlimited recipe storage.',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Buy',
+          onPress: () => {
+            buyDrippyPro();
+          }
+        },
+      ],
+    );
+  }
+
+  alertRestoreDrippyPro = () => {
+    const { restoreDrippyPro } = this.props;
+    // prompt if they want to restore
+    Alert.alert(
+      'Restore Drippy Pro',
+      'Would you like to restore the pro version of Drippy?',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Restore',
+          onPress: () => {
+            restoreDrippyPro();
+          }
+        },
+      ],
+    );
+  }
+
   render() {
     const { navigation } = this.props;
     const {
-      beans, recipes, selectedRecipes, selectedMap
+      beans, recipes, selectedRecipes, selectedMap, visibleModal
     } = this.state;
 
     const sponsor = navigation.getParam('sponsor', {});
@@ -319,6 +384,22 @@ class SponsorPage extends Component {
             />
           ))}
         </View>
+        <CustomModal
+          visibleModal={visibleModal}
+          onCloseClick={this.onCloseModalClick}
+          type={constants.MODAL_TYPE_CENTER}
+        >
+          <ModalContentCenter
+            title={constants.POPUP_TITLE_DRIPPY_PRO_LIBRARY}
+            description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
+            type={0}
+            primaryButtonTitle="Get Drippy Pro"
+            secondaryButtonTitle="Restore Previous Purchase"
+            onCloseClick={this.onCloseModalClick}
+            onPrimaryButtonClick={this.alertBuyDrippyPro}
+            onSecondaryButtonClick={this.alertRestoreDrippyPro}
+          />
+        </CustomModal>
       </ScrollView>
     );
   }
@@ -342,10 +423,16 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
+  user: state.userReducer.user,
   sponsors: state.sponsorsReducer.sponsors,
-  recipes: state.recipesReducer.recipes
+  recipes: state.recipesReducer.recipes,
 });
 
-const mapDispatchToProps = { getSponsor: fetchSponsor, persistRecipe: saveRecipe };
+const mapDispatchToProps = {
+  getSponsor: fetchSponsor,
+  persistRecipe: saveRecipe,
+  buyDrippyPro: requestPurchaseIAP,
+  restoreDrippyPro: restoreIAP,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SponsorPage);

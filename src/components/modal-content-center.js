@@ -41,7 +41,7 @@ export default function ModalContentCenter(props) {
         {type === 0 && (
           <Image
             style={[styles.image, imageHeight]}
-            source={require(`${baseTutorialPath}Tutorial_1.png`)}
+            source={require(`${baseTutorialPath}ImageModal.png`)}
           />
         )}
         <Text style={styles.description}>{description}</Text>
@@ -105,6 +105,6 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
     width: '100%',
-    paddingBottom: 32
+    marginBottom: 32
   }
 });

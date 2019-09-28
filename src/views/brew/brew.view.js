@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions
+  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions,
+  Alert
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import KeepAwake from 'react-native-keep-awake';
@@ -17,6 +18,9 @@ import CustomModal from '../../components/modal';
 import ModalContentBottom from '../../components/modal-content-bottom';
 import ModalContentCenter from '../../components/modal-content-center';
 import Pagination from '../../components/pagination';
+import {
+  requestPurchaseIAP, restoreIAP
+} from '../../actions/user-actions';
 
 class BrewPage extends Component {
   constructor(props) {
@@ -28,19 +32,23 @@ class BrewPage extends Component {
       timerTotal: -1,
       visibleModal: false,
       modalType: '',
-      deleteModal: false
+      deleteModal: false,
+      premium: false
     };
   }
 
   componentDidMount() {
     const { navigation } = this.props;
     const recipe = navigation.getParam('recipe', {});
-    this.setState({ recipe });
+    const premium = navigation.getParam('premium', false);
+    this.setState({ recipe, premium });
   }
 
   componentWillReceiveProps(nextProps) {
     const { recipe } = this.state;
+    const { user } = this.props;
     const { recipes } = nextProps;
+    const nextUser = nextProps.user;
 
     if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving
       && !recipes.recipeIsDeleting && recipes.recipes.length !== 0) {
@@ -49,6 +57,16 @@ class BrewPage extends Component {
         if (recipes.recipes[i].recipeId === recipe.recipeId) {
           this.setState({ recipe: recipes.recipes[i] });
         }
+      }
+    } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
+      this.setState({
+        premium: nextUser.user.premium
+      });
+    } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
+      if (nextUser.user.premium) {
+        this.setState({
+          premium: true
+        });
       }
     }
   }
@@ -74,10 +92,20 @@ class BrewPage extends Component {
     clearInterval(this.interval);
 
     // Check step
+    // TODO: mizudashi nav's away at last recipe step
     if (step !== recipe.steps.length) {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
-        this.clearTimer(step + 1);
+        // If cold brew, no serve step at end - skip
+        if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+          // Analytics
+          brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
+            recipe.brewingVessel, recipe.sponsorId);
+
+          navigation.goBack();
+        } else {
+          this.clearTimer(step + 1);
+        }
       } else {
         const nextStep = recipe.steps[step + 1];
         if (nextStep.title === constants.STEP_WAIT) {
@@ -152,6 +180,47 @@ class BrewPage extends Component {
     this.setState({
       visibleModal: false
     });
+  }
+
+  alertBuyDrippyPro = () => {
+    const { buyDrippyPro } = this.props;
+    // Prompt if they want to purchase
+    Alert.alert(
+      'Buy Drippy Pro',
+      'Would you like to purchase the pro version of Drippy? This will give you '
+      + 'the ability to create and edit recipes, and will unlock unlimited recipe storage.',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Buy',
+          onPress: () => {
+            buyDrippyPro();
+          }
+        },
+      ],
+    );
+  }
+
+  alertRestoreDrippyPro = () => {
+    const { restoreDrippyPro } = this.props;
+    // prompt if they want to restore
+    Alert.alert(
+      'Restore Drippy Pro',
+      'Would you like to restore the pro version of Drippy?',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Restore',
+          onPress: () => {
+            restoreDrippyPro();
+          }
+        },
+      ],
+    );
   }
 
   onPressItem = (item) => {
@@ -246,6 +315,8 @@ class BrewPage extends Component {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Chemex.png`)} />);
     } if (vessel === constants.VESSEL_FRENCH_PRESS) {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
+    } if (vessel === constants.VESSEL_MIZUDASHI) {
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Mizudashi.png`)} />);
     }
     return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
   }
@@ -280,6 +351,10 @@ class BrewPage extends Component {
       const stepObj = recipe.steps[step];
       if (stepObj.title === constants.STEP_HEAT_WATER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
+      } if (stepObj.title === constants.STEP_CHILL_WATER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}ChillWater.png`)} />);
+      } if (stepObj.title === constants.STEP_INSERT_FILTER) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertFilter.png`)} />);
       } if (stepObj.title === constants.STEP_RINSE_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
       } if (stepObj.title === constants.STEP_BLOOM_GROUNDS
@@ -298,6 +373,8 @@ class BrewPage extends Component {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_Aero.png`)} />);
       } if (stepObj.title === constants.STEP_PUSH_FILTER) {
         return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_FP.png`)} />);
+      } if (stepObj.title === constants.STEP_STEEP) {
+        return (<Image style={styles.icon} source={require(`${baseBrewPath}Steep.png`)} />);
       } if (stepObj.title === constants.STEP_WAIT) {
         // Get fill number
         const fill = Math.round((timerRemaining / timerTotal) * 100);
@@ -341,8 +418,14 @@ class BrewPage extends Component {
     let buttonTitle = 'Brew';
     if (!('steps' in recipe)) {
       buttonTitle = 'Loading...';
-    } else if (step >= 0 && step < recipe.steps.length) {
+    } else if (step >= 0 && step < recipe.steps.length - 1) {
       buttonTitle = 'Next';
+    } else if (step === recipe.steps.length - 1) {
+      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+        buttonTitle = 'Finish';
+      } else {
+        buttonTitle = 'Next';
+      }
     } else if (step === recipe.steps.length) {
       buttonTitle = 'Finish';
     }
@@ -394,7 +477,7 @@ class BrewPage extends Component {
       description = recipeModel.getRecipeDescription(recipe, useMetric);
     } else if (step < steps.length) {
       const currentStepObj = steps[step];
-      description = stepModel.getStepDescription(currentStepObj, useMetric);
+      description = stepModel.getStepDescription(currentStepObj, useMetric, recipe.brewingVessel);
       // Optional step notes
       if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
         stepNote = currentStepObj.notes;
@@ -406,7 +489,11 @@ class BrewPage extends Component {
     // Pagination
     let stepsLength = 0;
     if (steps && steps.length > 0) {
-      stepsLength = steps.length + 1;
+      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
+        stepsLength = steps.length;
+      } else {
+        stepsLength = steps.length + 1;
+      }
     }
 
     return (
@@ -473,8 +560,8 @@ class BrewPage extends Component {
             primaryButtonTitle="Get Drippy Pro"
             secondaryButtonTitle="Restore Previous Purchase"
             onCloseClick={this.onCloseModalClick}
-            onPrimaryButtonClick={this.onCloseModalClick}
-            onSecondaryButtonClick={this.onCloseModalClick}
+            onPrimaryButtonClick={this.alertBuyDrippyPro}
+            onSecondaryButtonClick={this.alertRestoreDrippyPro}
           />
           )}
         </CustomModal>
@@ -541,12 +628,17 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({ recipes: state.recipesReducer.recipes });
+const mapStateToProps = state => ({
+  recipes: state.recipesReducer.recipes,
+  user: state.userReducer.user,
+});
 
 const mapDispatchToProps = {
   favRecipe: favoriteRecipe,
   unfavRecipe: unfavoriteRecipe,
-  delRecipe: deleteRecipe
+  delRecipe: deleteRecipe,
+  buyDrippyPro: requestPurchaseIAP,
+  restoreDrippyPro: restoreIAP,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrewPage);

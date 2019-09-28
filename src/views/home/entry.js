@@ -22,7 +22,7 @@ export default function Entry(props) {
   if (selected) {
     textviewDynamic.flexDirection = 'column';
     textviewDynamic.flex = 1;
-    titleMargin = 5;
+    titleMargin = 4;
   } else {
     textviewDynamic.justifyContent = 'center';
     textviewDynamic.height = 55;
@@ -45,6 +45,10 @@ export default function Entry(props) {
             && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
           {vessel === constants.VESSEL_POUROVER
             && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+          {vessel === constants.VESSEL_KALITA_WAVE
+            && <Image style={styles.image} source={require(`${basePath}Kalita.png`)} />}
+          {vessel === constants.VESSEL_MIZUDASHI
+            && <Image style={styles.image} source={require(`${basePath}Mizudashi.png`)} />}
           {isBean
             && <Image style={styles.image} source={require(`${basePath}CoffeeBeans.png`)} />}
           {isMap
@@ -88,6 +92,8 @@ export default function Entry(props) {
               type={0}
               title="Save"
               margin={[0, 0, 0, 0]}
+              isGlyph
+              glyphType={1}
               disabled={disabled}
             />
             )}
@@ -174,21 +180,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     justifyContent: 'center',
+    lineHeight: 16,
   },
   description: {
     color: '#727272',
     fontSize: 14,
-    lineHeight: 18
+    lineHeight: 16
   },
   buttonview: {
-    marginTop: 20,
+    marginTop: 24,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   beanbuttonview: {
-    marginTop: 20,
+    marginTop: 24,
     alignItems: 'center'
   },
   rightbuttonview: {
@@ -197,7 +204,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start'
   },
   mapview: {
-    marginTop: 15,
+    marginTop: 16,
     height: 125,
     marginLeft: -16,
     marginRight: -16,

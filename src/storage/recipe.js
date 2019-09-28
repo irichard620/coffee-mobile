@@ -1,5 +1,6 @@
 import uuidv4 from 'uuid/v4';
 import { getTempUnit, translateTempToCelsius } from './helper';
+import { VESSEL_MIZUDASHI } from '../constants';
 
 const camelcaseKeys = require('camelcase-keys');
 
@@ -63,10 +64,14 @@ export function getRecipeDescription(recipe, useMetric) {
   // Line 2
   description += `${recipe.totalCoffee}g coffee, ${recipe.grindSize} grind\n`;
 
-  // Line 3
-  const tempUnit = getTempUnit(useMetric);
-  const tempToUse = useMetric ? translateTempToCelsius(recipe.waterTemp) : recipe.waterTemp;
-  description += `${recipe.totalWater}g of water, ${tempToUse}${tempUnit}`;
+  // Line 3 - different if cold brew
+  if (recipe.brewingVessel === VESSEL_MIZUDASHI) {
+    description += `${recipe.totalWater}g of cold water`;
+  } else {
+    const tempUnit = getTempUnit(useMetric);
+    const tempToUse = useMetric ? translateTempToCelsius(recipe.waterTemp) : recipe.waterTemp;
+    description += `${recipe.totalWater}g of water, ${tempToUse}${tempUnit}`;
+  }
 
   return description;
 }

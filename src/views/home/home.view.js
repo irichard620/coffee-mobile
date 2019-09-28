@@ -3,8 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
-  Animated, Easing
+  Animated, Easing, Alert, Platform
 } from 'react-native';
+import RNIap, {
+  purchaseErrorListener,
+  purchaseUpdatedListener
+} from 'react-native-iap';
 import Entry from './entry';
 import FloatingButton from '../../components/floating-button';
 import MenuButtons from './menu-buttons';
@@ -19,8 +23,15 @@ import * as constants from '../../constants';
 import CustomModal from '../../components/modal';
 import ModalContentBottom from '../../components/modal-content-bottom';
 import ModalContentCenter from '../../components/modal-content-center';
+import {
+  requestPurchaseIAP, restoreIAP, upgradeIAP
+} from '../../actions/user-actions';
 
 class HomePage extends Component {
+  purchaseUpdatePro = null;
+
+  purchaseErrorPro = null;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -52,8 +63,34 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
-    const { getRecipes, user } = this.props;
+    const { getRecipes, user, upgradeDrippyPro } = this.props;
+
+    // Purchase success handler
+    this.purchaseUpdatePro = purchaseUpdatedListener((purchase) => {
+      const receipt = purchase.transactionReceipt;
+      if (receipt) {
+        // Update in our system - wait for callback
+        upgradeDrippyPro(purchase);
+      }
+    });
+
+    // Purchase error handler
+    this.purchaseErrorPro = purchaseErrorListener(() => {
+      // Show alert
+      Alert.alert(
+        'Error purchasing Drippy Pro',
+        'An error occurred purchasing pro version of Drippy.',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+    });
+
+    // Get all recipes when page loads
     getRecipes();
+
     // Get temp and premium preference
     if (user && Object.keys(user.user).length !== 0 && ('useMetric' in user.user)) {
       const stateToSet = {};
@@ -138,18 +175,63 @@ class HomePage extends Component {
       };
     } if (nextUser && prevState.userIsSaving && !nextUser.userIsSaving) {
       return {
-        useMetric: nextUser.user.useMetric
+        useMetric: nextUser.user.useMetric,
+        userIsSaving: false
       };
     } if (nextUser && prevState.iapIsRestoring && !nextUser.iapIsRestoring) {
-      return {
-        premium: nextUser.user.premium
-      };
+      // Update user
+      if (!nextUser.user.premium) {
+        Alert.alert(
+          'Problem restoring Drippy Pro',
+          'There was an issue restoring your Drippy Pro. '
+          + 'It might be an issue with your connection, or no past purchase was found.',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+        return {
+          iapIsRestoring: false
+        };
+      }
+      Alert.alert(
+        'Drippy Pro Restored',
+        'Thanks for your continued support as a Drippy Pro user!',
+        [
+          {
+            text: 'OK',
+            onPress: () => ({
+              premium: true,
+              iapIsRestoring: false
+            })
+          },
+        ],
+      );
     } if (nextUser && prevState.iapIsUpgrading && !nextUser.iapIsUpgrading) {
+      // Finish transaction
+      if (Platform.OS === 'ios') {
+        RNIap.finishTransactionIOS(nextUser.purchase.transactionId);
+      } else if (Platform.OS === 'android') {
+        RNIap.acknowledgePurchaseAndroid(nextUser.purchase.purchaseToken);
+      }
       return {
-        premium: nextUser.user.premium
+        premium: nextUser.user.premium,
+        iapIsUpgrading: false
       };
     }
     return null;
+  }
+
+  componentWillUnmount() {
+    if (this.purchaseUpdatePro) {
+      this.purchaseUpdatePro.remove();
+      this.purchaseUpdatePro = null;
+    }
+    if (this.purchaseErrorPro) {
+      this.purchaseErrorPro.remove();
+      this.purchaseErrorPro = null;
+    }
   }
 
   switchTab = (index) => {
@@ -322,6 +404,47 @@ class HomePage extends Component {
       modalRecipeId: '',
       modalRecipeIndex: -1,
     });
+  }
+
+  alertBuyDrippyPro = () => {
+    const { buyDrippyPro } = this.props;
+    // Prompt if they want to purchase
+    Alert.alert(
+      'Buy Drippy Pro',
+      'Would you like to purchase the pro version of Drippy? This will give you '
+      + 'the ability to create and edit recipes, and will unlock unlimited recipe storage.',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Buy',
+          onPress: () => {
+            buyDrippyPro();
+          }
+        },
+      ],
+    );
+  }
+
+  alertRestoreDrippyPro = () => {
+    const { restoreDrippyPro } = this.props;
+    // prompt if they want to restore
+    Alert.alert(
+      'Restore Drippy Pro',
+      'Would you like to restore the pro version of Drippy?',
+      [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Restore',
+          onPress: () => {
+            restoreDrippyPro();
+          }
+        },
+      ],
+    );
   }
 
   onPressItem = (item) => {
@@ -539,8 +662,8 @@ class HomePage extends Component {
               primaryButtonTitle="Get Drippy Pro"
               secondaryButtonTitle="Restore Previous Purchase"
               onCloseClick={this.onCloseClick}
-              onPrimaryButtonClick={this.onCloseClick}
-              onSecondaryButtonClick={this.onCloseClick}
+              onPrimaryButtonClick={this.alertBuyDrippyPro}
+              onSecondaryButtonClick={this.alertRestoreDrippyPro}
             />
             )}
           </CustomModal>
@@ -605,7 +728,10 @@ const mapDispatchToProps = {
   getRecipes: fetchRecipes,
   favRecipe: favoriteRecipe,
   unfavRecipe: unfavoriteRecipe,
-  delRecipe: deleteRecipe
+  delRecipe: deleteRecipe,
+  buyDrippyPro: requestPurchaseIAP,
+  restoreDrippyPro: restoreIAP,
+  upgradeDrippyPro: upgradeIAP
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
