@@ -62,7 +62,7 @@ export default function MenuButtons(props) {
 
 const styles = StyleSheet.create({
   outline: {
-    marginBottom: 15,
+    marginBottom: 16,
     alignSelf: 'center',
     alignItems: 'center',
     flexDirection: 'row'

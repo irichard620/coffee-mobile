@@ -108,11 +108,9 @@ class SettingsPage extends Component {
         premium: nextUser.user.premium
       });
     } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
-      if (nextUser.user.premium) {
-        this.setState({
-          premium: true
-        });
-      }
+      this.setState({
+        premium: nextUser.user.premium
+      });
     }
   }
 

@@ -421,6 +421,9 @@ class HomePage extends Component {
           text: 'Buy',
           onPress: () => {
             buyDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],
@@ -441,6 +444,9 @@ class HomePage extends Component {
           text: 'Restore',
           onPress: () => {
             restoreDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],

@@ -23,8 +23,15 @@ export default function Button(props) {
     titleStyle = {
       color: '#FFFFFF'
     };
+  } else if (type === 1) {
+    backgroundStyle.backgroundColor = '#FFFFFF';
+    titleStyle = {
+      color: '#1D5E9E'
+    };
   } else {
     backgroundStyle.backgroundColor = '#FFFFFF';
+    backgroundStyle.borderWidth = 1;
+    backgroundStyle.borderColor = '#1D5E9E';
     titleStyle = {
       color: '#1D5E9E'
     };

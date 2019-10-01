@@ -100,11 +100,9 @@ class SponsorPage extends Component {
         premium: nextUser.user.premium
       });
     } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
-      if (nextUser.user.premium) {
-        this.setState({
-          premium: true
-        });
-      }
+      this.setState({
+        premium: nextUser.user.premium
+      });
     }
   }
 
@@ -271,6 +269,9 @@ class SponsorPage extends Component {
           text: 'Buy',
           onPress: () => {
             buyDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],
@@ -291,6 +292,9 @@ class SponsorPage extends Component {
           text: 'Restore',
           onPress: () => {
             restoreDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],

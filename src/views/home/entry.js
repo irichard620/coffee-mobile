@@ -104,7 +104,7 @@ export default function Entry(props) {
         <View style={styles.beanbuttonview}>
           <Button
             onButtonClick={() => onExploreClick(idx)}
-            type={0}
+            type={2}
             title="Explore the coffee"
             margin={[0, 0, 0, 0]}
           />
@@ -149,14 +149,11 @@ export default function Entry(props) {
 const styles = StyleSheet.create({
   outline: {
     borderRadius: 20,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 15,
-    paddingBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
+    padding: 16,
+    marginLeft: 16,
+    marginRight: 16,
     marginTop: 0,
-    marginBottom: 15,
+    marginBottom: 16,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,

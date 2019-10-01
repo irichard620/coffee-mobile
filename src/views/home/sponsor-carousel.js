@@ -70,13 +70,14 @@ class SponsorCarousel extends Component {
 
 const styles = StyleSheet.create({
   outline: {
-    marginBottom: 15
+    marginBottom: 16
   },
   slider: {
     overflow: 'visible' // for custom animations
   },
   sliderContentContainer: {
-    paddingVertical: 10 // for custom animation
+    paddingTop: 8, // for custom animation
+    paddingBottom: 3
   }
 });
 

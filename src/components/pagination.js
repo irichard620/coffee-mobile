@@ -13,7 +13,7 @@ export default function Pagination(props) {
   for (let i = 0; i < total; i += 1) {
     let marginToUse = 0;
     if (i < total - 1) {
-      marginToUse = 5;
+      marginToUse = 6;
     }
     const marginStyle = {
       marginRight: marginToUse
@@ -45,13 +45,13 @@ const styles = StyleSheet.create({
   },
   inactiveDot: {
     backgroundColor: '#E3E3E3',
-    width: 5,
-    height: 5,
+    width: 6,
+    height: 6,
     borderRadius: 3
   },
   activeDot: {
-    width: 5,
-    height: 5,
+    width: 6,
+    height: 6,
     borderRadius: 3
   }
 });

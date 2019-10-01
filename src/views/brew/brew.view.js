@@ -63,11 +63,9 @@ class BrewPage extends Component {
         premium: nextUser.user.premium
       });
     } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
-      if (nextUser.user.premium) {
-        this.setState({
-          premium: true
-        });
-      }
+      this.setState({
+        premium: nextUser.user.premium
+      });
     }
   }
 
@@ -197,6 +195,9 @@ class BrewPage extends Component {
           text: 'Buy',
           onPress: () => {
             buyDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],
@@ -217,6 +218,9 @@ class BrewPage extends Component {
           text: 'Restore',
           onPress: () => {
             restoreDrippyPro();
+            this.setState({
+              visibleModal: false
+            });
           }
         },
       ],
@@ -317,6 +321,8 @@ class BrewPage extends Component {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
     } if (vessel === constants.VESSEL_MIZUDASHI) {
       return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Mizudashi.png`)} />);
+    } if (vessel === constants.VESSEL_KALITA_WAVE) {
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_KalitaWave.png`)} />);
     }
     return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
   }
