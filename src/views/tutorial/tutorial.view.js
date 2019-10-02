@@ -59,7 +59,7 @@ class TutorialPage extends Component {
         <View style={styles.buttonContainer}>
           <Button
             onButtonClick={this.onNextClick}
-            type={1}
+            type={2}
             title="Let's Go!"
             margin={[0, 0, 0, 0]}
           />

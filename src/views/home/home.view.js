@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
-  Animated, Easing, Alert, Platform
+  Alert, Platform
 } from 'react-native';
 import RNIap, {
   purchaseErrorListener,
@@ -54,7 +54,6 @@ class HomePage extends Component {
       recipeIsDeleting: false,
       userIsSaving: false,
       menuSelected: false,
-      spinValue: new Animated.Value(0),
       useMetric: false,
       iapIsRestoring: false,
       iapIsUpgrading: false,
@@ -201,13 +200,13 @@ class HomePage extends Component {
         [
           {
             text: 'OK',
-            onPress: () => ({
-              premium: true,
-              iapIsRestoring: false
-            })
           },
         ],
       );
+      return {
+        premium: true,
+        iapIsRestoring: false
+      };
     } if (nextUser && prevState.iapIsUpgrading && !nextUser.iapIsUpgrading) {
       // Finish transaction
       if (Platform.OS === 'ios') {
@@ -516,39 +515,19 @@ class HomePage extends Component {
     }
   }
 
-  startRotateAnimation = (endVal, durationVal) => {
-    const { spinValue } = this.state;
-    Animated.timing(
-      spinValue,
-      {
-        toValue: endVal,
-        duration: durationVal,
-        easing: Easing.linear,
-        useNativeDriver: true
-      }
-    ).start();
-  }
-
   onFloatingClick = (type) => {
     const { menuSelected } = this.state;
 
     if (type === 0) {
       // Update to menu selected or not selected
       LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
-      if (!menuSelected) {
-        this.startRotateAnimation(1, 100);
-      } else {
-        this.startRotateAnimation(0, 100);
-      }
       this.setState({ menuSelected: !menuSelected });
     } else if (type === 1) {
       // Settings page
-      this.startRotateAnimation(0, 1);
       this.setState({ menuSelected: false });
       this.onSettingsClick();
     } else {
       // New recipe
-      this.startRotateAnimation(0, 1);
       this.setState({ menuSelected: false });
       this.onAddClick();
     }
@@ -585,7 +564,7 @@ class HomePage extends Component {
     const { sponsors } = this.props;
     const {
       tab, customs, favorites, featured, visibleModal, modalType,
-      deleteModal, sponsorIndex, menuSelected, spinValue, tabMenuSelected
+      deleteModal, sponsorIndex, menuSelected, tabMenuSelected
     } = this.state;
 
     let modalTitle = '';
@@ -603,11 +582,6 @@ class HomePage extends Component {
     const marginLeftContainer = {
       left: (width / 2.0) - 31
     };
-
-    const spin = spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '45deg']
-    });
 
     // Bottom dynamic
     const entryContainerBottom = {
@@ -689,7 +663,7 @@ class HomePage extends Component {
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={0}
-            spinValue={spin}
+            disabled={!menuSelected}
           />
         </View>
       </View>

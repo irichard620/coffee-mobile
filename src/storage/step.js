@@ -185,8 +185,8 @@ export function validateStep(modalType, modalText, useMetric) {
   }
 
   // Check steep hours
-  if (modalType === constants.STEP_STEEP && x >= 10) {
-    return 'Steep time must be less than 10 hours.';
+  if (modalType === constants.STEP_STEEP && x >= 48) {
+    return 'Steep time must be less than 48 hours.';
   }
 
   return '';
