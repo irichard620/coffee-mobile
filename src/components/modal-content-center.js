@@ -4,8 +4,8 @@ import {
   View, Text, StyleSheet, Image, Dimensions, ScrollView
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ButtonLarge from './button-large';
-import ButtonLargeText from './button-large-text';
+import List from './list';
+import { RECIPE_MENU_DRIPPY_PRO } from '../constants';
 
 export default function ModalContentCenter(props) {
   const {
@@ -19,16 +19,22 @@ export default function ModalContentCenter(props) {
     maxHeight: height * 0.7,
     width: width - 48
   };
-  const imageHeight = {
-    height: height * 0.175
-  };
   const titleWidth = {
     width: width - 48 - 32 - 48
   };
 
   const baseButtonPath = '../assets/buttons/';
-  const baseTutorialPath = '../assets/tutorial/';
 
+  const options = [{
+    title: RECIPE_MENU_DRIPPY_PRO,
+    type,
+    description,
+    primaryButtonTitle,
+    secondaryButtonTitle,
+  }];
+
+  // Note: for scrolling to fully work, need to wrap content in
+  // list item where all content touchable
   return (
     <View style={[styles.content, modalDimensions]}>
       <View style={styles.header}>
@@ -37,27 +43,12 @@ export default function ModalContentCenter(props) {
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.containerScrollView}>
-        {type === 0 && (
-          <Image
-            style={[styles.image, imageHeight]}
-            source={require(`${baseTutorialPath}ImageModal.png`)}
-          />
-        )}
-        <Text style={styles.description}>{description}</Text>
-        <ButtonLarge
-          onButtonClick={onPrimaryButtonClick}
-          type={0}
-          title={primaryButtonTitle}
-          margin={[32, 0, 0, 0]}
+      <ScrollView>
+        <List
+          options={options}
+          onPrimaryButtonClick={onPrimaryButtonClick}
+          onSecondaryButtonClick={onSecondaryButtonClick}
         />
-        {type === 0 && (
-          <ButtonLargeText
-            onButtonClick={onSecondaryButtonClick}
-            title={secondaryButtonTitle}
-            margin={[16, 0, 0, 0]}
-          />
-        )}
       </ScrollView>
     </View>
   );
@@ -69,7 +60,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingLeft: 16,
     paddingRight: 16,
-    paddingBottom: 24,
     borderRadius: 20,
   },
   header: {
@@ -86,25 +76,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center'
   },
-  description: {
-    fontSize: 16,
-    textAlign: 'left',
-    fontWeight: '400',
-    color: '#333333',
-  },
   close: {
     height: 24,
     width: 24
   },
-  scrollView: {
-    paddingTop: 16,
-  },
-  containerScrollView: {
-    alignItems: 'center'
-  },
-  image: {
-    resizeMode: 'contain',
-    width: '100%',
-    marginBottom: 32
-  }
 });

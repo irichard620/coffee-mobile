@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   emptySeparator: {
     height: 1,
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     marginTop: 15,
   },
   description: {

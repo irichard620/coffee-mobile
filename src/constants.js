@@ -82,6 +82,7 @@ export const RECIPE_MENU_FAVORITE = 'Favorite recipe';
 export const RECIPE_MENU_UNFAVORITE = 'Unfavorite recipe';
 export const RECIPE_MENU_DELETE = 'Delete';
 export const RECIPE_MENU_CANCEL = 'Cancel';
+export const RECIPE_MENU_DRIPPY_PRO = 'Drippy Pro';
 
 // Settings options
 export const SETTINGS_PRO = 'Drippy Pro';

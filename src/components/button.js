@@ -29,7 +29,7 @@ export default function Button(props) {
       color: '#1D5E9E'
     };
   } else {
-    backgroundStyle.backgroundColor = '#FFFFFF';
+    backgroundStyle.backgroundColor = 'transparent';
     backgroundStyle.borderWidth = 1;
     backgroundStyle.borderColor = '#1D5E9E';
     titleStyle = {
