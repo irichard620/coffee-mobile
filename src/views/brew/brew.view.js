@@ -231,8 +231,7 @@ class BrewPage extends Component {
     const {
       navigation, favRecipe, unfavRecipe, delRecipe
     } = this.props;
-    const premium = navigation.getParam('premium', false);
-    const { recipe, deleteModal } = this.state;
+    const { recipe, deleteModal, premium } = this.state;
 
     if (item === constants.RECIPE_MENU_EDIT) {
       // block action if free user

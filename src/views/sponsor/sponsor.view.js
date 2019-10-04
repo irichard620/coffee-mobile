@@ -233,9 +233,8 @@ class SponsorPage extends Component {
   }
 
   onDownloadClick = (idx) => {
-    const { persistRecipe, navigation } = this.props;
-    const { recipes } = this.state;
-    const premium = navigation.getParam('premium', false);
+    const { persistRecipe } = this.props;
+    const { recipes, premium } = this.state;
 
     // Get our recipe
     const recipe = recipes[idx];

@@ -16,7 +16,7 @@ export default function ModalContentCenter(props) {
   // Max height for modal
   const { height, width } = Dimensions.get('window');
   const modalDimensions = {
-    maxHeight: height * 0.7,
+    maxHeight: height * 0.85,
     width: width - 48
   };
   const titleWidth = {
