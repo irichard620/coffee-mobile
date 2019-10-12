@@ -1,13 +1,20 @@
 
 import React, { Component } from 'react';
 import CustomModal from '../../components/modal';
+import ModalContentBottom from '../../components/modal-content-bottom';
 import * as constants from '../../constants';
 
 class BuilderModal extends Component {
   newStepOptions = (vessel) => {
     const arrToUse = [];
     constants.steps.forEach((step) => {
-      if (step === constants.STEP_INSERT_PLUNGER) {
+      if (step === constants.STEP_HEAT_WATER
+        || step === constants.STEP_RINSE_FILTER
+        || step === constants.STEP_STIR) {
+        if (vessel !== constants.VESSEL_MIZUDASHI) {
+          arrToUse.push({ title: step });
+        }
+      } else if (step === constants.STEP_INSERT_PLUNGER) {
         if (vessel === constants.VESSEL_AEROPRESS) {
           arrToUse.push({ title: step });
         }
@@ -17,6 +24,12 @@ class BuilderModal extends Component {
         }
       } else if (step === constants.STEP_PUSH_FILTER) {
         if (vessel === constants.VESSEL_FRENCH_PRESS) {
+          arrToUse.push({ title: step });
+        }
+      } else if (step === constants.STEP_CHILL_WATER
+        || step === constants.STEP_INSERT_FILTER
+        || step === constants.STEP_STEEP) {
+        if (vessel === constants.VESSEL_MIZUDASHI) {
           arrToUse.push({ title: step });
         }
       } else {
@@ -56,6 +69,8 @@ class BuilderModal extends Component {
         return 'Degrees Celsius';
       }
       return 'Degrees Fahrenheit';
+    } if (modalType === constants.STEP_CHILL_WATER) {
+      return 'Grams of Water';
     } if (modalType === constants.STEP_GRIND_COFFEE) {
       return 'Grams of Coffee';
     } if (modalType === constants.STEP_BLOOM_GROUNDS) {
@@ -70,6 +85,8 @@ class BuilderModal extends Component {
       return 'Recipe Name';
     } if (modalType === constants.USER_NAME_ELEM) {
       return 'Name';
+    } if (modalType === constants.STEP_STEEP) {
+      return 'Hours to Steep';
     }
     return '';
   }
@@ -114,20 +131,24 @@ class BuilderModal extends Component {
       <CustomModal
         visibleModal={visibleModal}
         onCloseClick={onCloseClick}
-        modalText={modalText}
-        textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
-        modalSelect={modalSelect}
-        isListModal={isListModal}
-        isSelectInput={isSelectInput}
-        options={options}
-        title={titleToDisplay}
-        charLimit={charLimit}
-        pickerValues={constants.grindSizes}
-        onPressItem={onPressItem}
-        onChangeText={onChangeText}
-        onModalSave={onModalSave}
-        onChangePicker={onChangePicker}
-      />
+        type={constants.MODAL_TYPE_BOTTOM}
+      >
+        <ModalContentBottom
+          modalText={modalText}
+          textPlaceholder={this.getTextPlaceholder(modalType, useMetric)}
+          modalSelect={modalSelect}
+          isListModal={isListModal}
+          isSelectInput={isSelectInput}
+          options={options}
+          title={titleToDisplay}
+          charLimit={charLimit}
+          pickerValues={constants.grindSizes}
+          onPressItem={onPressItem}
+          onChangeText={onChangeText}
+          onModalSave={onModalSave}
+          onChangePicker={onChangePicker}
+        />
+      </CustomModal>
     );
   }
 }

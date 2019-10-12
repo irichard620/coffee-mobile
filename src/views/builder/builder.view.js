@@ -137,7 +137,8 @@ class BuilderPage extends Component {
     // Open modal if necessary or add step to screen
     if (item === constants.STEP_HEAT_WATER || item === constants.STEP_GRIND_COFFEE
     || item === constants.STEP_BLOOM_GROUNDS || item === constants.STEP_POUR_WATER
-    || item === constants.STEP_WAIT || item === constants.STEP_ADD_ICE) {
+    || item === constants.STEP_WAIT || item === constants.STEP_ADD_ICE
+    || item === constants.STEP_CHILL_WATER || item === constants.STEP_STEEP) {
       // These require text inputs - open up modal
       this.setState({ visibleModal: true, modalType: item });
     } else if (modalType === constants.VESSEL_ELEM) {
@@ -484,7 +485,6 @@ class BuilderPage extends Component {
             onButtonClick={this.onRecipeSave}
             type={1}
             title="Save"
-            width={110}
             margin={[15, 0, 45, 0]}
           />
         </View>

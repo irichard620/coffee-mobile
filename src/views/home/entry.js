@@ -22,7 +22,7 @@ export default function Entry(props) {
   if (selected) {
     textviewDynamic.flexDirection = 'column';
     textviewDynamic.flex = 1;
-    titleMargin = 5;
+    titleMargin = 4;
   } else {
     textviewDynamic.justifyContent = 'center';
     textviewDynamic.height = 55;
@@ -33,32 +33,26 @@ export default function Entry(props) {
     marginBottom: titleMargin,
   };
 
-  let logoBackgroundColor = '#F1F1F1';
-  if (isMap) {
-    logoBackgroundColor = '#E8533E';
-  }
-  const logoBackgroundStyle = {
-    backgroundColor: logoBackgroundColor
-  };
-
   return (
     <TouchableWithoutFeedback onPress={() => onEntryClick(idx)} disabled={disabled}>
       <View style={styles.outline}>
         <View style={styles.topview}>
-          <View style={[styles.logoview, logoBackgroundStyle]}>
-            {vessel === constants.VESSEL_AEROPRESS
-              && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
-            {vessel === constants.VESSEL_CHEMEX
-              && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
-            {vessel === constants.VESSEL_FRENCH_PRESS
-              && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
-            {vessel === constants.VESSEL_POUROVER
-              && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
-            {isBean
-              && <Image style={styles.image} source={require(`${basePath}Beans.png`)} />}
-            {isMap
-              && <Image style={styles.image} source={require(`${basePath}Map_Pin.png`)} />}
-          </View>
+          {vessel === constants.VESSEL_AEROPRESS
+            && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
+          {vessel === constants.VESSEL_CHEMEX
+            && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
+          {vessel === constants.VESSEL_FRENCH_PRESS
+            && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
+          {vessel === constants.VESSEL_POUROVER
+            && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+          {vessel === constants.VESSEL_KALITA_WAVE
+            && <Image style={styles.image} source={require(`${basePath}Kalita.png`)} />}
+          {vessel === constants.VESSEL_MIZUDASHI
+            && <Image style={styles.image} source={require(`${basePath}Mizudashi.png`)} />}
+          {isBean
+            && <Image style={styles.image} source={require(`${basePath}CoffeeBeans.png`)} />}
+          {isMap
+            && <Image style={styles.image} source={require(`${basePath}LocationPin.png`)} />}
           <View style={textviewDynamic}>
             {!selected && (
             <Text
@@ -82,14 +76,26 @@ export default function Entry(props) {
             </TouchableOpacity>
             )}
             {!isSponsor && (
-            <TouchableOpacity onPress={() => onGoClick(idx)} disabled={disabled}>
-              <Image style={styles.use} source={require(`${baseButtonPath}Go.png`)} />
-            </TouchableOpacity>
+            <Button
+              onButtonClick={() => onGoClick(idx)}
+              type={0}
+              title="Brew"
+              margin={[0, 0, 0, 0]}
+              isGlyph
+              glyphType={0}
+              disabled={disabled}
+            />
             )}
             {isSponsor && (
-            <TouchableOpacity onPress={() => onDownloadClick(idx)} disabled={disabled}>
-              <Image style={styles.use} source={require(`${baseButtonPath}Move_Down.png`)} />
-            </TouchableOpacity>
+            <Button
+              onButtonClick={() => onDownloadClick(idx)}
+              type={0}
+              title="Save"
+              margin={[0, 0, 0, 0]}
+              isGlyph
+              glyphType={1}
+              disabled={disabled}
+            />
             )}
           </View>
         </View>
@@ -98,9 +104,8 @@ export default function Entry(props) {
         <View style={styles.beanbuttonview}>
           <Button
             onButtonClick={() => onExploreClick(idx)}
-            type={0}
+            type={2}
             title="Explore the coffee"
-            width="56%"
             margin={[0, 0, 0, 0]}
           />
         </View>
@@ -144,14 +149,11 @@ export default function Entry(props) {
 const styles = StyleSheet.create({
   outline: {
     borderRadius: 20,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 15,
-    paddingBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
+    padding: 16,
+    marginLeft: 16,
+    marginRight: 16,
     marginTop: 0,
-    marginBottom: 15,
+    marginBottom: 16,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
@@ -163,16 +165,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
   },
-  logoview: {
-    height: 55,
-    width: 55,
+  image: {
+    height: 53,
+    width: 53,
     borderRadius: 20,
     marginRight: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    height: 35,
     resizeMode: 'contain',
   },
   title: {
@@ -180,21 +177,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     justifyContent: 'center',
+    lineHeight: 16,
   },
   description: {
     color: '#727272',
     fontSize: 14,
-    lineHeight: 18
+    lineHeight: 16
   },
   buttonview: {
-    marginTop: 20,
+    marginTop: 24,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   beanbuttonview: {
-    marginTop: 20,
+    marginTop: 24,
     alignItems: 'center'
   },
   rightbuttonview: {
@@ -203,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start'
   },
   mapview: {
-    marginTop: 15,
+    marginTop: 16,
     height: 125,
     marginLeft: -16,
     marginRight: -16,

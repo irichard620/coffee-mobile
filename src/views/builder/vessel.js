@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import {
   VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
-  VESSEL_POUROVER
+  VESSEL_POUROVER, VESSEL_KALITA_WAVE, VESSEL_MIZUDASHI
 } from '../../constants';
 
 export default function Vessel(props) {
@@ -16,16 +16,18 @@ export default function Vessel(props) {
   return (
     <TouchableOpacity onPress={onStepClick}>
       <View style={styles.outline}>
-        <View style={styles.logoview}>
-          {vessel === VESSEL_AEROPRESS
-            && <Image style={styles.image} source={require(`${basePath}Aeropress_Minicon.png`)} />}
-          {vessel === VESSEL_CHEMEX
-            && <Image style={styles.image} source={require(`${basePath}Chemex_Minicon.png`)} />}
-          {vessel === VESSEL_FRENCH_PRESS
-            && <Image style={styles.image} source={require(`${basePath}FrenchPress_Minicon.png`)} />}
-          {vessel === VESSEL_POUROVER
-            && <Image style={styles.image} source={require(`${basePath}V60_Minicon.png`)} />}
-        </View>
+        {vessel === VESSEL_AEROPRESS
+          && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
+        {vessel === VESSEL_CHEMEX
+          && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
+        {vessel === VESSEL_FRENCH_PRESS
+          && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
+        {vessel === VESSEL_POUROVER
+          && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+        {vessel === VESSEL_KALITA_WAVE
+          && <Image style={styles.image} source={require(`${basePath}Kalita.png`)} />}
+        {vessel === VESSEL_MIZUDASHI
+          && <Image style={styles.image} source={require(`${basePath}Mizudashi.png`)} />}
         <Text style={styles.title}>{vessel}</Text>
         <Text style={styles.description}>Brewing Vessel</Text>
       </View>
@@ -60,17 +62,13 @@ const styles = StyleSheet.create({
     color: '#727272',
     fontSize: 14,
   },
-  logoview: {
-    height: 55,
-    width: 55,
+  image: {
+    height: 53,
+    width: 53,
     borderRadius: 20,
-    backgroundColor: '#F1F1F1',
+    resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 25
-  },
-  image: {
-    height: 35,
-    resizeMode: 'contain',
   },
 });

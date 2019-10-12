@@ -2,13 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert,
-  Platform
+  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert
 } from 'react-native';
-import RNIap, {
-  purchaseErrorListener,
-  purchaseUpdatedListener
-} from 'react-native-iap';
 import {
   settings, settingsOptions, CustomLayoutSpring, settingsDescriptions,
   OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, OPTION_REPLAY_TUTORIAL,
@@ -21,8 +16,7 @@ import {
   fetchDefaultRecipes, hideDefaultRecipes
 } from '../../actions/recipe-actions';
 import {
-  saveUsername, updateTemperatureUnits, requestPurchaseIAP, restoreIAP,
-  upgradeIAP
+  saveUsername, updateTemperatureUnits, requestPurchaseIAP, restoreIAP
 } from '../../actions/user-actions';
 
 class SettingsPage extends Component {
@@ -41,30 +35,7 @@ class SettingsPage extends Component {
   }
 
   componentDidMount() {
-    const { user, upgradeDrippyPro } = this.props;
-
-    // Purchase updated handler
-    this.purchaseUpdatePro = purchaseUpdatedListener((purchase) => {
-      const receipt = purchase.transactionReceipt;
-      if (receipt) {
-        // Update in our system - wait for callback
-        upgradeDrippyPro(purchase);
-      }
-    });
-
-    // Purchase error handler
-    this.purchaseErrorPro = purchaseErrorListener(() => {
-      // Show alert
-      Alert.alert(
-        'Error purchasing Drippy Pro',
-        'An error occurred purchasing pro version of Drippy.',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
-    });
+    const { user } = this.props;
 
     // Add user details to state
     if (user && Object.keys(user.user).length !== 0) {
@@ -133,55 +104,13 @@ class SettingsPage extends Component {
         ],
       );
     } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
-      // Finish transaction
-      if (Platform.OS === 'ios') {
-        RNIap.finishTransactionIOS(nextUser.purchase.transactionId);
-      } else if (Platform.OS === 'android') {
-        RNIap.acknowledgePurchaseAndroid(nextUser.purchase.purchaseToken);
-      }
       this.setState({
         premium: nextUser.user.premium
       });
     } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
-      // Update user
-      if (!nextUser.user.premium) {
-        Alert.alert(
-          'Problem restoring Drippy Pro',
-          'There was an issue restoring your Drippy Pro. '
-          + 'It might be an issue with your connection, or no past purchase was found.',
-          [
-            {
-              text: 'OK',
-            },
-          ],
-        );
-      } else if (nextUser.user.premium) {
-        Alert.alert(
-          'Drippy Pro Restored',
-          'Thanks for your continued support as a Drippy Pro user!',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                this.setState({
-                  premium: true
-                });
-              }
-            },
-          ],
-        );
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.purchaseUpdatePro) {
-      this.purchaseUpdatePro.remove();
-      this.purchaseUpdatePro = null;
-    }
-    if (this.purchaseErrorPro) {
-      this.purchaseErrorPro.remove();
-      this.purchaseErrorPro = null;
+      this.setState({
+        premium: nextUser.user.premium
+      });
     }
   }
 
@@ -390,7 +319,6 @@ const mapDispatchToProps = {
   changeTemperatureUnits: updateTemperatureUnits,
   buyDrippyPro: requestPurchaseIAP,
   restoreDrippyPro: restoreIAP,
-  upgradeDrippyPro: upgradeIAP
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

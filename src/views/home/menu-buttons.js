@@ -62,17 +62,17 @@ export default function MenuButtons(props) {
 
 const styles = StyleSheet.create({
   outline: {
-    marginBottom: 15,
+    marginBottom: 16,
     alignSelf: 'center',
     alignItems: 'center',
     flexDirection: 'row'
   },
   buttonOutline: {
     borderRadius: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 18,
+    paddingRight: 18,
   },
   title: {
     fontSize: 14,

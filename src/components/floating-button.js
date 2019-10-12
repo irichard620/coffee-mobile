@@ -2,21 +2,15 @@
 import React from 'react';
 import {
   View, StyleSheet, TouchableOpacity, Image, Text,
-  TouchableWithoutFeedback, Animated
+  TouchableWithoutFeedback
 } from 'react-native';
 
 export default function FloatingButton(props) {
   const {
-    type, onFloatingClick, disabled, spinValue
+    type, onFloatingClick, disabled
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
-  let transformStyle = {};
-  if (type === 0) {
-    transformStyle = {
-      transform: [{ rotate: spinValue }]
-    };
-  }
 
   let iconContainerColor = '#FFFFFF';
   if (type === 0) {
@@ -28,7 +22,7 @@ export default function FloatingButton(props) {
 
   // Margin bottom dynamic
   let marginBottomToUse = 0;
-  if (disabled) {
+  if (disabled && type !== 0) {
     // Hide behind
     marginBottomToUse = -62;
   } else if (!disabled && type !== 0) {
@@ -41,10 +35,11 @@ export default function FloatingButton(props) {
   return (
     <React.Fragment>
       {type === 0 && (
-      <TouchableWithoutFeedback onPress={() => onFloatingClick(type)} disabled={disabled}>
+      <TouchableWithoutFeedback onPress={() => onFloatingClick(type)}>
         <View style={[styles.container, containerMarginBottom]}>
           <View style={[styles.iconContainer, iconContainerBackgroundStyle]}>
-            {type === 0 && <Animated.Image style={[styles.icon, transformStyle]} source={require(`${baseButtonPath}MenuIcon_Main.png`)} />}
+            {type === 0 && disabled && <Image style={styles.icon} source={require(`${baseButtonPath}Hamburger.png`)} />}
+            {type === 0 && !disabled && <Image style={styles.icon} source={require(`${baseButtonPath}CloseHamburger.png`)} />}
           </View>
         </View>
       </TouchableWithoutFeedback>
