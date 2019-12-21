@@ -5,14 +5,17 @@ import {
 } from 'react-native';
 
 export default function Back(props) {
-  const { type, onBackClick } = props;
+  const { type, onBackClick, noTopPadding } = props;
 
   const baseButtonPath = '../assets/buttons/';
 
   const { height } = Dimensions.get('window');
-  const paddingTopStyle = {
-    paddingTop: height * 0.04
-  };
+  const paddingTopStyle = {};
+  if (!noTopPadding) {
+    paddingTopStyle.paddingTop = height * 0.04;
+  } else {
+    paddingTopStyle.paddingTop = 0;
+  }
 
   return (
     <TouchableOpacity style={[styles.touchable, paddingTopStyle]} onPress={onBackClick}>

@@ -8,7 +8,7 @@ import WelcomePage from './src/views/welcome/welcome.view';
 import TutorialPage from './src/views/tutorial/tutorial.view';
 import SettingsPage from './src/views/settings/settings.view';
 
-const MainStack = createStackNavigator(
+const AppNavigator = createStackNavigator(
   {
     Welcome: {
       screen: WelcomePage,
@@ -46,27 +46,17 @@ const MainStack = createStackNavigator(
         gesturesEnabled: true
       }
     },
+    Brew: {
+      screen: BrewPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    }
   },
   {
     headerMode: 'none',
     initialRouteName: 'Welcome',
     mode: 'card',
-  }
-);
-const AppNavigator = createStackNavigator(
-  {
-    Main: {
-      screen: MainStack,
-    },
-    Brew: {
-      screen: BrewPage,
-    }
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'Main',
-    mode: 'modal',
-    transparentCard: true
   }
 );
 

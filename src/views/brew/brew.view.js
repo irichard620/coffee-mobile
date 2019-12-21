@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, Text, StyleSheet, Image, TouchableOpacity, Dimensions,
-  Alert
+  Alert, SafeAreaView
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import KeepAwake from 'react-native-keep-awake';
 import Button from '../../components/button';
-import PullDown from '../../components/pulldown';
+import Back from '../../components/back';
 import * as constants from '../../constants';
 import * as recipeModel from '../../storage/recipe';
 import * as stepModel from '../../storage/step';
@@ -149,6 +149,11 @@ class BrewPage extends Component {
     this.setState({
       step: step - 1
     });
+  }
+
+  onBackScreenClick = () => {
+    const { navigation } = this.props;
+    navigation.goBack();
   }
 
   setupTimer = (newStep, nextStep) => {
@@ -445,16 +450,6 @@ class BrewPage extends Component {
       marginTop: height * 0.07
     };
 
-    // Top margin of brew page
-    const brewTopMargin = {
-      marginTop: height * 0.06
-    };
-
-    // Backdrop top attribute
-    const backdropTop = {
-      top: -height
-    };
-
     // Modal title
     let modalTitle = '';
     if (deleteModal) {
@@ -503,9 +498,14 @@ class BrewPage extends Component {
 
     return (
       <React.Fragment>
-        <View style={[styles.backdrop, backdropTop]} />
-        <View style={[styles.container, brewTopMargin]}>
-          <PullDown />
+        <SafeAreaView style={[styles.container]}>
+          <View style={styles.backcontainer}>
+            <Back
+              onBackClick={this.onBackScreenClick}
+              type={0}
+              noTopPadding
+            />
+          </View>
           <Text style={styles.title}>{titleToUse}</Text>
           <View style={[styles.iconview, iconViewSize]}>
             {this.getIcon(recipe)}
@@ -540,7 +540,7 @@ class BrewPage extends Component {
               glyphType={0}
             />
           </View>
-        </View>
+        </SafeAreaView>
         <CustomModal
           visibleModal={visibleModal}
           onCloseClick={this.onCloseModalClick}
@@ -577,23 +577,16 @@ class BrewPage extends Component {
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    opacity: 0.7,
-    backgroundColor: 'black',
-    overflow: 'visible',
-  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 10,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+  },
+  backcontainer: {
+    marginTop: 16,
+    marginLeft: 15,
+    alignItems: 'flex-start',
   },
   title: {
     fontSize: 22,

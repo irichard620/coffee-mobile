@@ -10,15 +10,7 @@ export default function FloatingButton(props) {
     type, onFloatingClick, disabled
   } = props;
 
-  const baseButtonPath = '../assets/buttons/';
-
-  let iconContainerColor = '#FFFFFF';
-  if (type === 0) {
-    iconContainerColor = '#1D5E9E';
-  }
-  const iconContainerBackgroundStyle = {
-    backgroundColor: iconContainerColor
-  };
+  const baseButtonPath = '../assets/buttons/floating-menu/';
 
   // Margin bottom dynamic
   let marginBottomToUse = 0;
@@ -37,7 +29,7 @@ export default function FloatingButton(props) {
       {type === 0 && (
       <TouchableWithoutFeedback onPress={() => onFloatingClick(type)}>
         <View style={[styles.container, containerMarginBottom]}>
-          <View style={[styles.iconContainer, iconContainerBackgroundStyle]}>
+          <View style={styles.iconContainer}>
             {type === 0 && disabled && <Image style={styles.icon} source={require(`${baseButtonPath}Hamburger.png`)} />}
             {type === 0 && !disabled && <Image style={styles.icon} source={require(`${baseButtonPath}CloseHamburger.png`)} />}
           </View>
@@ -47,9 +39,9 @@ export default function FloatingButton(props) {
       {type !== 0 && (
       <TouchableOpacity onPress={() => onFloatingClick(type)} disabled={disabled}>
         <View style={[styles.container, containerMarginBottom]}>
-          <View style={[styles.iconContainer, iconContainerBackgroundStyle]}>
-            {type === 1 && <Image style={styles.icon} source={require(`${baseButtonPath}MenuIcon_Settings.png`)} />}
-            {type === 2 && <Image style={styles.icon} source={require(`${baseButtonPath}MenuIcon_NewRecipe.png`)} />}
+          <View style={styles.iconContainer}>
+            {type === 1 && <Image style={styles.floatingIcon} source={require(`${baseButtonPath}Menu_Settings.png`)} />}
+            {type === 2 && <Image style={styles.floatingIcon} source={require(`${baseButtonPath}Menu_NewRecipe.png`)} />}
           </View>
           {type === 1 && !disabled && <Text style={styles.textStyle}>Settings</Text>}
           {type === 2 && !disabled && <Text style={styles.textStyle}>New Recipe</Text>}
@@ -81,6 +73,10 @@ const styles = StyleSheet.create({
   icon: {
     height: 22,
     resizeMode: 'contain'
+  },
+  floatingIcon: {
+    height: 62,
+    width: 62,
   },
   textStyle: {
     color: '#FFFFFF',
