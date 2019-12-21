@@ -38,21 +38,21 @@ export default function Entry(props) {
       <View style={styles.outline}>
         <View style={styles.topview}>
           {vessel === constants.VESSEL_AEROPRESS
-            && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_Aeropress.png`)} />}
           {vessel === constants.VESSEL_CHEMEX
-            && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_Chemex.png`)} />}
           {vessel === constants.VESSEL_FRENCH_PRESS
-            && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_FrenchPress.png`)} />}
           {vessel === constants.VESSEL_POUROVER
-            && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_V60.png`)} />}
           {vessel === constants.VESSEL_KALITA_WAVE
-            && <Image style={styles.image} source={require(`${basePath}Kalita.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_Kalita.png`)} />}
           {vessel === constants.VESSEL_MIZUDASHI
-            && <Image style={styles.image} source={require(`${basePath}Mizudashi.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_Mizudashi.png`)} />}
           {isBean
-            && <Image style={styles.image} source={require(`${basePath}CoffeeBeans.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_CoffeeBeans.png`)} />}
           {isMap
-            && <Image style={styles.image} source={require(`${basePath}LocationPin.png`)} />}
+            && <Image style={styles.image} source={require(`${basePath}Icon_Location.png`)} />}
           <View style={textviewDynamic}>
             {!selected && (
             <Text

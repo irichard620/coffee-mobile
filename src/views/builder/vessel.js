@@ -17,17 +17,17 @@ export default function Vessel(props) {
     <TouchableOpacity onPress={onStepClick}>
       <View style={styles.outline}>
         {vessel === VESSEL_AEROPRESS
-          && <Image style={styles.image} source={require(`${basePath}Aeropress.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_Aeropress.png`)} />}
         {vessel === VESSEL_CHEMEX
-          && <Image style={styles.image} source={require(`${basePath}Chemex.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_Chemex.png`)} />}
         {vessel === VESSEL_FRENCH_PRESS
-          && <Image style={styles.image} source={require(`${basePath}FrenchPress.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_FrenchPress.png`)} />}
         {vessel === VESSEL_POUROVER
-          && <Image style={styles.image} source={require(`${basePath}V60.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_V60.png`)} />}
         {vessel === VESSEL_KALITA_WAVE
-          && <Image style={styles.image} source={require(`${basePath}Kalita.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_Kalita.png`)} />}
         {vessel === VESSEL_MIZUDASHI
-          && <Image style={styles.image} source={require(`${basePath}Mizudashi.png`)} />}
+          && <Image style={styles.image} source={require(`${basePath}Icon_Mizudashi.png`)} />}
         <Text style={styles.title}>{vessel}</Text>
         <Text style={styles.description}>Brewing Vessel</Text>
       </View>

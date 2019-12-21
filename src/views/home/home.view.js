@@ -35,7 +35,7 @@ class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 1,
+      tab: 0,
       tabMenuSelected: false,
       selectedFavorites: [],
       selectedCustoms: [],
@@ -236,7 +236,7 @@ class HomePage extends Component {
   switchTab = (index) => {
     const { tab } = this.state;
     if (tab !== index) {
-      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
+      LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
       this.setState({
         tab: index,
       });
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4',
+    backgroundColor: '#F1F3F6',
   },
   entrycontainer: {
     marginBottom: 90

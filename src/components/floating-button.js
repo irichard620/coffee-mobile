@@ -4,6 +4,7 @@ import {
   View, StyleSheet, TouchableOpacity, Image, Text,
   TouchableWithoutFeedback
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function FloatingButton(props) {
   const {
@@ -30,8 +31,15 @@ export default function FloatingButton(props) {
       <TouchableWithoutFeedback onPress={() => onFloatingClick(type)}>
         <View style={[styles.container, containerMarginBottom]}>
           <View style={styles.iconContainer}>
-            {type === 0 && disabled && <Image style={styles.icon} source={require(`${baseButtonPath}Hamburger.png`)} />}
-            {type === 0 && !disabled && <Image style={styles.icon} source={require(`${baseButtonPath}CloseHamburger.png`)} />}
+            <LinearGradient
+              colors={['#6BA3D1', '#2D8CD3', '#1D5E9E']}
+              style={styles.linearGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              {type === 0 && disabled && <Image style={styles.icon} source={require(`${baseButtonPath}Hamburger.png`)} />}
+              {type === 0 && !disabled && <Image style={styles.icon} source={require(`${baseButtonPath}CloseHamburger.png`)} />}
+            </LinearGradient>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -58,8 +66,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
+  linearGradient: {
+    flex: 1,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   iconContainer: {
-    backgroundColor: '#1D5E9E',
     width: 62,
     height: 62,
     borderRadius: 31,
