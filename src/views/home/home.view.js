@@ -617,7 +617,7 @@ class HomePage extends Component {
 
     // Show ad if non-premium and hasn't shown in 7 days
     let showAd = false;
-    if (lastAdShown === null) {
+    if (!premium && lastAdShown === null) {
       showAd = true;
     } else if (!premium) {
       const timeDiff = new Date().getTime() - lastAdShown.getTime();
