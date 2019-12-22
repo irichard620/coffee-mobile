@@ -41,6 +41,9 @@ export function fetchUser() {
           if (!('premium' in userDetails)) {
             userDetails.premium = false;
           }
+          if (!('lastAdShown' in userDetails)) {
+            userDetails.lastAdShown = null;
+          }
           AsyncStorage.setItem('user', JSON.stringify(userDetails));
         }
         dispatch(receiveUser(userDetails));
@@ -75,6 +78,7 @@ export function saveUsername(username, firstTime) {
         if (firstTime) {
           userDetails.useMetric = false;
           userDetails.premium = false; // Initialize premium to false - first time open
+          userDetails.lastAdShown = null;
         }
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
         dispatch(savedUser(userDetails));
@@ -89,6 +93,19 @@ export function updateTemperatureUnits(useMetric) {
       .then((user) => {
         const userDetails = user ? JSON.parse(user) : {};
         userDetails.useMetric = useMetric;
+        AsyncStorage.setItem('user', JSON.stringify(userDetails));
+        dispatch(savedUser(userDetails));
+      });
+  };
+}
+
+export function updateLastAdShown(updatedDate) {
+  return function (dispatch) {
+    dispatch(savingUser());
+    return AsyncStorage.getItem('user')
+      .then((user) => {
+        const userDetails = user ? JSON.parse(user) : {};
+        userDetails.lastAdShown = updatedDate;
         AsyncStorage.setItem('user', JSON.stringify(userDetails));
         dispatch(savedUser(userDetails));
       });

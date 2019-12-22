@@ -10,6 +10,7 @@ import RNIap, {
   purchaseUpdatedListener
 } from 'react-native-iap';
 import Entry from './entry';
+import AdEntry from './ad-entry';
 import FloatingButton from '../../components/floating-button';
 import MenuButtons from './menu-buttons';
 import SponsorCarousel from './sponsor-carousel';
@@ -24,7 +25,7 @@ import CustomModal from '../../components/modal';
 import ModalContentBottom from '../../components/modal-content-bottom';
 import ModalContentCenter from '../../components/modal-content-center';
 import {
-  requestPurchaseIAP, restoreIAP, upgradeIAP
+  requestPurchaseIAP, restoreIAP, upgradeIAP, updateLastAdShown
 } from '../../actions/user-actions';
 
 class HomePage extends Component {
@@ -47,6 +48,7 @@ class HomePage extends Component {
       modalRecipeIndex: -1,
       visibleModal: false,
       modalType: '',
+      popupModalTitle: '',
       deleteModal: false,
       sponsorIndex: 0,
       recipesIsFetching: false,
@@ -57,7 +59,8 @@ class HomePage extends Component {
       useMetric: false,
       iapIsRestoring: false,
       iapIsUpgrading: false,
-      premium: false
+      premium: false,
+      lastAdShown: null
     };
   }
 
@@ -97,6 +100,8 @@ class HomePage extends Component {
         stateToSet.useMetric = user.user.useMetric;
       } if (('premium' in user.user)) {
         stateToSet.premium = user.user.premium;
+      } if (('lastAdShown' in user.user && user.user.lastAdShown !== null)) {
+        stateToSet.lastAdShown = new Date(user.user.lastAdShown);
       }
       this.setState(stateToSet);
     }
@@ -241,7 +246,7 @@ class HomePage extends Component {
         tab: index,
       });
     }
-  }
+  };
 
   onAddClick = () => {
     // Pull up add menu
@@ -251,20 +256,21 @@ class HomePage extends Component {
       // Block action
       this.setState({
         visibleModal: true,
-        modalType: constants.MODAL_TYPE_CENTER
+        modalType: constants.MODAL_TYPE_CENTER,
+        popupModalTitle: constants.POPUP_TITLE_DRIPPY_PRO
       });
       return;
     }
     navigation.navigate('Builder', {
       useMetric
     });
-  }
+  };
 
   onSettingsClick = () => {
     // Pull up settings menu
     const { navigation } = this.props;
     navigation.navigate('Settings');
-  }
+  };
 
   onSponsorClick = (sponsor) => {
     // Pull up sponsor page
@@ -275,11 +281,11 @@ class HomePage extends Component {
       premium,
       useMetric
     });
-  }
+  };
 
   onSnapToItem = (idx) => {
     this.setState({ sponsorIndex: idx });
-  }
+  };
 
   onEntryClick = (idx) => {
     const {
@@ -300,7 +306,7 @@ class HomePage extends Component {
         selectedFeatured: selectedFeatured.map((val, i) => (i === idx ? !val : false))
       });
     }
-  }
+  };
 
   onEditClick = (idx) => {
     const {
@@ -321,7 +327,7 @@ class HomePage extends Component {
       modalRecipeIndex: idx,
       deleteModal: false
     });
-  }
+  };
 
   onGoClick = (idx) => {
     const { navigation } = this.props;
@@ -347,7 +353,7 @@ class HomePage extends Component {
       useMetric,
       premium
     });
-  }
+  };
 
   getModalOptions = () => {
     const {
@@ -393,7 +399,7 @@ class HomePage extends Component {
       title: constants.RECIPE_MENU_DELETE,
     });
     return options;
-  }
+  };
 
   onCloseClick = () => {
     // Close and clear modal
@@ -403,7 +409,7 @@ class HomePage extends Component {
       modalRecipeId: '',
       modalRecipeIndex: -1,
     });
-  }
+  };
 
   alertBuyDrippyPro = () => {
     const { buyDrippyPro } = this.props;
@@ -427,7 +433,7 @@ class HomePage extends Component {
         },
       ],
     );
-  }
+  };
 
   alertRestoreDrippyPro = () => {
     const { restoreDrippyPro } = this.props;
@@ -450,7 +456,7 @@ class HomePage extends Component {
         },
       ],
     );
-  }
+  };
 
   onPressItem = (item) => {
     const {
@@ -467,7 +473,8 @@ class HomePage extends Component {
         // Block action
         this.setState({
           visibleModal: true,
-          modalType: constants.MODAL_TYPE_CENTER
+          modalType: constants.MODAL_TYPE_CENTER,
+          popupModalTitle: constants.POPUP_TITLE_DRIPPY_PRO
         });
         return;
       }
@@ -531,7 +538,26 @@ class HomePage extends Component {
       this.setState({ menuSelected: false });
       this.onAddClick();
     }
-  }
+  };
+
+  onDrippyProAdClose = () => {
+    const { updateLastAdTime } = this.props;
+    // Update timestamp in state - should remove from view - 7 days later
+    const updatedDate = new Date();
+    updateLastAdTime(updatedDate);
+    this.setState({
+      lastAdShown: updatedDate,
+    });
+  };
+
+  onDrippyProAdClicked = () => {
+    // Open center modal
+    this.setState({
+      visibleModal: true,
+      modalType: constants.MODAL_TYPE_CENTER,
+      popupModalTitle: constants.POPUP_TITLE_DRIPPY_PRO_AD
+    });
+  };
 
   renderEntry = (idx, item) => {
     const {
@@ -563,8 +589,9 @@ class HomePage extends Component {
   render() {
     const { sponsors } = this.props;
     const {
-      tab, customs, favorites, featured, visibleModal, modalType,
-      deleteModal, sponsorIndex, menuSelected, tabMenuSelected
+      tab, customs, favorites, featured, visibleModal, modalType, lastAdShown,
+      deleteModal, sponsorIndex, menuSelected, tabMenuSelected, popupModalTitle,
+      premium
     } = this.state;
 
     let modalTitle = '';
@@ -588,6 +615,18 @@ class HomePage extends Component {
       marginBottom: height * 0.2
     };
 
+    // Show ad if non-premium and hasn't shown in 7 days
+    let showAd = false;
+    if (lastAdShown === null) {
+      showAd = true;
+    } else if (!premium) {
+      const timeDiff = new Date().getTime() - lastAdShown.getTime();
+      const dayDiff = timeDiff / (1000 * 3600 * 24);
+      if (dayDiff >= 7) {
+        showAd = true;
+      }
+    }
+
     return (
       <View style={styles.outerContainer}>
         <ScrollView style={[styles.container, topPaddingStyle]}>
@@ -606,7 +645,14 @@ class HomePage extends Component {
             selected={tab}
             menuSelected={tabMenuSelected}
           />
-
+          {showAd && (
+            <AdEntry
+              title={constants.AD_TITLE_DRIPPY_PRO}
+              description={constants.AD_DESCRIPTION_DRIPPY_PRO}
+              onClose={this.onDrippyProAdClose}
+              onAdClicked={this.onDrippyProAdClicked}
+            />
+          )}
           <View style={entryContainerBottom}>
             {tab === 0 && customs.map((custom, idx) => (
               this.renderEntry(idx, custom)
@@ -636,7 +682,7 @@ class HomePage extends Component {
             {modalType === constants.MODAL_TYPE_CENTER
             && (
             <ModalContentCenter
-              title={constants.POPUP_TITLE_DRIPPY_PRO}
+              title={popupModalTitle}
               description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
               type={0}
               primaryButtonTitle="Get Drippy Pro"
@@ -711,7 +757,8 @@ const mapDispatchToProps = {
   delRecipe: deleteRecipe,
   buyDrippyPro: requestPurchaseIAP,
   restoreDrippyPro: restoreIAP,
-  upgradeDrippyPro: upgradeIAP
+  upgradeDrippyPro: upgradeIAP,
+  updateLastAdTime: updateLastAdShown,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

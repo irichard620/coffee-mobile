@@ -120,10 +120,17 @@ export const MODAL_TYPE_CENTER = 'center';
 // Popup options
 export const POPUP_TITLE_DRIPPY_PRO = 'Drippy Pro Feature';
 export const POPUP_TITLE_DRIPPY_PRO_LIBRARY = 'Recipe Library Full';
+export const POPUP_TITLE_DRIPPY_PRO_AD = 'Get Drippy Pro';
 export const POPUP_DESCRIPTION_DRIPPY_PRO = 'Drippy Pro comes with a whole bunch of fun, '
   + 'new features, and it’s a one-time purchase that helps support our little team of two! '
   + 'Enjoy unlimited recipe storage, access to the Recipe Builder to create and edit to your '
   + 'heart’s desire, and all future Pro features we have in the works.';
+
+// Homepage ads
+export const AD_TITLE_DRIPPY_PRO = 'Upgrade to Drippy Pro';
+export const AD_DESCRIPTION_DRIPPY_PRO = 'Enjoy unlimited recipe storage, recipe building, '
+  + 'and access to all future Pro features with a one time purchase of Drippy Pro. Support our '
+  + 'tiny team for less than the price of a coffee!';
 
 // Animation
 export const CustomLayoutSpring = {

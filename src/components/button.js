@@ -6,7 +6,7 @@ import {
 
 export default function Button(props) {
   const {
-    onButtonClick, type, title, margin, disabled, isGlyph, glyphType
+    onButtonClick, type, title, margin, disabled, isGlyph, glyphType, transparentColor
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
@@ -29,11 +29,15 @@ export default function Button(props) {
       color: '#1D5E9E'
     };
   } else {
+    let colorToUse = '#1D5E9E';
+    if (transparentColor) {
+      colorToUse = transparentColor;
+    }
     backgroundStyle.backgroundColor = 'transparent';
     backgroundStyle.borderWidth = 1;
-    backgroundStyle.borderColor = '#1D5E9E';
+    backgroundStyle.borderColor = colorToUse;
     titleStyle = {
-      color: '#1D5E9E'
+      color: colorToUse
     };
   }
   if (isGlyph) {
