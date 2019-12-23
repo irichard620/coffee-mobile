@@ -5,25 +5,21 @@ import {
   Dimensions, ScrollView
 } from 'react-native';
 import List from './list';
-import Button from './button';
 import PullDown from './pulldown';
+import ButtonLarge from './button-large';
 
 export default function ModalContentBottom(props) {
   const {
     modalText, textPlaceholder, modalSelect,
     onPressItem, onChangeText, onModalSave, onChangePicker, isListModal,
-    isSelectInput, options, title, charLimit, pickerValues
+    isSelectInput, options, title, charLimit, pickerValues, hasSave,
   } = props;
 
   // Elems with atleast one text
   const isTextInput = !isListModal;
-  let isTitle = false;
-  if (title && title !== '') {
-    isTitle = true;
-  }
 
   // Max height for modal
-  const { height } = Dimensions.get('window');
+  const { height, width } = Dimensions.get('window');
   const maxHeightModal = {
     maxHeight: height * 0.75
   };
@@ -35,13 +31,15 @@ export default function ModalContentBottom(props) {
     >
       <View style={[styles.content, maxHeightModal]}>
         <PullDown />
-        {isTitle && <Text style={styles.title}>{title}</Text>}
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.titleSeparator} />
+        {!(isListModal && !hasSave) && <View style={styles.topListSeparator} />}
         {isTextInput && (
         <TextInput
           onChangeText={text => onChangeText(text)}
           value={modalText}
           placeholder={textPlaceholder}
-          placeholderTextColor="#b7b3b3"
+          placeholderTextColor="#898989"
           style={styles.textinput}
           maxLength={charLimit}
           multiline={false}
@@ -60,16 +58,6 @@ export default function ModalContentBottom(props) {
           </Picker>
         </View>
         )}
-        {!isListModal && (
-          <View style={styles.saveContainer}>
-            <Button
-              onButtonClick={onModalSave}
-              type={0}
-              title="Save"
-              margin={[0, 0, 0, 0]}
-            />
-          </View>
-        )}
         {isListModal && (
           <ScrollView>
             <List
@@ -77,6 +65,16 @@ export default function ModalContentBottom(props) {
               onPressItem={onPressItem}
             />
           </ScrollView>
+        )}
+        {hasSave && (
+          <View style={styles.saveContainer}>
+            <ButtonLarge
+              onButtonClick={onModalSave}
+              title="Save"
+              margin={[0, 16, 0, 16]}
+              buttonWidth={width - 32}
+            />
+          </View>
         )}
       </View>
     </KeyboardAvoidingView>
@@ -86,31 +84,41 @@ export default function ModalContentBottom(props) {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
-    paddingTop: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingBottom: 45,
+    paddingTop: 8,
+    paddingBottom: 16,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
   saveContainer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 24,
+    marginBottom: 8
   },
   title: {
-    marginBottom: 20,
-    fontSize: 20,
+    marginTop: 36,
+    marginLeft: 16,
+    marginBottom: 8,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#1D5E9E',
+    color: '#000000',
     alignSelf: 'flex-start',
+  },
+  titleSeparator: {
+    height: 1,
+    backgroundColor: '#F1F3F6',
+  },
+  topListSeparator: {
+    height: 16,
   },
   pickertitle: {
     fontSize: 16,
     color: '#1D5E9E',
   },
   textinput: {
-    padding: 15,
-    borderRadius: 20,
-    backgroundColor: '#F4F4F4'
+    marginLeft: 16,
+    marginRight: 16,
+    padding: 16,
+    borderRadius: 10,
+    backgroundColor: '#F2F3F6'
   }
 });

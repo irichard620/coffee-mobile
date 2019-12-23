@@ -6,7 +6,8 @@ import {
 
 export default function ButtonLarge(props) {
   const {
-    onButtonClick, type, title, margin, disabled
+    onButtonClick, title, margin, disabled, buttonWidth,
+    buttonHeight, textColor, backgroundColor
   } = props;
 
   const backgroundStyle = {
@@ -14,18 +15,22 @@ export default function ButtonLarge(props) {
     marginRight: margin[1],
     marginBottom: margin[2],
     marginLeft: margin[3],
+    backgroundColor: '#2D8CD3',
   };
-  let titleStyle = {};
-  if (type === 0) {
-    backgroundStyle.backgroundColor = '#1D5E9E';
-    titleStyle = {
-      color: '#FFFFFF'
-    };
-  } else {
-    backgroundStyle.backgroundColor = '#FFFFFF';
-    titleStyle = {
-      color: '#1D5E9E'
-    };
+  if (buttonWidth) {
+    backgroundStyle.width = buttonWidth;
+  }
+  if (buttonHeight) {
+    backgroundStyle.height = buttonHeight;
+  }
+  if (backgroundColor) {
+    backgroundStyle.backgroundColor = backgroundColor;
+  }
+  const titleStyle = {
+    color: '#FFFFFF'
+  };
+  if (textColor) {
+    titleStyle.color = textColor;
   }
   return (
     <TouchableOpacity
@@ -46,15 +51,11 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   button: {
-    height: 43,
+    height: 48,
     paddingLeft: 20,
     paddingRight: 20,
-    borderRadius: 22,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
   },
 });

@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, StyleSheet, FlatList
+  StyleSheet, FlatList
 } from 'react-native';
 import ListItem from './list-item';
 import ListItemPaywall from './list-item-paywall';
@@ -26,16 +26,19 @@ class List extends Component {
         />
       );
     }
+    let selected = false;
+    if (('selected' in item) && item.selected) {
+      selected = true;
+    }
     return (
       <ListItem
         onPressItem={onPressItem}
         title={item.title}
+        selected={selected}
         isSettings={isSettings}
       />
     );
-  }
-
-  renderSeparator = () => (<View style={styles.line} />)
+  };
 
   render() {
     const { options } = this.props;
@@ -45,7 +48,6 @@ class List extends Component {
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
         style={styles.list}
-        ItemSeparatorComponent={this.renderSeparator}
       />
     );
   }

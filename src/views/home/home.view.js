@@ -594,7 +594,7 @@ class HomePage extends Component {
       premium
     } = this.state;
 
-    let modalTitle = '';
+    let modalTitle = 'Recipe Settings';
     if (deleteModal) {
       modalTitle = 'Delete this recipe?';
     }

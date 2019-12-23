@@ -12,11 +12,10 @@ export default function PullDown() {
 
 const styles = StyleSheet.create({
   pulldown: {
-    width: 35,
-    height: 5,
+    width: 40,
+    height: 6,
     borderRadius: 3,
     alignSelf: 'center',
     backgroundColor: '#E3E3E3',
-    marginBottom: 30
   }
 });

@@ -5,17 +5,16 @@ import {
   View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard, Dimensions
 } from 'react-native';
 import update from 'immutability-helper';
-import Add from '../../components/add';
 import Back from '../../components/back';
 import Step from './step';
 import Vessel from './vessel';
 import * as constants from '../../constants';
 import BuilderModal from './builder-modal';
 import StepList from './step-list';
-import Button from '../../components/button';
 import * as stepModel from '../../storage/step';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
+import ButtonLarge from '../../components/button-large';
 
 class BuilderPage extends Component {
   constructor(props) {
@@ -97,7 +96,7 @@ class BuilderPage extends Component {
   onBackClick = () => {
     const { navigation } = this.props;
     navigation.goBack();
-  }
+  };
 
   onAddClick = () => {
     const { brewingVessel } = this.state;
@@ -132,7 +131,7 @@ class BuilderPage extends Component {
 
   onPressItem = (item) => {
     const {
-      steps, selected, brewingVessel, modalType
+      steps, selected
     } = this.state;
     // Open modal if necessary or add step to screen
     if (item === constants.STEP_HEAT_WATER || item === constants.STEP_GRIND_COFFEE
@@ -141,6 +140,53 @@ class BuilderPage extends Component {
     || item === constants.STEP_CHILL_WATER || item === constants.STEP_STEEP) {
       // These require text inputs - open up modal
       this.setState({ visibleModal: true, modalType: item });
+    } else {
+      // Add new step
+      const newStep = stepModel.Step({
+        title: item,
+      });
+      this.setState({
+        visibleModal: false,
+        modalType: '',
+        steps: [
+          ...steps,
+          newStep
+        ],
+        selected: [
+          ...selected,
+          false
+        ]
+      });
+    }
+  };
+
+  onCloseClick = () => {
+    // Close and clear modal
+    this.setState({
+      visibleModal: false,
+      modalType: '',
+      modalText: '',
+      modalIdx: -1
+    });
+  }
+
+  onModalSave = (item) => {
+    const {
+      modalType, modalText, modalIdx, modalSelect, steps, selected, useMetric,
+      brewingVessel
+    } = this.state;
+
+    // Dismiss keyboard for modal
+    Keyboard.dismiss();
+
+    // If modal was for recipe name, just update that
+    if (modalType === constants.RECIPE_NAME_ELEM) {
+      this.setState({
+        recipeName: modalText,
+        visibleModal: false,
+        modalType: '',
+        modalText: ''
+      });
     } else if (modalType === constants.VESSEL_ELEM) {
       // If same vessel, return
       if (brewingVessel === item) {
@@ -180,52 +226,6 @@ class BuilderPage extends Component {
         orientation: item,
         visibleModal: false,
         modalType: ''
-      });
-    } else {
-      // Add new step
-      const newStep = stepModel.Step({
-        title: item,
-      });
-      this.setState({
-        visibleModal: false,
-        modalType: '',
-        steps: [
-          ...steps,
-          newStep
-        ],
-        selected: [
-          ...selected,
-          false
-        ]
-      });
-    }
-  };
-
-  onCloseClick = () => {
-    // Close and clear modal
-    this.setState({
-      visibleModal: false,
-      modalType: '',
-      modalText: '',
-      modalIdx: -1
-    });
-  }
-
-  onModalSave = () => {
-    const {
-      modalType, modalText, modalIdx, modalSelect, steps, selected, useMetric
-    } = this.state;
-
-    // Dismiss keyboard for modal
-    Keyboard.dismiss();
-
-    // If modal was for recipe name, just update that
-    if (modalType === constants.RECIPE_NAME_ELEM) {
-      this.setState({
-        recipeName: modalText,
-        visibleModal: false,
-        modalType: '',
-        modalText: ''
       });
     } else {
       // Validate step
@@ -282,7 +282,7 @@ class BuilderPage extends Component {
         });
       }
     }
-  }
+  };
 
   onStepClick = (stepId, inList) => {
     const { recipeName } = this.state;
@@ -419,7 +419,7 @@ class BuilderPage extends Component {
     }
 
     // Top margin - dynamic
-    const { height } = Dimensions.get('window');
+    const { height, width } = Dimensions.get('window');
     const marginTopStyle = {
       marginTop: height * 0.03
     };
@@ -477,15 +477,23 @@ class BuilderPage extends Component {
           useMetric={useMetric}
         />
         <View style={styles.addandsave}>
-          <Add
-            onAddClick={this.onAddClick}
-            type={0}
+          <ButtonLarge
+            onButtonClick={this.onAddClick}
+            title="Add Step"
+            margin={[0, 16, 16, 16]}
+            buttonWidth={width - 32}
+            buttonHeight={40}
+            textColor="#2D8CD3"
+            backgroundColor="#2D8CD321"
           />
-          <Button
-            onButtonClick={this.onRecipeSave}
-            type={1}
-            title="Save"
-            margin={[15, 0, 45, 0]}
+          <ButtonLarge
+            onButtonClick={this.onAddClick}
+            title="Save Recipe"
+            margin={[0, 16, 0, 16]}
+            buttonWidth={width - 32}
+            buttonHeight={40}
+            textColor="#40B90B"
+            backgroundColor="#40B90B22"
           />
         </View>
         <BuilderModal
@@ -495,6 +503,8 @@ class BuilderPage extends Component {
           modalText={modalText}
           modalSelect={modalSelect}
           vessel={brewingVessel}
+          filterType={filterType}
+          orientation={orientation}
           onCloseClick={this.onCloseClick}
           onPressItem={this.onPressItem}
           onChangeText={this.onChangeText}

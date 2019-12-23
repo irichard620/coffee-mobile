@@ -5,6 +5,13 @@ import ModalContentBottom from '../../components/modal-content-bottom';
 import * as constants from '../../constants';
 
 class BuilderModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedModalItem: '',
+    };
+  }
+
   newStepOptions = (vessel) => {
     const arrToUse = [];
     constants.steps.forEach((step) => {
@@ -37,31 +44,31 @@ class BuilderModal extends Component {
       }
     });
     return arrToUse;
-  }
+  };
 
-  brewVesselOptions = () => {
+  brewVesselOptions = (existingVessel) => {
     const arrToUse = [];
     constants.vessels.forEach((vessel) => {
-      arrToUse.push({ title: vessel });
+      arrToUse.push({ title: vessel, selected: (existingVessel === vessel) });
     });
     return arrToUse;
-  }
+  };
 
-  filterOptions = (vessel) => {
+  filterOptions = (vessel, existingFilter) => {
     const arrToUse = [];
     constants.filters[vessel].forEach((filter) => {
-      arrToUse.push({ title: filter });
+      arrToUse.push({ title: filter, selected: (existingFilter === filter) });
     });
     return arrToUse;
-  }
+  };
 
-  orientationOptions = (vessel) => {
+  orientationOptions = (vessel, existingOrientation) => {
     const arrToUse = [];
     constants.orientations[vessel].forEach((orientation) => {
-      arrToUse.push({ title: orientation });
+      arrToUse.push({ title: orientation, selected: (existingOrientation === orientation) });
     });
     return arrToUse;
-  }
+  };
 
   getTextPlaceholder = (modalType, useMetric) => {
     if (modalType === constants.STEP_HEAT_WATER) {
@@ -89,13 +96,38 @@ class BuilderModal extends Component {
       return 'Hours to Steep';
     }
     return '';
-  }
+  };
+
+  onModalPressItem = (item) => {
+    const { onPressItem } = this.props;
+    if (item in constants.steps) {
+      // If step - we immediately trigger new step
+      onPressItem(item);
+    } else {
+      // Other presses require a save
+      // Also update options for this one
+      this.setState({
+        selectedModalItem: item
+      });
+    }
+  };
+
+  onModalSavePressed = () => {
+    const { onModalSave } = this.props;
+    const { selectedModalItem } = this.state;
+    onModalSave(selectedModalItem);
+    this.setState({
+      selectedModalItem: ''
+    });
+  };
 
   render() {
     const {
-      visibleModal, modalType, modalText, modalSelect, onCloseClick, onPressItem,
-      onChangeText, onModalSave, onChangePicker, vessel, useMetric
+      visibleModal, modalType, modalText, modalSelect, onCloseClick,
+      onChangeText, onChangePicker, vessel, useMetric, filterType,
+      orientation
     } = this.props;
+    const { selectedModalItem } = this.state;
 
     // Get content
     let isListModal = false;
@@ -103,26 +135,42 @@ class BuilderModal extends Component {
     let options = [];
     let titleToDisplay = '';
     let charLimit = 4;
+    let hasSave = true;
     if (modalType === constants.NEW_STEP_ELEM) {
+      titleToDisplay = 'Step Options';
       isListModal = true;
       options = this.newStepOptions(vessel);
+      hasSave = false;
     } else if (modalType === constants.VESSEL_ELEM) {
+      titleToDisplay = 'Vessel Options';
       isListModal = true;
-      options = this.brewVesselOptions();
+      let existingItem = vessel;
+      if (selectedModalItem !== '') {
+        existingItem = selectedModalItem;
+      }
+      options = this.brewVesselOptions(existingItem);
     } else if (modalType === constants.FILTER_ELEM) {
+      titleToDisplay = 'Filter Options';
       isListModal = true;
-      options = this.filterOptions(vessel);
+      let existingItem = filterType;
+      if (selectedModalItem !== '') {
+        existingItem = selectedModalItem;
+      }
+      options = this.filterOptions(vessel, existingItem);
     } else if (modalType === constants.ORIENTATION_ELEM) {
+      titleToDisplay = 'Orientation Options';
       isListModal = true;
-      options = this.orientationOptions(vessel);
+      let existingItem = orientation;
+      if (selectedModalItem !== '') {
+        existingItem = selectedModalItem;
+      }
+      options = this.orientationOptions(vessel, existingItem);
     } else if (modalType === constants.STEP_GRIND_COFFEE) {
+      titleToDisplay = 'Grind Coffee Options';
       isSelectInput = true;
     } else if (modalType === constants.RECIPE_NAME_ELEM) {
       titleToDisplay = 'Recipe Name';
       charLimit = 30;
-    } else if (modalType === constants.USER_NAME_ELEM) {
-      titleToDisplay = "What's your name?";
-      charLimit = 20;
     } else {
       titleToDisplay = modalType;
     }
@@ -143,10 +191,11 @@ class BuilderModal extends Component {
           title={titleToDisplay}
           charLimit={charLimit}
           pickerValues={constants.grindSizes}
-          onPressItem={onPressItem}
+          onPressItem={this.onModalPressItem}
           onChangeText={onChangeText}
-          onModalSave={onModalSave}
+          onModalSave={this.onModalSavePressed}
           onChangePicker={onChangePicker}
+          hasSave={hasSave}
         />
       </CustomModal>
     );
