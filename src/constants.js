@@ -76,6 +76,15 @@ export const ORIENTATION_ELEM = 'orientation';
 export const BEAN_ELEM = 'bean';
 export const USER_NAME_ELEM = 'username';
 
+// Builder details
+export const BUILDER_RECIPE_NAME_DETAIL = 'Recipe Name';
+export const BUILDER_VESSEL_DETAIL = 'Brew Vessel';
+export const BUILDER_VESSEL_SIZE_DETAIL = 'Vessel Size';
+export const BUILDER_FILTER_DETAIL = 'Filter';
+export const BUILDER_DESCRIPTION_DETAIL = 'Recipe Description';
+export const details = [BUILDER_RECIPE_NAME_DETAIL, BUILDER_VESSEL_DETAIL,
+  BUILDER_VESSEL_SIZE_DETAIL, BUILDER_FILTER_DETAIL, BUILDER_DESCRIPTION_DETAIL];
+
 // recipe menu options
 export const RECIPE_MENU_EDIT = 'Edit recipe';
 export const RECIPE_MENU_FAVORITE = 'Favorite recipe';

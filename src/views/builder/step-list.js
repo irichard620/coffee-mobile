@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import * as constants from '../../constants';
 import * as stepModel from '../../storage/step';
 import Step from './step';
+import BuilderListHeader from './builder-list-header';
 
 class StepList extends Component {
   renderItem = (step, idx) => {
@@ -45,8 +46,8 @@ class StepList extends Component {
         onPressDelete={() => onPressDelete(idx)}
         onPressUp={() => onPressUp(idx)}
         onPressDown={() => onPressDown(idx)}
-        onStepClick={() => onStepClick(idx, true)}
-        margin={[0, 15, 15, 15]}
+        onStepClick={() => onStepClick(idx)}
+        margin={[0, 0, 0, 0]}
       />
     );
   };
@@ -56,6 +57,7 @@ class StepList extends Component {
 
     return (
       <View>
+        {steps.length > 0 && <BuilderListHeader title="Steps" textColor="#2D8CD3" />}
         {steps.map((step, idx) => (
           this.renderItem(step, idx)
         ))}

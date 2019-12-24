@@ -2,15 +2,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard, Dimensions
+  View, ScrollView, StyleSheet, LayoutAnimation, Alert, Keyboard, Dimensions
 } from 'react-native';
 import update from 'immutability-helper';
-import Back from '../../components/back';
-import Step from './step';
-import Vessel from './vessel';
+import TopHeader from '../../components/top-header';
 import * as constants from '../../constants';
 import BuilderModal from './builder-modal';
 import StepList from './step-list';
+import DetailsList from './details-list';
 import * as stepModel from '../../storage/step';
 import * as recipeModel from '../../storage/recipe';
 import { saveRecipe } from '../../actions/recipe-actions';
@@ -28,9 +27,9 @@ class BuilderPage extends Component {
       modalSelect: constants.GRIND_MEDIUM,
       recipeName: 'New Recipe',
       favorited: false,
-      brewingVessel: '-',
-      filterType: '-',
-      orientation: '-',
+      brewingVessel: '',
+      filterType: '',
+      orientation: '',
       totalWater: 0,
       totalCoffee: 0,
       grindSize: '',
@@ -102,7 +101,7 @@ class BuilderPage extends Component {
     const { brewingVessel } = this.state;
 
     // If no vessel, show alert
-    if (brewingVessel === '' || brewingVessel === '-') {
+    if (brewingVessel === '') {
       Alert.alert(
         'Choose a Brew Method',
         'You need to select a brewing vessel before you can add any steps.',
@@ -116,18 +115,18 @@ class BuilderPage extends Component {
     }
     // Pull up add menu
     this.setState({ visibleModal: true, modalType: constants.NEW_STEP_ELEM });
-  }
+  };
 
   changeVessel = (vessel) => {
     this.setState({
       brewingVessel: vessel,
-      filterType: '-',
-      orientation: '-',
+      filterType: '',
+      orientation: '',
       visibleModal: false,
       modalType: '',
       steps: []
     });
-  }
+  };
 
   onPressItem = (item) => {
     const {
@@ -193,7 +192,7 @@ class BuilderPage extends Component {
         return;
       }
       // If no vessel, update
-      if (brewingVessel === '' || brewingVessel === '-' || steps.length === 0) {
+      if (brewingVessel === '' || steps.length === 0) {
         this.changeVessel(item);
         return;
       }
@@ -284,21 +283,12 @@ class BuilderPage extends Component {
     }
   };
 
-  onStepClick = (stepId, inList) => {
-    const { recipeName } = this.state;
-    if (stepId === constants.RECIPE_NAME_ELEM) {
-      // Recipe edit modal with name prepopulated
-      this.setState({ visibleModal: true, modalType: stepId, modalText: recipeName });
-    } else if (!inList) {
-      // Pull up modify menu
-      this.setState({ visibleModal: true, modalType: stepId });
-    } else {
-      // Update selected
-      const { selected } = this.state;
-      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
-      this.setState({ selected: selected.map((val, i) => (i === stepId ? !val : false)) });
-    }
-  }
+  onStepClick = (stepId) => {
+    // Update selected
+    const { selected } = this.state;
+    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
+    this.setState({ selected: selected.map((val, i) => (i === stepId ? !val : false)) });
+  };
 
   onPressEdit = (stepIdx, title) => {
     const { steps, useMetric } = this.state;
@@ -312,7 +302,7 @@ class BuilderPage extends Component {
         modalSelect: stepModel.getModalSelectProperty(currentStep)
       });
     }
-  }
+  };
 
   onPressDelete = (stepIdx) => {
     const { steps, selected } = this.state;
@@ -329,7 +319,7 @@ class BuilderPage extends Component {
         selected: newSelected,
       });
     }
-  }
+  };
 
   swapInArray = (array, idx1, idx2) => {
     const arrayCopy = [...array];
@@ -337,7 +327,7 @@ class BuilderPage extends Component {
     arrayCopy[idx2] = arrayCopy[idx1];
     arrayCopy[idx1] = temp;
     return arrayCopy;
-  }
+  };
 
   onPressUp = (stepIdx) => {
     const { steps, selected } = this.state;
@@ -354,7 +344,7 @@ class BuilderPage extends Component {
         selected: newSelected,
       });
     }
-  }
+  };
 
   onPressDown = (stepIdx) => {
     const { steps, selected } = this.state;
@@ -371,17 +361,60 @@ class BuilderPage extends Component {
         selected: newSelected,
       });
     }
-  }
+  };
+
+  getDetailsList = () => {
+    const {
+      recipeName, brewingVessel, filterType, orientation
+    } = this.state;
+    const arrToUse = [];
+    constants.details.forEach((detail) => {
+      let detailValue = '';
+      let detailDisabled = false;
+      let detailModalId = '';
+      if (detail === constants.BUILDER_RECIPE_NAME_DETAIL) {
+        detailValue = recipeName;
+        detailModalId = constants.RECIPE_NAME_ELEM;
+      } else if (detail === constants.BUILDER_VESSEL_DETAIL) {
+        detailValue = brewingVessel;
+        detailModalId = constants.VESSEL_ELEM;
+      } else if (detail === constants.BUILDER_VESSEL_SIZE_DETAIL) {
+        detailDisabled = (brewingVessel === '' || filterType === ''
+          || !(brewingVessel in constants.orientations));
+        detailValue = orientation;
+        detailModalId = constants.ORIENTATION_ELEM;
+      } else if (detail === constants.BUILDER_FILTER_DETAIL) {
+        detailDisabled = (brewingVessel === '');
+        detailValue = filterType;
+        detailModalId = constants.FILTER_ELEM;
+      }
+      arrToUse.push({
+        title: detail, value: detailValue, disabled: detailDisabled, modalId: detailModalId
+      });
+    });
+    return arrToUse;
+  };
+
+  onDetailClick = (modalId) => {
+    const { recipeName } = this.state;
+    if (modalId === constants.RECIPE_NAME_ELEM) {
+      // Recipe edit modal with name prepopulated
+      this.setState({ visibleModal: true, modalType: modalId, modalText: recipeName });
+    } else {
+      // Pull up modify menu
+      this.setState({ visibleModal: true, modalType: modalId });
+    }
+  };
 
   onChangeText = (text) => {
     this.setState({
       modalText: text
     });
-  }
+  };
 
   onChangePicker = (val) => {
     this.setState({ modalSelect: val });
-  }
+  };
 
   onRecipeSave = () => {
     const { persistRecipe } = this.props;
@@ -402,7 +435,7 @@ class BuilderPage extends Component {
     }
     const newRecipe = recipeModel.Recipe(objToUse);
     persistRecipe(newRecipe, true);
-  }
+  };
 
   render() {
     const {
@@ -410,109 +443,65 @@ class BuilderPage extends Component {
       modalText, modalSelect, steps, selected, visibleModal, useMetric
     } = this.state;
 
-    // Check if we should disable certain fields
-    const filterDisabled = (brewingVessel === '-');
-    let orientationDisabled = false;
-    if (brewingVessel === '-' || filterType === '-'
-    || !(brewingVessel in constants.orientations)) {
-      orientationDisabled = true;
-    }
-
     // Top margin - dynamic
-    const { height, width } = Dimensions.get('window');
-    const marginTopStyle = {
-      marginTop: height * 0.03
-    };
+    const { width } = Dimensions.get('window');
 
     return (
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={[styles.backcontainer, marginTopStyle]}>
-          <Back
-            onBackClick={this.onBackClick}
-            type={0}
+      <View style={styles.container}>
+        <TopHeader title={recipeName} onClose={this.onBackClick} />
+        <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+          <DetailsList
+            details={this.getDetailsList()}
+            onDetailClick={this.onDetailClick}
           />
-        </View>
-        <Text style={styles.title}>Recipe Builder</Text>
-        <Step
-          disabled={false}
-          title={recipeName}
-          description="Recipe Name"
-          onStepClick={() => this.onStepClick(constants.RECIPE_NAME_ELEM)}
-          margin={[0, 15, 15, 15]}
-        />
-        <View style={styles.rowSteps}>
-          <View style={styles.vesselContainer}>
-            <Vessel
-              disabled={false}
-              vessel={brewingVessel}
-              onStepClick={() => this.onStepClick(constants.VESSEL_ELEM)}
+          <StepList
+            onPressEdit={this.onPressEdit}
+            onPressDelete={this.onPressDelete}
+            onPressUp={this.onPressUp}
+            onPressDown={this.onPressDown}
+            onStepClick={this.onStepClick}
+            steps={steps}
+            selected={selected}
+            useMetric={useMetric}
+          />
+          <View style={styles.addandsave}>
+            <ButtonLarge
+              onButtonClick={this.onAddClick}
+              title="Add Step"
+              margin={[0, 16, 16, 16]}
+              buttonWidth={width - 32}
+              buttonHeight={40}
+              textColor="#2D8CD3"
+              backgroundColor="#2D8CD321"
+            />
+            <ButtonLarge
+              onButtonClick={this.onAddClick}
+              title="Save Recipe"
+              margin={[0, 16, 0, 16]}
+              buttonWidth={width - 32}
+              buttonHeight={40}
+              textColor="#40B90B"
+              backgroundColor="#40B90B22"
             />
           </View>
-          <View style={styles.columnSteps}>
-            <Step
-              disabled={filterDisabled}
-              title={filterType}
-              description="Filter Type"
-              onStepClick={() => this.onStepClick(constants.FILTER_ELEM)}
-              margin={[0, 15, 15, 15]}
-            />
-            <Step
-              disabled={orientationDisabled}
-              title={orientation}
-              description="Orientation/Size"
-              onStepClick={() => this.onStepClick(constants.ORIENTATION_ELEM)}
-              margin={[0, 15, 15, 15]}
-            />
-          </View>
-        </View>
-        <View style={styles.line} />
-        <StepList
-          onPressEdit={this.onPressEdit}
-          onPressDelete={this.onPressDelete}
-          onPressUp={this.onPressUp}
-          onPressDown={this.onPressDown}
-          onStepClick={this.onStepClick}
-          steps={steps}
-          selected={selected}
-          useMetric={useMetric}
-        />
-        <View style={styles.addandsave}>
-          <ButtonLarge
-            onButtonClick={this.onAddClick}
-            title="Add Step"
-            margin={[0, 16, 16, 16]}
-            buttonWidth={width - 32}
-            buttonHeight={40}
-            textColor="#2D8CD3"
-            backgroundColor="#2D8CD321"
+          <BuilderModal
+            visibleModal={visibleModal}
+            modalIdx={modalIdx}
+            modalType={modalType}
+            modalText={modalText}
+            modalSelect={modalSelect}
+            vessel={brewingVessel}
+            filterType={filterType}
+            orientation={orientation}
+            onCloseClick={this.onCloseClick}
+            onPressItem={this.onPressItem}
+            onChangeText={this.onChangeText}
+            onChangePicker={this.onChangePicker}
+            onModalSave={this.onModalSave}
+            useMetric={useMetric}
           />
-          <ButtonLarge
-            onButtonClick={this.onAddClick}
-            title="Save Recipe"
-            margin={[0, 16, 0, 16]}
-            buttonWidth={width - 32}
-            buttonHeight={40}
-            textColor="#40B90B"
-            backgroundColor="#40B90B22"
-          />
-        </View>
-        <BuilderModal
-          visibleModal={visibleModal}
-          modalIdx={modalIdx}
-          modalType={modalType}
-          modalText={modalText}
-          modalSelect={modalSelect}
-          vessel={brewingVessel}
-          filterType={filterType}
-          orientation={orientation}
-          onCloseClick={this.onCloseClick}
-          onPressItem={this.onPressItem}
-          onChangeText={this.onChangeText}
-          onChangePicker={this.onChangePicker}
-          onModalSave={this.onModalSave}
-          useMetric={useMetric}
-        />
-      </ScrollView>
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -520,38 +509,11 @@ class BuilderPage extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4'
+    backgroundColor: '#FFFFFF',
   },
-  backcontainer: {
-    marginLeft: 15,
-    alignItems: 'flex-start',
-  },
-  title: {
-    marginLeft: 15,
-    marginBottom: 20,
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#1D5E9E',
-    alignSelf: 'flex-start',
-  },
-  content: {
-    backgroundColor: 'white',
-    padding: 15,
-    alignItems: 'flex-start',
-    borderRadius: 20,
-  },
-  contentTitle: {
-    fontSize: 20,
-    marginBottom: 12,
-  },
-  rowSteps: {
-    flexDirection: 'row'
-  },
-  vesselContainer: {
-    width: '50%',
-  },
-  columnSteps: {
-    width: '50%',
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#F1F3F6'
   },
   line: {
     marginLeft: 15,

@@ -100,7 +100,7 @@ class BuilderModal extends Component {
 
   onModalPressItem = (item) => {
     const { onPressItem } = this.props;
-    if (item in constants.steps) {
+    if (constants.steps.includes(item)) {
       // If step - we immediately trigger new step
       onPressItem(item);
     } else {

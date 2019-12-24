@@ -62,25 +62,20 @@ export default function Step(props) {
 const styles = StyleSheet.create({
   outline: {
     alignItems: 'flex-start',
-    borderRadius: 20,
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 15,
     paddingBottom: 15,
     backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
   },
   title: {
-    color: '#1D5E9E',
+    color: '#000000',
     fontSize: 16,
     fontWeight: '600',
   },
   description: {
-    color: '#727272',
-    fontSize: 14,
+    color: '#898989',
+    fontSize: 15,
   },
   topview: {
     alignItems: 'flex-start',
