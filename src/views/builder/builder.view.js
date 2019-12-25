@@ -26,6 +26,7 @@ class BuilderPage extends Component {
       modalText: '',
       modalSelect: constants.GRIND_MEDIUM,
       recipeName: 'New Recipe',
+      recipeDescription: '',
       favorited: false,
       brewingVessel: '',
       filterType: '',
@@ -53,6 +54,7 @@ class BuilderPage extends Component {
       this.setState({
         recipeId: recipe.recipeId,
         recipeName: recipe.recipeName,
+        recipeDescription: recipe.recipeDescription,
         favorited: recipe.favorited,
         brewingVessel: recipe.brewingVessel,
         filterType: recipe.filterType,
@@ -167,7 +169,7 @@ class BuilderPage extends Component {
       modalText: '',
       modalIdx: -1
     });
-  }
+  };
 
   onModalSave = (item) => {
     const {
@@ -225,6 +227,14 @@ class BuilderPage extends Component {
         orientation: item,
         visibleModal: false,
         modalType: ''
+      });
+    } else if (modalType === constants.RECIPE_DESCRIPTION_ELEM) {
+      // Update orientation
+      this.setState({
+        recipeDescription: item,
+        visibleModal: false,
+        modalType: '',
+        modalText: ''
       });
     } else {
       // Validate step
@@ -365,7 +375,8 @@ class BuilderPage extends Component {
 
   getDetailsList = () => {
     const {
-      recipeName, brewingVessel, filterType, orientation
+      recipeName, brewingVessel, filterType, orientation,
+      recipeDescription
     } = this.state;
     const arrToUse = [];
     constants.details.forEach((detail) => {
@@ -387,6 +398,9 @@ class BuilderPage extends Component {
         detailDisabled = (brewingVessel === '');
         detailValue = filterType;
         detailModalId = constants.FILTER_ELEM;
+      } else if (detail === constants.BUILDER_DESCRIPTION_DETAIL) {
+        detailValue = recipeDescription;
+        detailModalId = constants.RECIPE_DESCRIPTION_ELEM;
       }
       arrToUse.push({
         title: detail, value: detailValue, disabled: detailDisabled, modalId: detailModalId
@@ -396,10 +410,13 @@ class BuilderPage extends Component {
   };
 
   onDetailClick = (modalId) => {
-    const { recipeName } = this.state;
+    const { recipeName, recipeDescription } = this.state;
     if (modalId === constants.RECIPE_NAME_ELEM) {
       // Recipe edit modal with name prepopulated
       this.setState({ visibleModal: true, modalType: modalId, modalText: recipeName });
+    } else if (modalId === constants.RECIPE_DESCRIPTION_ELEM) {
+      // Recipe edit modal with name prepopulated
+      this.setState({ visibleModal: true, modalType: modalId, modalText: recipeDescription });
     } else {
       // Pull up modify menu
       this.setState({ visibleModal: true, modalType: modalId });

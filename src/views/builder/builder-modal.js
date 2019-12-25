@@ -94,6 +94,8 @@ class BuilderModal extends Component {
       return 'Name';
     } if (modalType === constants.STEP_STEEP) {
       return 'Hours to Steep';
+    } if (modalType === constants.RECIPE_DESCRIPTION_ELEM) {
+      return 'Recipe Description';
     }
     return '';
   };
@@ -171,6 +173,9 @@ class BuilderModal extends Component {
     } else if (modalType === constants.RECIPE_NAME_ELEM) {
       titleToDisplay = 'Recipe Name';
       charLimit = 30;
+    } else if (modalType === constants.RECIPE_DESCRIPTION_ELEM) {
+      titleToDisplay = 'Recipe Description';
+      charLimit = 100;
     } else {
       titleToDisplay = modalType;
     }

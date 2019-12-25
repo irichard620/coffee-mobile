@@ -75,6 +75,7 @@ export const FILTER_ELEM = 'filter';
 export const ORIENTATION_ELEM = 'orientation';
 export const BEAN_ELEM = 'bean';
 export const USER_NAME_ELEM = 'username';
+export const RECIPE_DESCRIPTION_ELEM = 'description';
 
 // Builder details
 export const BUILDER_RECIPE_NAME_DETAIL = 'Recipe Name';

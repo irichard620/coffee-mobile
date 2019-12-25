@@ -15,6 +15,7 @@ export function Recipe(recipeObj) {
 
   // Assign other values
   recipe.recipeName = recipeObj.recipeName;
+  recipe.recipeDescription = recipeObj.recipeDescription;
   recipe.brewingVessel = recipeObj.brewingVessel;
   recipe.filterType = recipeObj.filterType;
   recipe.orientation = recipeObj.orientation;
