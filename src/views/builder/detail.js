@@ -3,6 +3,7 @@ import React from 'react';
 import {
   View, Text, StyleSheet, Image, TouchableOpacity
 } from 'react-native';
+import * as constants from '../../constants';
 
 export default function Detail(props) {
   const {
@@ -11,14 +12,20 @@ export default function Detail(props) {
 
   const baseButtonPath = '../../assets/buttons/';
 
+  let descriptionValue = value;
+  if (title === constants.BUILDER_DESCRIPTION_DETAIL
+    && descriptionValue && descriptionValue.length > 22) {
+    descriptionValue = `${value.slice(0, 22)}...`;
+  }
+
   return (
     <TouchableOpacity onPress={() => onDetailClick(modalId)} disabled={disabled}>
       <View style={styles.outline}>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.rightView}>
-          {value !== '' && (
+          {descriptionValue !== '' && (
             <Text style={styles.description}>
-              {value}
+              {descriptionValue}
             </Text>
           )}
           <Image style={styles.icon} source={require(`${baseButtonPath}Modal_Arrow.png`)} />

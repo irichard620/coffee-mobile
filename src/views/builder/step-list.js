@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Step from './step';
 import BuilderListHeader from './builder-list-header';
 
@@ -21,21 +21,26 @@ class StepList extends Component {
       canGoDown = false;
     }
 
+    const showSeparator = (idx < steps.length - 1);
+
     return (
-      <Step
-        key={idx}
-        step={step}
-        useMetric={useMetric}
-        canGoUp={canGoUp}
-        canGoDown={canGoDown}
-        selected={selected[idx]}
-        onPressEdit={() => onPressEdit(idx, step.title)}
-        onPressDelete={() => onPressDelete(idx)}
-        onPressUp={() => onPressUp(idx)}
-        onPressDown={() => onPressDown(idx)}
-        onStepClick={() => onStepClick(idx)}
-        margin={[0, 0, 0, 0]}
-      />
+      <React.Fragment>
+        <Step
+          key={idx}
+          step={step}
+          useMetric={useMetric}
+          canGoUp={canGoUp}
+          canGoDown={canGoDown}
+          selected={selected[idx]}
+          onPressEdit={() => onPressEdit(idx, step.title)}
+          onPressDelete={() => onPressDelete(idx)}
+          onPressUp={() => onPressUp(idx)}
+          onPressDown={() => onPressDown(idx)}
+          onStepClick={() => onStepClick(idx)}
+          margin={[0, 0, 0, 0]}
+        />
+        {showSeparator && <View style={styles.separator} />}
+      </React.Fragment>
     );
   };
 
@@ -45,6 +50,7 @@ class StepList extends Component {
     return (
       <View>
         {steps.length > 0 && <BuilderListHeader title="Steps" textColor="#2D8CD3" />}
+        {steps.length > 0 && <View style={styles.separator} />}
         {steps.map((step, idx) => (
           this.renderItem(step, idx)
         ))}
@@ -52,5 +58,13 @@ class StepList extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  separator: {
+    height: 1,
+    backgroundColor: '#F1F3F6',
+    width: '100%'
+  }
+});
 
 export default StepList;

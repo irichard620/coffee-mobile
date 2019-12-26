@@ -25,6 +25,7 @@ export default function TopHeader(props) {
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
+      <View style={styles.separator} />
     </SafeAreaView>
   );
 }
@@ -51,5 +52,10 @@ const styles = StyleSheet.create({
   close: {
     height: 20,
     width: 20,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#F1F3F6',
+    width: '100%'
   }
 });

@@ -4,10 +4,17 @@ import {
   View, Text, StyleSheet, Image, TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
 import * as constants from '../../constants';
+import Button from '../../components/button';
 import { getTempUnit, translateTempToCelsius } from '../../storage/helper';
 import { getStepShortDescription } from '../../storage/step';
 
 class Step extends Component {
+  getHighlightedText = text => (
+    <Text style={styles.descriptionHighlight}>
+      {text}
+    </Text>
+  );
+
   getStepDescriptionWithHighlights = (step, useMetric) => {
     if (step.title === constants.STEP_HEAT_WATER) {
       const tempUnit = getTempUnit(useMetric);
@@ -15,100 +22,67 @@ class Step extends Component {
         ? translateTempToCelsius(step.properties.waterTemp) : step.properties.waterTemp;
       return (
         <Text style={styles.descriptionBase}>
-          Heat water to
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {tempToUse}
-            {tempUnit}
-          </Text>
-          .
+          {'Heat water to '}
+          {this.getHighlightedText(tempToUse)}
+          {this.getHighlightedText(tempUnit)}
+          {'.'}
         </Text>
       );
     } if (step.title === constants.STEP_CHILL_WATER) {
       return (
         <Text style={styles.descriptionBase}>
-          Chill at least
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.gramsWater}
-            {' '}
-          </Text>
-          grams of filtered water.
+          {'Chill at least '}
+          {this.getHighlightedText(step.properties.gramsWater)}
+          {' grams of filtered water.'}
         </Text>
       );
     } if (step.title === constants.STEP_GRIND_COFFEE) {
       return (
         <Text style={styles.descriptionBase}>
-          <Text style={styles.descriptionHighlight}>
-            {step.properties.gramsCoffee}
-            {' '}
-          </Text>
-          grams of coffee ground
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.grindSize}
-          </Text>
-          .
+          {this.getHighlightedText(step.properties.gramsCoffee)}
+          {' grams of coffee ground '}
+          {this.getHighlightedText(step.properties.grindSize)}
+          {'.'}
         </Text>
       );
     } if (step.title === constants.STEP_BLOOM_GROUNDS) {
       return (
         <Text style={styles.descriptionBase}>
-          Bloom grounds with
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.gramsWater}
-            {' '}
-          </Text>
-          grams of water.
+          {'Bloom grounds with '}
+          {this.getHighlightedText(step.properties.gramsWater)}
+          {' grams of water.'}
         </Text>
       );
     } if (step.title === constants.STEP_POUR_WATER) {
       return (
         <Text style={styles.descriptionBase}>
-          Pour in
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.gramsWater}
-            {' '}
-          </Text>
-          grams of water.
+          {'Pour in '}
+          {this.getHighlightedText(step.properties.gramsWater)}
+          {' grams of water.'}
         </Text>
       );
     } if (step.title === constants.STEP_WAIT) {
       return (
         <Text style={styles.descriptionBase}>
-          Wait
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.seconds}
-            {' '}
-          </Text>
-          seconds.
+          {'Wait '}
+          {this.getHighlightedText(step.properties.seconds)}
+          {' seconds.'}
         </Text>
       );
     } if (step.title === constants.STEP_ADD_ICE) {
       return (
         <Text style={styles.descriptionBase}>
-          Add
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.gramsIce}
-            {' '}
-          </Text>
-          grams of ice..
+          {'Add '}
+          {this.getHighlightedText(step.properties.gramsIce)}
+          {' grams of ice.'}
         </Text>
       );
     } if (step.title === constants.STEP_STEEP) {
       return (
         <Text style={styles.descriptionBase}>
-          Refrigerate and allow grounds to steep for
-          <Text style={styles.descriptionHighlight}>
-            {' '}
-            {step.properties.hours}
-            {' '}
-          </Text>
-          hours.
+          {'Refrigerate and allow grounds to steep for '}
+          {this.getHighlightedText(step.properties.hours)}
+          {' hours.'}
         </Text>
       );
     }
@@ -143,13 +117,13 @@ class Step extends Component {
     return (
       <TouchableWithoutFeedback onPress={onStepClick} disabled={disabled}>
         <View style={[styles.outline, backgroundStyle]}>
-          <View style={styles.topview}>
+          <View style={styles.topView}>
             <Text style={styles.title}>{title}</Text>
             {this.getStepDescriptionWithHighlights(step, useMetric)}
           </View>
           {selected && (
-            <View style={styles.buttonview}>
-              <View style={styles.rightbuttonview}>
+            <View style={styles.buttonView}>
+              <View style={styles.rightButtonView}>
                 {canGoUp && (
                   <TouchableOpacity onPress={onPressUp}>
                     <Image style={styles.edit} source={require(`${baseButtonPath}Move_Up.png`)} />
@@ -160,14 +134,17 @@ class Step extends Component {
                     <Image style={styles.edit} source={require(`${baseButtonPath}Move_Down.png`)} />
                   </TouchableOpacity>
                 )}
-                {canEdit && (
-                  <TouchableOpacity onPress={onPressEdit}>
-                    <Image style={styles.edit} source={require(`${baseButtonPath}Edit.png`)} />
-                  </TouchableOpacity>
-                )}
                 <TouchableOpacity onPress={onPressDelete}>
                   <Image style={styles.use} source={require(`${baseButtonPath}Delete.png`)} />
                 </TouchableOpacity>
+                {canEdit && (
+                  <Button
+                    type={0}
+                    title="Edit"
+                    onButtonClick={onPressEdit}
+                    margin={[0, 0, 0, 0]}
+                  />
+                )}
               </View>
             </View>
           )}
@@ -199,11 +176,11 @@ const styles = StyleSheet.create({
     color: '#2D8CD3',
     fontSize: 15,
   },
-  topview: {
+  topView: {
     alignItems: 'flex-start',
     flexDirection: 'column',
   },
-  buttonview: {
+  buttonView: {
     width: '100%',
     marginTop: 20,
     display: 'flex',
@@ -211,7 +188,7 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
-  rightbuttonview: {
+  rightButtonView: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start'
@@ -224,6 +201,7 @@ const styles = StyleSheet.create({
   use: {
     height: 40,
     width: 40,
+    marginRight: 15
   }
 });
 

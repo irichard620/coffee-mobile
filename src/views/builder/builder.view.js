@@ -231,7 +231,7 @@ class BuilderPage extends Component {
     } else if (modalType === constants.RECIPE_DESCRIPTION_ELEM) {
       // Update orientation
       this.setState({
-        recipeDescription: item,
+        recipeDescription: modalText,
         visibleModal: false,
         modalType: '',
         modalText: ''
@@ -390,8 +390,7 @@ class BuilderPage extends Component {
         detailValue = brewingVessel;
         detailModalId = constants.VESSEL_ELEM;
       } else if (detail === constants.BUILDER_VESSEL_SIZE_DETAIL) {
-        detailDisabled = (brewingVessel === '' || filterType === ''
-          || !(brewingVessel in constants.orientations));
+        detailDisabled = (brewingVessel === '' || !(brewingVessel in constants.orientations));
         detailValue = orientation;
         detailModalId = constants.ORIENTATION_ELEM;
       } else if (detail === constants.BUILDER_FILTER_DETAIL) {
@@ -492,9 +491,9 @@ class BuilderPage extends Component {
               backgroundColor="#2D8CD321"
             />
             <ButtonLarge
-              onButtonClick={this.onAddClick}
+              onButtonClick={this.onRecipeSave}
               title="Save Recipe"
-              margin={[0, 16, 0, 16]}
+              margin={[0, 16, 32, 16]}
               buttonWidth={width - 32}
               buttonHeight={40}
               textColor="#40B90B"
