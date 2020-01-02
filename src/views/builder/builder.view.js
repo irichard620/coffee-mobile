@@ -483,7 +483,7 @@ class BuilderPage extends Component {
 
     return (
       <View style={styles.container}>
-        <TopHeader title={recipeName} onClose={this.onBackClick} />
+        <TopHeader title={recipeName} onClose={this.onBackClick} showSeparator />
         <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
           <DetailsList
             details={this.getDetailsList()}

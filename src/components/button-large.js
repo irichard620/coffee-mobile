@@ -7,7 +7,7 @@ import {
 export default function ButtonLarge(props) {
   const {
     onButtonClick, title, margin, disabled, buttonWidth,
-    buttonHeight, textColor, backgroundColor
+    buttonHeight, textColor, backgroundColor, borderColor
   } = props;
 
   const backgroundStyle = {
@@ -25,6 +25,10 @@ export default function ButtonLarge(props) {
   }
   if (backgroundColor) {
     backgroundStyle.backgroundColor = backgroundColor;
+  }
+  if (borderColor) {
+    backgroundStyle.borderWidth = 1;
+    backgroundStyle.borderColor = borderColor;
   }
   const titleStyle = {
     color: '#FFFFFF'

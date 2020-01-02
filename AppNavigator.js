@@ -40,12 +40,6 @@ const MainStack = createStackNavigator(
         gesturesEnabled: true
       }
     },
-    Brew: {
-      screen: BrewPage,
-      navigationOptions: {
-        gesturesEnabled: true
-      }
-    }
   },
   {
     headerMode: 'none',
@@ -63,6 +57,12 @@ const AppNavigator = createStackNavigator(
       screen: BuilderPage,
       navigationOptions: {
         gesturesEnabled: false
+      }
+    },
+    Brew: {
+      screen: BrewPage,
+      navigationOptions: {
+        gesturesEnabled: true
       }
     },
   },

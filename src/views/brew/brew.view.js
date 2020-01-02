@@ -2,25 +2,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity, Dimensions,
+  View, StyleSheet, Dimensions,
   Alert, SafeAreaView
 } from 'react-native';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import KeepAwake from 'react-native-keep-awake';
-import Button from '../../components/button';
-import Back from '../../components/back';
+import ButtonLarge from '../../components/button-large';
 import * as constants from '../../constants';
-import * as recipeModel from '../../storage/recipe';
-import * as stepModel from '../../storage/step';
 import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
 import { brewFinishAnalytics } from '../../actions/analytics-actions';
 import CustomModal from '../../components/modal';
 import ModalContentBottom from '../../components/modal-content-bottom';
 import ModalContentCenter from '../../components/modal-content-center';
-import Pagination from '../../components/pagination';
 import {
   requestPurchaseIAP, restoreIAP
 } from '../../actions/user-actions';
+import TopHeader from '../../components/top-header';
+import BrewContentHome from './brew-content-home';
+import BrewContentSteps from './brew-content-steps';
 
 class BrewPage extends Component {
   constructor(props) {
@@ -82,7 +80,7 @@ class BrewPage extends Component {
     clearInterval(this.interval);
   }
 
-  onBrewClick = () => {
+  onSecondButtonClick = () => {
     const { navigation } = this.props;
     const { step, recipe } = this.state;
 
@@ -90,7 +88,6 @@ class BrewPage extends Component {
     clearInterval(this.interval);
 
     // Check step
-    // TODO: mizudashi nav's away at last recipe step
     if (step !== recipe.steps.length) {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
@@ -119,42 +116,43 @@ class BrewPage extends Component {
 
       navigation.goBack();
     }
-  }
+  };
 
-  onEditClick = () => {
-    this.setState({
-      visibleModal: true,
-      modalType: constants.MODAL_TYPE_BOTTOM,
-      deleteModal: false
-    });
-  }
-
-  onBackClick = () => {
+  onFirstButtonClick = () => {
     const { step, recipe } = this.state;
+    if (step === -1) {
+      // Recipe settings
+      this.setState({
+        visibleModal: true,
+        modalType: constants.MODAL_TYPE_BOTTOM,
+        deleteModal: false
+      });
+    } else {
+      // Clear interval
+      clearInterval(this.interval);
 
-    // Clear interval
-    clearInterval(this.interval);
-
-    if (step > 0) {
-      const prevStep = recipe.steps[step - 1];
-      if (prevStep.title === constants.STEP_WAIT) {
-        this.setupTimer(step - 1, prevStep);
+      // Go back
+      if (step > 0) {
+        const prevStep = recipe.steps[step - 1];
+        if (prevStep.title === constants.STEP_WAIT) {
+          this.setupTimer(step - 1, prevStep);
+        } else {
+          this.clearTimer(step - 1);
+        }
       } else {
         this.clearTimer(step - 1);
       }
-    } else {
-      this.clearTimer(step - 1);
-    }
 
-    this.setState({
-      step: step - 1
-    });
-  }
+      this.setState({
+        step: step - 1
+      });
+    }
+  };
 
   onBackScreenClick = () => {
     const { navigation } = this.props;
     navigation.goBack();
-  }
+  };
 
   setupTimer = (newStep, nextStep) => {
     this.setState({
@@ -168,7 +166,7 @@ class BrewPage extends Component {
         1000
       );
     });
-  }
+  };
 
   clearTimer = (newStep) => {
     this.setState({
@@ -176,14 +174,14 @@ class BrewPage extends Component {
       timerRemaining: -1,
       timerTotal: -1,
     });
-  }
+  };
 
   onCloseModalClick = () => {
     // Close and clear modal
     this.setState({
       visibleModal: false
     });
-  }
+  };
 
   alertBuyDrippyPro = () => {
     const { buyDrippyPro } = this.props;
@@ -207,7 +205,7 @@ class BrewPage extends Component {
         },
       ],
     );
-  }
+  };
 
   alertRestoreDrippyPro = () => {
     const { restoreDrippyPro } = this.props;
@@ -230,7 +228,7 @@ class BrewPage extends Component {
         },
       ],
     );
-  }
+  };
 
   onPressItem = (item) => {
     const {
@@ -279,7 +277,19 @@ class BrewPage extends Component {
       // Call clear
       this.onCloseModalClick();
     }
-  }
+  };
+
+  onBrewDetailClick = (detail) => {
+    Alert.alert(
+      'Coming Soon!',
+      `The '${detail}' feature is coming soon. Stay tuned!`,
+      [
+        {
+          text: 'Ok'
+        },
+      ],
+    );
+  };
 
   getModalOptions = () => {
     const { recipe, deleteModal } = this.state;
@@ -312,24 +322,7 @@ class BrewPage extends Component {
       title: constants.RECIPE_MENU_DELETE,
     });
     return options;
-  }
-
-  getVesselIcon = (vessel) => {
-    const baseBrewPath = '../../assets/brew/';
-
-    if (vessel === constants.VESSEL_AEROPRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Aero.png`)} />);
-    } if (vessel === constants.VESSEL_CHEMEX) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Chemex.png`)} />);
-    } if (vessel === constants.VESSEL_FRENCH_PRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
-    } if (vessel === constants.VESSEL_MIZUDASHI) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Mizudashi.png`)} />);
-    } if (vessel === constants.VESSEL_KALITA_WAVE) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_KalitaWave.png`)} />);
-    }
-    return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
-  }
+  };
 
   getTimerDisplay = () => {
     const { timerRemaining } = this.state;
@@ -346,198 +339,81 @@ class BrewPage extends Component {
       numSeconds = `0${numSeconds}`;
     }
     return `${numMinutes}:${numSeconds}`;
-  }
-
-  getIcon = (recipe) => {
-    const { step, timerRemaining, timerTotal } = this.state;
-
-    const baseBrewPath = '../../assets/brew/';
-
-    if (step === -1) {
-      return this.getVesselIcon(recipe.brewingVessel);
-    }
-    if (step < recipe.steps.length) {
-      // Get step
-      const stepObj = recipe.steps[step];
-      if (stepObj.title === constants.STEP_HEAT_WATER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}HeatWater.png`)} />);
-      } if (stepObj.title === constants.STEP_CHILL_WATER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}ChillWater.png`)} />);
-      } if (stepObj.title === constants.STEP_INSERT_FILTER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertFilter.png`)} />);
-      } if (stepObj.title === constants.STEP_RINSE_FILTER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}RinseFilter.png`)} />);
-      } if (stepObj.title === constants.STEP_BLOOM_GROUNDS
-        || stepObj.title === constants.STEP_POUR_WATER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}PourWater.png`)} />);
-      } if (stepObj.title === constants.STEP_GRIND_COFFEE
-        || stepObj.title === constants.STEP_ADD_GROUNDS) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}GrindBeans.png`)} />);
-      } if (stepObj.title === constants.STEP_ADD_ICE) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}AddIce.png`)} />);
-      } if (stepObj.title === constants.STEP_STIR) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}Stir.png`)} />);
-      } if (stepObj.title === constants.STEP_INSERT_PLUNGER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}InsertPlunger_Aero.png`)} />);
-      } if (stepObj.title === constants.STEP_PUSH_PLUNGER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_Aero.png`)} />);
-      } if (stepObj.title === constants.STEP_PUSH_FILTER) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}Plunge_FP.png`)} />);
-      } if (stepObj.title === constants.STEP_STEEP) {
-        return (<Image style={styles.icon} source={require(`${baseBrewPath}Steep.png`)} />);
-      } if (stepObj.title === constants.STEP_WAIT) {
-        // Get fill number
-        const fill = Math.round((timerRemaining / timerTotal) * 100);
-        const { height } = Dimensions.get('window');
-        const timerSize = height * 0.34;
-
-        return (
-          <AnimatedCircularProgress
-            size={timerSize}
-            width={15}
-            fill={fill}
-            tintColor="#a7d2ea"
-            backgroundColor="#F4F4F4"
-          >
-            {
-              () => (
-                <Text style={styles.timertext}>
-                  { this.getTimerDisplay() }
-                </Text>
-              )
-            }
-          </AnimatedCircularProgress>
-        );
-      }
-      return this.getVesselIcon(recipe.brewingVessel);
-    }
-    // End image
-    return (<Image style={styles.icon} source={require(`${baseBrewPath}Complete.png`)} />);
-  }
+  };
 
   render() {
     const { navigation } = this.props;
     const {
-      step, visibleModal, recipe, deleteModal, modalType
+      step, visibleModal, recipe, deleteModal, modalType, timerTotal, timerRemaining
     } = this.state;
-    const { recipeName, steps } = recipe;
-
-    const baseButtonPath = '../../assets/buttons/';
+    const { recipeName } = recipe;
 
     // Button styles
-    let buttonTitle = 'Brew';
+    let firstButtonTitle = 'Recipe Settings';
+    let secondButtonTitle = 'Start Recipe';
     if (!('steps' in recipe)) {
-      buttonTitle = 'Loading...';
+      firstButtonTitle = 'Loading...';
+      secondButtonTitle = 'Loading...';
     } else if (step >= 0 && step < recipe.steps.length - 1) {
-      buttonTitle = 'Next';
+      firstButtonTitle = 'Previous';
+      secondButtonTitle = 'Next Step';
     } else if (step === recipe.steps.length - 1) {
       if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
-        buttonTitle = 'Finish';
+        firstButtonTitle = 'Previous';
+        secondButtonTitle = 'Finish';
       } else {
-        buttonTitle = 'Next';
+        firstButtonTitle = 'Previous';
+        secondButtonTitle = 'Next Step';
       }
     } else if (step === recipe.steps.length) {
-      buttonTitle = 'Finish';
+      firstButtonTitle = 'Previous';
+      secondButtonTitle = 'Finish';
     }
-    const backStyle = {
-      marginRight: 15,
-    };
 
     // Icon view styles
-    const { height } = Dimensions.get('window');
-    const iconViewSize = {
-      height: height * 0.34,
-      marginTop: height * 0.07
-    };
+    const { width } = Dimensions.get('window');
+    const buttonWidth = (width - 16 - 16 - 9) / 2;
 
     // Modal title
-    let modalTitle = '';
+    let modalTitle = 'Recipe Settings';
     if (deleteModal) {
       modalTitle = 'Delete this recipe?';
-    }
-
-    // Title
-    let titleToUse = '';
-    if (step === -1) {
-      titleToUse = recipeName;
-    } else if (step < steps.length) {
-      const { title } = steps[step];
-      titleToUse = title;
-    } else {
-      titleToUse = 'Serve';
     }
 
     // Temp units
     const useMetric = navigation.getParam('useMetric', false);
 
-    // Description
-    let description = '';
-    let stepNote = '';
-    if (step === -1) {
-      description = recipeModel.getRecipeDescription(recipe, useMetric);
-    } else if (step < steps.length) {
-      const currentStepObj = steps[step];
-      description = stepModel.getStepDescription(currentStepObj, useMetric, recipe.brewingVessel);
-      // Optional step notes
-      if (('notes' in currentStepObj) && currentStepObj.notes !== '') {
-        stepNote = currentStepObj.notes;
-      }
-    } else {
-      description = 'Enjoy your coffee!';
-    }
-
-    // Pagination
-    let stepsLength = 0;
-    if (steps && steps.length > 0) {
-      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
-        stepsLength = steps.length;
-      } else {
-        stepsLength = steps.length + 1;
-      }
-    }
-
     return (
       <React.Fragment>
         <SafeAreaView style={[styles.container]}>
-          <View style={styles.backcontainer}>
-            <Back
-              onBackClick={this.onBackScreenClick}
-              type={0}
-              noTopPadding
+          <TopHeader title={recipeName} onClose={this.onBackScreenClick} showSeparator={false} />
+          {step === -1 && (
+            <BrewContentHome recipe={recipe} onDetailClick={this.onBrewDetailClick} />
+          )}
+          {step >= 0 && (
+            <BrewContentSteps
+              recipe={recipe}
+              step={step}
+              timerTotal={timerTotal}
+              timerRemaining={timerRemaining}
+              useMetric={useMetric}
             />
-          </View>
-          <Text style={styles.title}>{titleToUse}</Text>
-          <View style={[styles.iconview, iconViewSize]}>
-            {this.getIcon(recipe)}
-          </View>
-          <Pagination
-            total={stepsLength}
-            index={step}
-            activeColor="#1D5E9E"
-          />
-          <Text style={styles.description}>
-            {description}
-            {' '}
-            {stepNote}
-          </Text>
-          <View style={styles.buttonview}>
-            {step !== -1 && (
-            <TouchableOpacity onPress={this.onBackClick}>
-              <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Previous_Gray.png`)} />
-            </TouchableOpacity>
-            )}
-            {step === -1 && (
-            <TouchableOpacity onPress={this.onEditClick}>
-              <Image style={[styles.mini, backStyle]} source={require(`${baseButtonPath}Edit.png`)} />
-            </TouchableOpacity>
-            )}
-            <Button
-              onButtonClick={this.onBrewClick}
-              type={0}
-              title={buttonTitle}
+          )}
+          <View style={styles.buttonView}>
+            <ButtonLarge
+              onButtonClick={this.onFirstButtonClick}
+              title={firstButtonTitle}
+              margin={[0, 9, 0, 0]}
+              buttonWidth={buttonWidth}
+              textColor="#000000"
+              backgroundColor="#FFFFFF"
+              borderColor="#D3D3D3"
+            />
+            <ButtonLarge
+              onButtonClick={this.onSecondButtonClick}
+              title={secondButtonTitle}
               margin={[0, 0, 0, 0]}
-              isGlyph
-              glyphType={0}
+              buttonWidth={buttonWidth}
             />
           </View>
         </SafeAreaView>
@@ -583,11 +459,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
   },
-  backcontainer: {
-    marginTop: 16,
-    marginLeft: 15,
-    alignItems: 'flex-start',
-  },
   title: {
     fontSize: 22,
     color: '#1D5E9E',
@@ -612,13 +483,13 @@ const styles = StyleSheet.create({
     color: '#727272',
     marginTop: 40
   },
-  buttonview: {
-    position: 'absolute',
-    top: '90%',
+  buttonView: {
     alignSelf: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'nowrap',
+    marginTop: 16,
+    marginBottom: 16
   },
   mini: {
     height: 40,

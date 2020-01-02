@@ -7,7 +7,7 @@ import {
 
 export default function TopHeader(props) {
   const {
-    title, onClose,
+    title, onClose, showSeparator
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
@@ -25,7 +25,7 @@ export default function TopHeader(props) {
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
-      <View style={styles.separator} />
+      {showSeparator && <View style={styles.separator} />}
     </SafeAreaView>
   );
 }

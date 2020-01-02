@@ -144,6 +144,12 @@ export const AD_DESCRIPTION_DRIPPY_PRO = 'Enjoy unlimited recipe storage, recipe
   + 'and access to all future Pro features with a one time purchase of Drippy Pro. Support our '
   + 'tiny team for less than the price of a coffee!';
 
+// Brew details
+export const BREW_BREW_SIZE_DETAIL = 'Brew Size';
+export const BREW_LEARN_MORE_DETAIL = 'Learn More';
+export const BREW_HISTORY_DETAIL = 'History';
+export const brewDetails = [BREW_BREW_SIZE_DETAIL, BREW_LEARN_MORE_DETAIL, BREW_HISTORY_DETAIL];
+
 // Animation
 export const CustomLayoutSpring = {
   duration: 325,
