@@ -376,7 +376,7 @@ class BuilderPage extends Component {
   getDetailsList = () => {
     const {
       recipeName, brewingVessel, filterType, orientation,
-      recipeDescription
+      recipeDescription, totalWater, totalCoffee
     } = this.state;
     const arrToUse = [];
     constants.details.forEach((detail) => {
@@ -400,6 +400,11 @@ class BuilderPage extends Component {
       } else if (detail === constants.BUILDER_DESCRIPTION_DETAIL) {
         detailValue = recipeDescription;
         detailModalId = constants.RECIPE_DESCRIPTION_ELEM;
+      } else if (detail === constants.BUILDER_RATIO) {
+        if (totalWater !== 0 && totalCoffee !== 0) {
+          detailValue = Math.round((totalCoffee / totalWater) * 100) / 100;
+        }
+        detailDisabled = true;
       }
       arrToUse.push({
         title: detail, value: detailValue, disabled: detailDisabled, modalId: detailModalId
@@ -432,23 +437,37 @@ class BuilderPage extends Component {
     this.setState({ modalSelect: val });
   };
 
+  getTotalWaterAndCoffeeDetails = () => {
+    const { steps } = this.state;
+    let totalCoffee = 0;
+    let totalWater = 0;
+    let waterTempTotal = '';
+    let grindSizeTotal = '';
+    for (let i = 0; i < steps.length; i += 1) {
+      const currentStep = steps[i];
+      if (currentStep.title === constants.STEP_GRIND_COFFEE) {
+        totalCoffee += Number(currentStep.properties.gramsCoffee);
+        grindSizeTotal = currentStep.properties.grindSize;
+      } else if (currentStep.title === constants.STEP_HEAT_WATER) {
+        waterTempTotal = currentStep.properties.waterTemp;
+      } else if (currentStep.title === constants.STEP_POUR_WATER
+        || currentStep.title === constants.STEP_BLOOM_GROUNDS) {
+        totalWater = Number(currentStep.properties.gramsWater)
+          + Number(totalWater);
+      }
+    }
+    return [totalCoffee, totalWater, grindSizeTotal, waterTempTotal];
+  };
+
   onRecipeSave = () => {
     const { persistRecipe } = this.props;
     const objToUse = this.state;
     // Need to add totalWater, totalCoffee, waterTemp, and grindSize
-    for (let i = 0; i < objToUse.steps.length; i += 1) {
-      const currentStep = objToUse.steps[i];
-      if (currentStep.title === constants.STEP_GRIND_COFFEE) {
-        objToUse.grindSize = currentStep.properties.grindSize;
-        objToUse.totalCoffee = currentStep.properties.gramsCoffee;
-      } else if (currentStep.title === constants.STEP_HEAT_WATER) {
-        objToUse.waterTemp = currentStep.properties.waterTemp;
-      } else if (currentStep.title === constants.STEP_POUR_WATER
-        || currentStep.title === constants.STEP_BLOOM_GROUNDS) {
-        objToUse.totalWater = String(Number(currentStep.properties.gramsWater)
-        + Number(objToUse.totalWater));
-      }
-    }
+    const [totalCoffee, totalWater, grindSize, waterTemp] = this.getTotalWaterAndCoffeeDetails();
+    objToUse.totalCoffee = String(totalCoffee);
+    objToUse.totalWater = String(totalWater);
+    objToUse.grindSize = grindSize;
+    objToUse.waterTemp = waterTemp;
     const newRecipe = recipeModel.Recipe(objToUse);
     persistRecipe(newRecipe, true);
   };
@@ -539,7 +558,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3E3E3'
   },
   addandsave: {
-    marginTop: 15,
+    marginTop: 16,
     alignSelf: 'center',
     alignItems: 'center',
   },

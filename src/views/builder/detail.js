@@ -13,8 +13,13 @@ export default function Detail(props) {
   const baseButtonPath = '../../assets/buttons/';
 
   let descriptionValue = value;
-  if (title === constants.BUILDER_DESCRIPTION_DETAIL
-    && descriptionValue && descriptionValue.length > 22) {
+  if (
+    (
+      title === constants.BUILDER_DESCRIPTION_DETAIL
+      || title === constants.BUILDER_RECIPE_NAME_DETAIL
+    )
+    && descriptionValue && descriptionValue.length > 22
+  ) {
     descriptionValue = `${value.slice(0, 22)}...`;
   }
 

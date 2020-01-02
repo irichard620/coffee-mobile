@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import Step from './step';
 import BuilderListHeader from './builder-list-header';
 
@@ -48,7 +48,10 @@ class StepList extends Component {
     const { steps } = this.props;
 
     return (
-      <View>
+      <View style={styles.outline}>
+        {steps.length === 0 && (
+          <Text style={styles.noStepText}>Add some steps to get your recipe started...</Text>
+        )}
         {steps.length > 0 && <BuilderListHeader title="Steps" textColor="#2D8CD3" />}
         {steps.length > 0 && <View style={styles.separator} />}
         {steps.map((step, idx) => (
@@ -60,10 +63,19 @@ class StepList extends Component {
 }
 
 const styles = StyleSheet.create({
+  outline: {
+    marginTop: 16,
+  },
   separator: {
     height: 1,
     backgroundColor: '#F1F3F6',
     width: '100%'
+  },
+  noStepText: {
+    color: '#898989',
+    fontWeight: '600',
+    fontSize: 16,
+    textAlign: 'center'
   }
 });
 

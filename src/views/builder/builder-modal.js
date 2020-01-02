@@ -123,9 +123,17 @@ class BuilderModal extends Component {
     });
   };
 
+  onModalCloseClick = () => {
+    const { onCloseClick } = this.props;
+    onCloseClick();
+    this.setState({
+      selectedModalItem: ''
+    });
+  };
+
   render() {
     const {
-      visibleModal, modalType, modalText, modalSelect, onCloseClick,
+      visibleModal, modalType, modalText, modalSelect,
       onChangeText, onChangePicker, vessel, useMetric, filterType,
       orientation
     } = this.props;
@@ -183,7 +191,7 @@ class BuilderModal extends Component {
     return (
       <CustomModal
         visibleModal={visibleModal}
-        onCloseClick={onCloseClick}
+        onCloseClick={this.onModalCloseClick}
         type={constants.MODAL_TYPE_BOTTOM}
       >
         <ModalContentBottom

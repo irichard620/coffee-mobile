@@ -22,7 +22,9 @@ class DetailsList extends Component {
           disabled={detail.disabled}
           onDetailClick={onDetailClick}
         />
-        {showSeparator && <View style={styles.separator} />}
+        {showSeparator && (
+          <View style={styles.separator} />
+        )}
       </React.Fragment>
     );
   };
@@ -31,7 +33,7 @@ class DetailsList extends Component {
     const { details } = this.props;
 
     return (
-      <View style={styles.outline}>
+      <View>
         <BuilderListHeader title="Details" textColor="#FFAB0D" />
         <View style={styles.separator} />
         {details.map((detail, idx) => (
@@ -43,13 +45,9 @@ class DetailsList extends Component {
 }
 
 const styles = StyleSheet.create({
-  outline: {
-    marginBottom: 16,
-  },
   separator: {
     height: 1,
     backgroundColor: '#F1F3F6',
-    width: '100%'
   }
 });
 

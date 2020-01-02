@@ -126,16 +126,16 @@ class Step extends Component {
               <View style={styles.rightButtonView}>
                 {canGoUp && (
                   <TouchableOpacity onPress={onPressUp}>
-                    <Image style={styles.edit} source={require(`${baseButtonPath}Move_Up.png`)} />
+                    <Image style={styles.edit} source={require(`${baseButtonPath}Builder_Up.png`)} />
                   </TouchableOpacity>
                 )}
                 {canGoDown && (
                   <TouchableOpacity onPress={onPressDown}>
-                    <Image style={styles.edit} source={require(`${baseButtonPath}Move_Down.png`)} />
+                    <Image style={styles.edit} source={require(`${baseButtonPath}Builder_Down.png`)} />
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={onPressDelete}>
-                  <Image style={styles.use} source={require(`${baseButtonPath}Delete.png`)} />
+                  <Image style={styles.use} source={require(`${baseButtonPath}Builder_Delete.png`)} />
                 </TouchableOpacity>
                 {canEdit && (
                   <Button
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 16,
     fontWeight: '600',
+    marginBottom: 4
   },
   descriptionBase: {
     color: '#898989',
