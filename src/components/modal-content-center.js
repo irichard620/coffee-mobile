@@ -20,8 +20,9 @@ export default function ModalContentCenter(props) {
     width: width - 48
   };
   const titleWidth = {
-    width: width - 48 - 32 - 48
+    width: width - 48 - 32 - 24
   };
+  const buttonWidth = width - 48 - 32;
 
   const baseButtonPath = '../assets/buttons/';
 
@@ -31,6 +32,7 @@ export default function ModalContentCenter(props) {
     description,
     primaryButtonTitle,
     secondaryButtonTitle,
+    buttonWidth,
   }];
 
   // Note: for scrolling to fully work, need to wrap content in
@@ -39,7 +41,7 @@ export default function ModalContentCenter(props) {
     <View style={[styles.content, modalDimensions]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onCloseClick}>
-          <Image style={styles.close} source={require(`${baseButtonPath}XButton.png`)} />
+          <Image style={styles.close} source={require(`${baseButtonPath}Modal_X.png`)} />
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
@@ -64,6 +66,7 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
     marginBottom: 16,
     width: '100%'
@@ -72,12 +75,12 @@ const styles = StyleSheet.create({
     width: '33%',
     fontSize: 18,
     fontWeight: '600',
-    color: '#333333',
+    color: '#000000',
     textAlign: 'center',
     alignSelf: 'center'
   },
   close: {
-    height: 24,
-    width: 24
+    height: 14,
+    width: 14
   },
 });

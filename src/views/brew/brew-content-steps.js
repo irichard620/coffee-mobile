@@ -10,6 +10,23 @@ import * as stepModel from '../../storage/step';
 import BrewStep from './brew-step';
 
 class BrewContentSteps extends Component {
+  getTimerDisplay = () => {
+    const { timerRemaining } = this.props;
+
+    if (timerRemaining === 0) {
+      return 'Done!';
+    }
+    let numMinutes = String(Math.floor(timerRemaining / 60));
+    let numSeconds = String(Math.floor(timerRemaining % 60));
+    if (numMinutes.length === 1) {
+      numMinutes = `0${numMinutes}`;
+    }
+    if (numSeconds.length === 1) {
+      numSeconds = `0${numSeconds}`;
+    }
+    return `${numMinutes}:${numSeconds}`;
+  };
+
   getIcon = (recipe) => {
     const { step, timerRemaining, timerTotal } = this.props;
 
@@ -60,7 +77,7 @@ class BrewContentSteps extends Component {
           >
             {
               () => (
-                <Text style={styles.timertext}>
+                <Text style={styles.timerText}>
                   { this.getTimerDisplay() }
                 </Text>
               )
@@ -108,7 +125,7 @@ class BrewContentSteps extends Component {
     return (
       <React.Fragment>
         {stepsToUse.map((stepObj, idx) => (
-          this.renderBrewStep(stepObj, idx)
+          this.renderBrewStep(stepObj, idx + step)
         ))}
         {brewingVessel !== constants.VESSEL_MIZUDASHI && (
           this.renderBrewStep({ title: 'Brew Complete' }, steps.length)
@@ -181,7 +198,12 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#F1F3F6',
-  }
+  },
+  timerText: {
+    color: '#727272',
+    fontSize: 20,
+    fontWeight: '500'
+  },
 });
 
 export default BrewContentSteps;

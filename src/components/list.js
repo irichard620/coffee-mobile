@@ -23,6 +23,7 @@ class List extends Component {
           secondaryButtonTitle={item.secondaryButtonTitle}
           onPrimaryButtonClick={onPrimaryButtonClick}
           onSecondaryButtonClick={onSecondaryButtonClick}
+          buttonWidth={item.buttonWidth}
         />
       );
     }

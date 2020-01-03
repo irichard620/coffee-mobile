@@ -30,7 +30,7 @@ export default function ButtonLargeText(props) {
 
 const styles = StyleSheet.create({
   title: {
-    color: '#727272',
+    color: '#898989',
     fontSize: 16,
     fontWeight: '600'
   },

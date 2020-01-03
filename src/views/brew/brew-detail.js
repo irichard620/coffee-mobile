@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity
+  View, Text, StyleSheet, Image, TouchableHighlight
 } from 'react-native';
 import * as constants from '../../constants';
 
@@ -13,7 +13,7 @@ export default function BrewDetail(props) {
   const baseButtonPath = '../../assets/buttons/details/';
 
   return (
-    <TouchableOpacity onPress={() => onDetailClick(title)} disabled={disabled}>
+    <TouchableHighlight underlayColor="#F1F3F6" onPress={() => onDetailClick(title)} disabled={disabled}>
       <View style={styles.outline}>
         <View style={styles.leftView}>
           {title === constants.BREW_BREW_SIZE_DETAIL && <Image style={styles.leftIcon} source={require(`${baseButtonPath}Icon_BrewSize.png`)} />}
@@ -30,7 +30,7 @@ export default function BrewDetail(props) {
           <Image style={styles.icon} source={require(`${baseButtonPath}Brew_Arrow.png`)} />
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableHighlight>
   );
 }
 

@@ -324,23 +324,6 @@ class BrewPage extends Component {
     return options;
   };
 
-  getTimerDisplay = () => {
-    const { timerRemaining } = this.state;
-
-    if (timerRemaining === 0) {
-      return 'Done!';
-    }
-    let numMinutes = String(Math.floor(timerRemaining / 60));
-    let numSeconds = String(Math.floor(timerRemaining % 60));
-    if (numMinutes.length === 1) {
-      numMinutes = `0${numMinutes}`;
-    }
-    if (numSeconds.length === 1) {
-      numSeconds = `0${numSeconds}`;
-    }
-    return `${numMinutes}:${numSeconds}`;
-  };
-
   render() {
     const { navigation } = this.props;
     const {
@@ -465,19 +448,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontWeight: '600',
   },
-  iconview: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  icon: {
-    height: '100%',
-    resizeMode: 'contain'
-  },
-  timertext: {
-    color: '#727272',
-    fontSize: 20,
-    fontWeight: '500'
-  },
   description: {
     fontSize: 16,
     color: '#727272',
@@ -491,10 +461,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 16
   },
-  mini: {
-    height: 40,
-    width: 40
-  }
 });
 
 const mapStateToProps = state => ({

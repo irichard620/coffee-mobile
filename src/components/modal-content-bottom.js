@@ -24,6 +24,15 @@ export default function ModalContentBottom(props) {
     maxHeight: height * 0.75
   };
 
+  const listPadding = {
+    paddingTop: 16,
+    paddingBottom: 24,
+  };
+  if (isListModal && !hasSave) {
+    listPadding.paddingTop = 0;
+    listPadding.paddingBottom = 0;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior="position"
@@ -33,33 +42,32 @@ export default function ModalContentBottom(props) {
         <PullDown />
         <Text style={styles.title}>{title}</Text>
         <View style={styles.titleSeparator} />
-        {!(isListModal && !hasSave) && <View style={styles.topListSeparator} />}
         {isTextInput && (
-        <TextInput
-          onChangeText={text => onChangeText(text)}
-          value={modalText}
-          placeholder={textPlaceholder}
-          placeholderTextColor="#898989"
-          style={styles.textinput}
-          maxLength={charLimit}
-          multiline={false}
-        />
+          <TextInput
+            onChangeText={text => onChangeText(text)}
+            value={modalText}
+            placeholder={textPlaceholder}
+            placeholderTextColor="#898989"
+            style={styles.textInput}
+            maxLength={charLimit}
+            multiline={false}
+          />
         )}
         {isSelectInput && (
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={modalSelect}
-            onValueChange={onChangePicker}
-            itemStyle={styles.pickertitle}
-          >
-            {pickerValues.map(pickerVal => (
-              <Picker.Item label={pickerVal} value={pickerVal} />
-            ))}
-          </Picker>
-        </View>
+          <View style={styles.picker}>
+            <Picker
+              selectedValue={modalSelect}
+              onValueChange={onChangePicker}
+              itemStyle={styles.pickerTitle}
+            >
+              {pickerValues.map(pickerVal => (
+                <Picker.Item label={pickerVal} value={pickerVal} />
+              ))}
+            </Picker>
+          </View>
         )}
         {isListModal && (
-          <ScrollView>
+          <ScrollView style={listPadding}>
             <List
               options={options}
               onPressItem={onPressItem}
@@ -91,7 +99,6 @@ const styles = StyleSheet.create({
   },
   saveContainer: {
     alignItems: 'center',
-    marginTop: 24,
     marginBottom: 8
   },
   title: {
@@ -110,15 +117,18 @@ const styles = StyleSheet.create({
   topListSeparator: {
     height: 16,
   },
-  pickertitle: {
+  pickerTitle: {
     fontSize: 16,
     color: '#1D5E9E',
   },
-  textinput: {
+  textInput: {
+    marginTop: 16,
+    marginBottom: 24,
     marginLeft: 16,
     marginRight: 16,
     padding: 16,
     borderRadius: 10,
-    backgroundColor: '#F2F3F6'
+    backgroundColor: '#F2F3F6',
+    fontSize: 16,
   }
 });

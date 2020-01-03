@@ -8,7 +8,7 @@ import ButtonLargeText from './button-large-text';
 
 export default function ListItemPaywall(props) {
   const {
-    description, type, primaryButtonTitle,
+    description, type, primaryButtonTitle, buttonWidth,
     secondaryButtonTitle, onPrimaryButtonClick, onSecondaryButtonClick
   } = props;
 
@@ -35,6 +35,7 @@ export default function ListItemPaywall(props) {
           type={0}
           title={primaryButtonTitle}
           margin={[32, 0, 0, 0]}
+          buttonWidth={buttonWidth}
         />
         {type === 0 && (
           <ButtonLargeText
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'left',
     fontWeight: '400',
-    color: '#333333',
+    color: '#000000',
   },
   image: {
     resizeMode: 'contain',
