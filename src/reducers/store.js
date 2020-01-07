@@ -4,13 +4,15 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import sponsorsReducer from './sponsor-reducers';
 import recipesReducer from './recipe-reducers';
 import userReducer from './user-reducers';
+import vesselsReducer from './vessel-reducers';
 
 const loggerMiddleware = createLogger();
 
 const rootReducer = combineReducers({
   sponsorsReducer,
   recipesReducer,
-  userReducer
+  userReducer,
+  vesselsReducer,
 });
 
 const store = createStore(

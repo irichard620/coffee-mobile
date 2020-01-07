@@ -4,19 +4,19 @@ import {
   StyleSheet, FlatList
 } from 'react-native';
 import ListItem from './list-item';
-import ListItemPaywall from './list-item-paywall';
-import { RECIPE_MENU_DRIPPY_PRO } from '../constants';
+import ListItemModalCenter from './list-item-modal-center';
 
 class List extends Component {
   keyExtractor = item => item.title;
 
   renderItem = ({ item }) => {
     const {
-      onPressItem, isSettings, onPrimaryButtonClick, onSecondaryButtonClick
+      onPressItem, isSettings, onPrimaryButtonClick, onSecondaryButtonClick,
+      isCenterModal
     } = this.props;
-    if (item.title === RECIPE_MENU_DRIPPY_PRO) {
+    if (isCenterModal) {
       return (
-        <ListItemPaywall
+        <ListItemModalCenter
           description={item.description}
           type={item.type}
           primaryButtonTitle={item.primaryButtonTitle}
@@ -24,6 +24,7 @@ class List extends Component {
           onPrimaryButtonClick={onPrimaryButtonClick}
           onSecondaryButtonClick={onSecondaryButtonClick}
           buttonWidth={item.buttonWidth}
+          disabled={item.disabled}
         />
       );
     }

@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, StyleSheet, Dimensions,
-  Alert, SafeAreaView
+  Alert, SafeAreaView, Linking
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 import ButtonLarge from '../../components/button-large';
 import * as constants from '../../constants';
 import { favoriteRecipe, unfavoriteRecipe, deleteRecipe } from '../../actions/recipe-actions';
 import { brewFinishAnalytics } from '../../actions/analytics-actions';
+import { fetchVessel } from '../../actions/vessel-actions';
 import CustomModal from '../../components/modal';
 import ModalContentBottom from '../../components/modal-content-bottom';
 import ModalContentCenter from '../../components/modal-content-center';
@@ -30,8 +31,16 @@ class BrewPage extends Component {
       timerTotal: -1,
       visibleModal: false,
       modalType: '',
+      modalCenterTitle: '',
+      modalCenterDescription: '',
+      modalCenterType: 1,
+      modalCenterPrimaryButtonText: '',
+      modalCenterSecondayButtonText: '',
+      modalCenterDisabled: false,
       deleteModal: false,
-      premium: false
+      premium: false,
+      vesselLink: '',
+      vesselDescription: '',
     };
   }
 
@@ -43,19 +52,16 @@ class BrewPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { recipe } = this.state;
-    const { user } = this.props;
-    const { recipes } = nextProps;
+    const { user, vessels, recipes } = this.props;
     const nextUser = nextProps.user;
-
-    if (recipes && !recipes.recipesIsFetching && !recipes.recipeIsSaving
-      && !recipes.recipeIsDeleting && recipes.recipes.length !== 0) {
-      for (let i = 0; i < recipes.recipes.length; i += 1) {
-        // Check IDs and
-        if (recipes.recipes[i].recipeId === recipe.recipeId) {
-          this.setState({ recipe: recipes.recipes[i] });
-        }
-      }
+    const nextVessels = nextProps.vessels;
+    const nextRecipes = nextProps.recipes;
+    if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
+      this.updateRecipe(nextRecipes);
+    } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
+      this.updateRecipe(nextRecipes);
+    } else if (recipes && recipes.recipeIsDeleting && !nextRecipes.recipeIsDeleting) {
+      this.updateRecipe(nextRecipes);
     } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
       this.setState({
         premium: nextUser.user.premium
@@ -63,6 +69,17 @@ class BrewPage extends Component {
     } else if (user && user.iapIsRestoring && !nextUser.iapIsRestoring) {
       this.setState({
         premium: nextUser.user.premium
+      });
+    } else if (vessels && vessels.vesselIsFetching && !nextVessels.vesselIsFetching) {
+      // Update vessel link and description
+      this.setState({
+        vesselLink: nextVessels.vessel.vesselLink,
+        vesselDescription: nextVessels.vessel.vesselDescription,
+        modalCenterTitle: 'Learn More',
+        modalCenterDescription: nextVessels.vessel.vesselDescription,
+        modalCenterType: 1,
+        modalCenterPrimaryButtonText: `Shop ${nextVessels.vesselName}`,
+        modalCenterDisabled: false,
       });
     }
   }
@@ -79,6 +96,16 @@ class BrewPage extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  updateRecipe = (nextRecipes) => {
+    const { recipe } = this.state;
+    for (let i = 0; i < nextRecipes.recipes.length; i += 1) {
+      // Check IDs and
+      if (nextRecipes.recipes[i].recipeId === recipe.recipeId) {
+        this.setState({ recipe: nextRecipes.recipes[i] });
+      }
+    }
+  };
 
   onSecondButtonClick = () => {
     const { navigation } = this.props;
@@ -183,6 +210,33 @@ class BrewPage extends Component {
     });
   };
 
+  onModalCenterPrimaryClicked = () => {
+    const { modalCenterType, vesselLink } = this.state;
+
+    if (modalCenterType === 0) {
+      // Alert drippy
+      this.alertBuyDrippyPro();
+    } else {
+      // Open link
+      Linking.canOpenURL(vesselLink).then((supported) => {
+        if (supported) {
+          Linking.openURL(vesselLink);
+        } else {
+          // Open error alert
+          Alert.alert(
+            'Error Occurred',
+            'The URL could not be opened.',
+            [
+              {
+                text: 'OK'
+              },
+            ],
+          );
+        }
+      });
+    }
+  };
+
   alertBuyDrippyPro = () => {
     const { buyDrippyPro } = this.props;
     // Prompt if they want to purchase
@@ -242,7 +296,13 @@ class BrewPage extends Component {
         // Block action
         this.setState({
           visibleModal: true,
-          modalType: constants.MODAL_TYPE_CENTER
+          modalType: constants.MODAL_TYPE_CENTER,
+          modalCenterTitle: constants.POPUP_TITLE_DRIPPY_PRO,
+          modalCenterDescription: constants.POPUP_DESCRIPTION_DRIPPY_PRO,
+          modalCenterType: 0,
+          modalCenterPrimaryButtonText: 'Get Drippy Pro',
+          modalCenterSecondayButtonText: 'Restore Previous Purchase',
+          modalCenterDisabled: false,
         });
         return;
       }
@@ -280,15 +340,46 @@ class BrewPage extends Component {
   };
 
   onBrewDetailClick = (detail) => {
-    Alert.alert(
-      'Coming Soon!',
-      `The '${detail}' feature is coming soon. Stay tuned!`,
-      [
-        {
-          text: 'Ok'
-        },
-      ],
-    );
+    const { getVessel } = this.props;
+    const { recipe, vesselLink, vesselDescription } = this.state;
+    if (detail === constants.BREW_LEARN_MORE_DETAIL) {
+      // Get vessel if needed - else show modal
+      if (vesselLink === '' || vesselDescription === '') {
+        // Fetch
+        getVessel(recipe.brewingVessel);
+        // Show modal but it will just be loading
+        this.setState({
+          visibleModal: true,
+          modalType: constants.MODAL_TYPE_CENTER,
+          modalCenterTitle: 'Loading...',
+          modalCenterDescription: 'Vessel information is loading',
+          modalCenterType: 1,
+          modalCenterPrimaryButtonText: `Shop ${recipe.brewingVessel}`,
+          modalCenterDisabled: true,
+        });
+      } else {
+        // Show modal
+        this.setState({
+          visibleModal: true,
+          modalType: constants.MODAL_TYPE_CENTER,
+          modalCenterTitle: 'Learn More',
+          modalCenterDescription: vesselDescription,
+          modalCenterType: 1,
+          modalCenterPrimaryButtonText: `Shop ${recipe.brewingVessel}`,
+          modalCenterDisabled: false,
+        });
+      }
+    } else {
+      Alert.alert(
+        'Coming Soon!',
+        `The '${detail}' feature is coming soon. Stay tuned!`,
+        [
+          {
+            text: 'Ok'
+          },
+        ],
+      );
+    }
   };
 
   getModalOptions = () => {
@@ -327,7 +418,9 @@ class BrewPage extends Component {
   render() {
     const { navigation } = this.props;
     const {
-      step, visibleModal, recipe, deleteModal, modalType, timerTotal, timerRemaining
+      step, visibleModal, recipe, deleteModal, modalType, timerTotal, timerRemaining,
+      modalCenterTitle, modalCenterDescription, modalCenterType, modalCenterPrimaryButtonText,
+      modalCenterSecondayButtonText, modalCenterDisabled
     } = this.state;
     const { recipeName } = recipe;
 
@@ -418,14 +511,15 @@ class BrewPage extends Component {
           {modalType === constants.MODAL_TYPE_CENTER
           && (
           <ModalContentCenter
-            title={constants.POPUP_TITLE_DRIPPY_PRO}
-            description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
-            type={0}
-            primaryButtonTitle="Get Drippy Pro"
-            secondaryButtonTitle="Restore Previous Purchase"
+            title={modalCenterTitle}
+            description={modalCenterDescription}
+            type={modalCenterType}
+            primaryButtonTitle={modalCenterPrimaryButtonText}
+            secondaryButtonTitle={modalCenterSecondayButtonText}
             onCloseClick={this.onCloseModalClick}
-            onPrimaryButtonClick={this.alertBuyDrippyPro}
+            onPrimaryButtonClick={this.onModalCenterPrimaryClicked}
             onSecondaryButtonClick={this.alertRestoreDrippyPro}
+            disabled={modalCenterDisabled}
           />
           )}
         </CustomModal>
@@ -466,6 +560,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   recipes: state.recipesReducer.recipes,
   user: state.userReducer.user,
+  vessels: state.vesselsReducer.vessels,
 });
 
 const mapDispatchToProps = {
@@ -474,6 +569,7 @@ const mapDispatchToProps = {
   delRecipe: deleteRecipe,
   buyDrippyPro: requestPurchaseIAP,
   restoreDrippyPro: restoreIAP,
+  getVessel: fetchVessel,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrewPage);

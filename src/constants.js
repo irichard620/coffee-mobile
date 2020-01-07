@@ -9,6 +9,14 @@ export const VESSEL_KALITA_WAVE = 'Kalita Wave';
 export const VESSEL_MIZUDASHI = 'Mizudashi';
 export const vessels = [VESSEL_AEROPRESS, VESSEL_CHEMEX, VESSEL_FRENCH_PRESS,
   VESSEL_POUROVER, VESSEL_KALITA_WAVE, VESSEL_MIZUDASHI];
+export const vesselApiNames = {
+  [VESSEL_AEROPRESS]: 'aeropress',
+  [VESSEL_CHEMEX]: 'chemex',
+  [VESSEL_FRENCH_PRESS]: 'french_press',
+  [VESSEL_POUROVER]: 'v60_pourover',
+  [VESSEL_KALITA_WAVE]: 'kalita_wave',
+  [VESSEL_MIZUDASHI]: 'mizudashi',
+};
 
 // Filter types
 export const FILTER_PAPER = 'Paper';

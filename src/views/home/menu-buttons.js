@@ -18,8 +18,8 @@ export default function MenuButtons(props) {
     width: outlineWidth.width / 3
   };
   const selectedButtonStyle = {
-    width: buttonWidth.width - 12, // 6 buffer on each side
-    left: 6
+    width: buttonWidth.width - 6, // 6 buffer on each side
+    left: 3
   };
   selectedButtonStyle.left += selected * buttonWidth.width;
 

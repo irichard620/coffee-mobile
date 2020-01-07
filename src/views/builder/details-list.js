@@ -21,6 +21,7 @@ class DetailsList extends Component {
           modalId={detail.modalId}
           disabled={detail.disabled}
           onDetailClick={onDetailClick}
+          showArrow={detail.showArrow}
         />
         {showSeparator && (
           <View style={styles.separator} />
@@ -35,7 +36,7 @@ class DetailsList extends Component {
     return (
       <View>
         <BuilderListHeader title="Details" textColor="#FFAB0D" />
-        <View style={styles.separator} />
+        <View style={[styles.separator]} />
         {details.map((detail, idx) => (
           this.renderItem(detail, idx)
         ))}
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#F1F3F6',
+    marginLeft: 16
   }
 });
 

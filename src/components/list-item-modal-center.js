@@ -6,9 +6,9 @@ import {
 import ButtonLarge from './button-large';
 import ButtonLargeText from './button-large-text';
 
-export default function ListItemPaywall(props) {
+export default function ListItemModalCenter(props) {
   const {
-    description, type, primaryButtonTitle, buttonWidth,
+    description, type, primaryButtonTitle, buttonWidth, disabled,
     secondaryButtonTitle, onPrimaryButtonClick, onSecondaryButtonClick
   } = props;
 
@@ -36,12 +36,14 @@ export default function ListItemPaywall(props) {
           title={primaryButtonTitle}
           margin={[32, 0, 0, 0]}
           buttonWidth={buttonWidth}
+          disabled={disabled}
         />
         {type === 0 && (
           <ButtonLargeText
             onButtonClick={onSecondaryButtonClick}
             title={secondaryButtonTitle}
             margin={[16, 0, 0, 0]}
+            disabled={disabled}
           />
         )}
       </View>

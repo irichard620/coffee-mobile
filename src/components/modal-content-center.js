@@ -5,12 +5,12 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import List from './list';
-import { RECIPE_MENU_DRIPPY_PRO } from '../constants';
 
 export default function ModalContentCenter(props) {
   const {
     onCloseClick, title, description, type, primaryButtonTitle,
-    secondaryButtonTitle, onPrimaryButtonClick, onSecondaryButtonClick
+    secondaryButtonTitle, onPrimaryButtonClick, onSecondaryButtonClick,
+    disabled
   } = props;
 
   // Max height for modal
@@ -27,12 +27,12 @@ export default function ModalContentCenter(props) {
   const baseButtonPath = '../assets/buttons/';
 
   const options = [{
-    title: RECIPE_MENU_DRIPPY_PRO,
     type,
     description,
     primaryButtonTitle,
     secondaryButtonTitle,
     buttonWidth,
+    disabled,
   }];
 
   // Note: for scrolling to fully work, need to wrap content in
@@ -50,6 +50,7 @@ export default function ModalContentCenter(props) {
           options={options}
           onPrimaryButtonClick={onPrimaryButtonClick}
           onSecondaryButtonClick={onSecondaryButtonClick}
+          isCenterModal
         />
       </ScrollView>
     </View>

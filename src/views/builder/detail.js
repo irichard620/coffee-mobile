@@ -7,7 +7,7 @@ import * as constants from '../../constants';
 
 export default function Detail(props) {
   const {
-    onDetailClick, disabled, title, value, modalId
+    onDetailClick, disabled, title, value, modalId, showArrow
   } = props;
 
   const baseButtonPath = '../../assets/buttons/';
@@ -33,7 +33,7 @@ export default function Detail(props) {
               {descriptionValue}
             </Text>
           )}
-          <Image style={styles.icon} source={require(`${baseButtonPath}Modal_Arrow.png`)} />
+          {showArrow && <Image style={styles.icon} source={require(`${baseButtonPath}Modal_Arrow.png`)} />}
         </View>
       </View>
     </TouchableOpacity>

@@ -46,6 +46,10 @@ class BuilderPage extends Component {
     const recipe = navigation.getParam('recipe', {});
     const useMetric = navigation.getParam('useMetric', false);
     if (Object.keys(recipe).length !== 0) {
+      // Get coffee/water details
+      const [totalCoffee, totalWater] = this.getTotalWaterAndCoffeeDetails(
+        recipe.steps
+      );
       // Update params
       const selected = [];
       for (let i = 0; i < recipe.steps.length; i += 1) {
@@ -61,7 +65,9 @@ class BuilderPage extends Component {
         orientation: recipe.orientation,
         steps: recipe.steps,
         selected,
-        useMetric
+        useMetric,
+        totalCoffee,
+        totalWater,
       });
     } else {
       this.setState({
@@ -260,22 +266,29 @@ class BuilderPage extends Component {
           title: modalType,
           properties: stepModel.getStepProperties(modalType, modalText, modalSelect, useMetric)
         });
+        const newRecipeSteps = [...steps, newStep];
+        // Get new coffee/water ratio
+        const [totalCoffee, totalWater] = this.getTotalWaterAndCoffeeDetails(newRecipeSteps);
         this.setState({
           visibleModal: false,
           modalType: '',
           modalText: '',
           modalIdx: -1,
-          steps: [
-            ...steps,
-            newStep
-          ],
+          steps: newRecipeSteps,
           selected: [
             ...selected,
             false
-          ]
+          ],
+          totalCoffee,
+          totalWater
         });
       } else if (modalIdx !== -1) {
         // Replace at index
+        steps[modalIdx].properties = stepModel.getStepProperties(
+          modalType, modalText, modalSelect, useMetric
+        );
+        // Get new coffee/water ratio
+        const [totalCoffee, totalWater] = this.getTotalWaterAndCoffeeDetails(steps);
         this.setState({
           visibleModal: false,
           modalType: '',
@@ -288,6 +301,8 @@ class BuilderPage extends Component {
               },
             }
           }),
+          totalCoffee,
+          totalWater
         });
       }
     }
@@ -383,6 +398,7 @@ class BuilderPage extends Component {
       let detailValue = '';
       let detailDisabled = false;
       let detailModalId = '';
+      let detailShowArrow = true;
       if (detail === constants.BUILDER_RECIPE_NAME_DETAIL) {
         detailValue = recipeName;
         detailModalId = constants.RECIPE_NAME_ELEM;
@@ -402,12 +418,17 @@ class BuilderPage extends Component {
         detailModalId = constants.RECIPE_DESCRIPTION_ELEM;
       } else if (detail === constants.BUILDER_RATIO) {
         if (totalWater !== 0 && totalCoffee !== 0) {
-          detailValue = Math.round((totalCoffee / totalWater) * 100) / 100;
+          detailValue = `1:${String(Math.round((totalWater / totalCoffee) * 100) / 100)}`;
         }
         detailDisabled = true;
+        detailShowArrow = false;
       }
       arrToUse.push({
-        title: detail, value: detailValue, disabled: detailDisabled, modalId: detailModalId
+        title: detail,
+        value: detailValue,
+        disabled: detailDisabled,
+        modalId: detailModalId,
+        showArrow: detailShowArrow
       });
     });
     return arrToUse;
@@ -437,8 +458,7 @@ class BuilderPage extends Component {
     this.setState({ modalSelect: val });
   };
 
-  getTotalWaterAndCoffeeDetails = () => {
-    const { steps } = this.state;
+  getTotalWaterAndCoffeeDetails = (steps) => {
     let totalCoffee = 0;
     let totalWater = 0;
     let waterTempTotal = '';
@@ -463,7 +483,9 @@ class BuilderPage extends Component {
     const { persistRecipe } = this.props;
     const objToUse = this.state;
     // Need to add totalWater, totalCoffee, waterTemp, and grindSize
-    const [totalCoffee, totalWater, grindSize, waterTemp] = this.getTotalWaterAndCoffeeDetails();
+    const [totalCoffee, totalWater, grindSize, waterTemp] = this.getTotalWaterAndCoffeeDetails(
+      objToUse.steps
+    );
     objToUse.totalCoffee = String(totalCoffee);
     objToUse.totalWater = String(totalWater);
     objToUse.grindSize = grindSize;
