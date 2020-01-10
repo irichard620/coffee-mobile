@@ -104,34 +104,40 @@ export const RECIPE_MENU_DELETE = 'Delete';
 export const RECIPE_MENU_CANCEL = 'Cancel';
 export const RECIPE_MENU_DRIPPY_PRO = 'Drippy Pro';
 
+// Settings sections
+export const SETTINGS_SECTION_PRO = 'DRIPPY PRO';
+export const SETTINGS_SECTION_GENERAL = 'GENERAL';
+export const SETTINGS_SECTION_CONTACT = 'CONTACT';
+export const settingsSections = [
+  SETTINGS_SECTION_PRO, SETTINGS_SECTION_GENERAL, SETTINGS_SECTION_CONTACT
+];
+
 // Settings options
-export const SETTINGS_PRO = 'Drippy Pro';
-export const SETTINGS_PRO_EXISTS = 'Drippy Pro Exists';
-export const SETTINGS_PROFILE = 'Profile';
-export const SETTINGS_DEFAULT_RECIPES = 'Default Recipes';
-export const settings = [SETTINGS_PRO, SETTINGS_PROFILE, SETTINGS_DEFAULT_RECIPES];
-export const settingsDescriptions = {
-  [SETTINGS_PRO]: 'Love Drippy? Support our two person team by getting our next cup of coffee!'
-    + ' As a Drippy Pro user, you’ll get unlimited recipe storage and access to the builder,'
-    + ' where you can create and edit recipes to your liking. You’ll have access to all the'
-    + ' special Drippy Pro features we have planned for the future, too. (And that’s a lot, we promise.)',
-  [SETTINGS_PRO_EXISTS]: 'Thanks for supporting Drippy Pro! We think you will love our upcoming features.',
-  [SETTINGS_PROFILE]: '',
-  [SETTINGS_DEFAULT_RECIPES]: ''
-};
 export const OPTION_GET_DRIPPY_PRO = 'Get Drippy Pro';
-export const OPTION_RESTORE_PURCHASE = 'Restore Purchase';
-export const OPTION_TEMP_UNITS = 'Temperature Units';
-export const OPTION_REPLAY_TUTORIAL = 'Replay Tutorial';
-export const OPTION_HIDE_DEFAULT = 'Hide Default Recipes';
-export const OPTION_RESTORE_DEFAULT = 'Restore Default Recipes';
+export const OPTION_RESTORE_PURCHASE = 'Restore Previous Purchase';
+export const OPTION_TEMPERATURE_UNITS = 'Temperature Units';
+export const OPTION_REPLAY_INTRO = 'Replay Drippy Intro';
+export const OPTION_MANAGE_DEFAULT_RECIPES = 'Manage Default Recipes';
+export const OPTION_CONTACT_US = 'Contact Us';
+export const OPTION_JOIN_BETA = 'Join Drippy Beta';
+export const OPTION_INSTAGRAM = 'Follow us on Instagram';
 export const settingsOptions = {
-  [SETTINGS_PRO_EXISTS]: [],
-  [SETTINGS_PRO]: [{ title: OPTION_GET_DRIPPY_PRO }, { title: OPTION_RESTORE_PURCHASE }],
-  [SETTINGS_PROFILE]: [{ title: OPTION_TEMP_UNITS },
-    { title: OPTION_REPLAY_TUTORIAL }],
-  [SETTINGS_DEFAULT_RECIPES]: [{ title: OPTION_HIDE_DEFAULT }, { title: OPTION_RESTORE_DEFAULT }],
+  [SETTINGS_SECTION_PRO]: [OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE],
+  [SETTINGS_SECTION_GENERAL]: [
+    OPTION_TEMPERATURE_UNITS,
+    OPTION_REPLAY_INTRO,
+    OPTION_MANAGE_DEFAULT_RECIPES
+  ],
+  [SETTINGS_SECTION_CONTACT]: [OPTION_CONTACT_US, OPTION_JOIN_BETA, OPTION_INSTAGRAM],
 };
+
+// Temp units
+export const FAHRENHEIT = 'Fahrenheit';
+export const CELSIUS = 'Celsius';
+
+// Default options
+export const DEFAULT_RECIPES_RESTORE = 'Restore Default Recipes';
+export const DEFAULT_RECIPES_HIDE = 'Hide Default Recipes';
 
 // Modal types
 export const MODAL_TYPE_BOTTOM = 'bottom';

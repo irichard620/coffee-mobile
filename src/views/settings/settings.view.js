@@ -2,22 +2,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, ScrollView, StyleSheet, Dimensions, LayoutAnimation, Alert
+  View, Text, ScrollView, StyleSheet, Alert, Linking
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import * as constants from '../../constants';
 import {
-  settings, settingsOptions, CustomLayoutSpring, settingsDescriptions,
-  OPTION_TEMP_UNITS, OPTION_HIDE_DEFAULT, OPTION_RESTORE_DEFAULT, OPTION_REPLAY_TUTORIAL,
-  OPTION_GET_DRIPPY_PRO, OPTION_RESTORE_PURCHASE, SETTINGS_PRO_EXISTS,
-  SETTINGS_PRO
-} from '../../constants';
-import Back from '../../components/back';
-import SettingsCard from './settings-card';
-import {
-  fetchDefaultRecipes, hideDefaultRecipes
-} from '../../actions/recipe-actions';
-import {
-  saveUsername, updateTemperatureUnits, requestPurchaseIAP, restoreIAP
+  saveUsername, requestPurchaseIAP, restoreIAP
 } from '../../actions/user-actions';
+import TopHeader from '../../components/top-header';
+import Detail from '../builder/detail';
 
 class SettingsPage extends Component {
   purchaseUpdatePro = null;
@@ -28,7 +21,6 @@ class SettingsPage extends Component {
     super(props);
 
     this.state = {
-      selected: [false, false, false],
       useMetric: false,
       premium: false
     };
@@ -47,62 +39,14 @@ class SettingsPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { recipes, user } = this.props;
-    const nextRecipes = nextProps.recipes;
+    const { user } = this.props;
     const nextUser = nextProps.user;
 
     // Check if restore default worked
-    if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
-      if (nextRecipes.error !== '') {
-        // Show fail alert
-        Alert.alert(
-          'Error Occurred',
-          'Could not reach Drippy servers. Please try again later.',
-          [
-            {
-              text: 'OK',
-            },
-          ],
-        );
-      } else {
-        // Show success alert
-        Alert.alert(
-          'Default Recipes Restored',
-          'The Drippy default recipes have been re-added to your library.',
-          [
-            {
-              text: 'OK',
-            },
-          ],
-        );
-      }
-    } else if (recipes && recipes.recipeIsDeleting && !nextRecipes.recipeIsDeleting) {
-      // Show success alert
-      Alert.alert(
-        'Default Recipes Hidden',
-        'All default recipes have been hidden from your library.',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
-    } else if (user && user.userIsSaving && !nextUser.userIsSaving) {
-      // Show success alert
-      Alert.alert(
-        'Settings Updated',
-        'Your changes have been saved.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              this.setState({
-                useMetric: nextUser.user.useMetric
-              });
-            }
-          },
-        ],
-      );
+    if (user && user.userIsSaving && !nextUser.userIsSaving) {
+      this.setState({
+        useMetric: nextUser.user.useMetric
+      });
     } else if (user && user.iapIsUpgrading && !nextUser.iapIsUpgrading) {
       this.setState({
         premium: nextUser.user.premium
@@ -116,26 +60,14 @@ class SettingsPage extends Component {
 
   onBackClick = () => {
     const { navigation } = this.props;
-    navigation.goBack();
-  }
+    navigation.dispatch(NavigationActions.back());
+  };
 
-  onCardClick = (idx) => {
-    const { selected } = this.state;
-
-    LayoutAnimation.configureNext(CustomLayoutSpring);
-    this.setState({
-      selected: selected.map((val, i) => (i === idx ? !val : false))
-    });
-  }
-
-  onPressItem = (item) => {
+  onSettingsOptionClick = (option) => {
     const {
-      getDefaultRecipes, deleteDefaultRecipes, changeTemperatureUnits, navigation,
-      buyDrippyPro, restoreDrippyPro
+      navigation, buyDrippyPro, restoreDrippyPro
     } = this.props;
-    const { useMetric } = this.state;
-
-    if (item === OPTION_GET_DRIPPY_PRO) {
+    if (option === constants.OPTION_GET_DRIPPY_PRO) {
       // Prompt if they want to purchase
       Alert.alert(
         'Buy Drippy Pro',
@@ -153,7 +85,7 @@ class SettingsPage extends Component {
           },
         ],
       );
-    } else if (item === OPTION_RESTORE_PURCHASE) {
+    } else if (option === constants.OPTION_RESTORE_PURCHASE) {
       // prompt if they want to restore
       Alert.alert(
         'Restore Drippy Pro',
@@ -170,120 +102,122 @@ class SettingsPage extends Component {
           },
         ],
       );
-    } else if (item === OPTION_TEMP_UNITS) {
-      // Prompt if they want to toggle temp unit
-      let newUnit = 'Celsius';
-      if (useMetric) {
-        newUnit = 'Fahrenheit';
-      }
-      Alert.alert(
-        'Change Temperature Units',
-        `Would you like to toggle your temperature unit to ${newUnit}?`,
-        [
-          {
-            text: 'Cancel'
-          },
-          {
-            text: 'Toggle',
-            onPress: () => {
-              changeTemperatureUnits(!useMetric);
-            }
-          },
-        ],
-      );
-    } else if (item === OPTION_REPLAY_TUTORIAL) {
+    } else if (option === constants.OPTION_TEMPERATURE_UNITS) {
+      navigation.navigate('Temperature');
+    } else if (option === constants.OPTION_REPLAY_INTRO) {
       // Pull up tutorial, pass in flag
       navigation.navigate({
-        routeName: 'Tutorial',
+        routeName: 'TutorialFromSettings',
         params: {
           fromSettings: true,
         },
         key: 'fromSettings'
       });
-    } else if (item === OPTION_HIDE_DEFAULT) {
-      // Prompt if they want to hide default recipes
-      Alert.alert(
-        'Are you sure?',
-        'Do you want to hide the default recipes? This will remove them from your library, and any edits you made will be lost.',
-        [
-          {
-            text: 'Cancel'
-          },
-          {
-            text: 'Hide',
-            onPress: () => {
-              deleteDefaultRecipes();
-            }
-          },
-        ],
-      );
-    } else if (item === OPTION_RESTORE_DEFAULT) {
-      // Prompt if they want to reset default recipes
-      Alert.alert(
-        'Are you sure?',
-        "Do you want to restore the default recipes? This will bring back any that have been deleted and undo any edits you've made to them.",
-        [
-          {
-            text: 'Cancel'
-          },
-          {
-            text: 'Restore',
-            onPress: () => {
-              getDefaultRecipes(true);
-            }
-          },
-        ],
-      );
+    } else if (option === constants.OPTION_MANAGE_DEFAULT_RECIPES) {
+      navigation.navigate('DefaultRecipes');
+    } else if (option === constants.OPTION_CONTACT_US || option === constants.OPTION_JOIN_BETA) {
+      // Pull up email
+      let emailLink = 'mailto:drippyapp@gmail.com';
+      if (option === constants.OPTION_JOIN_BETA) {
+        emailLink = `${emailLink}?subject=Request to join Drippy Beta`;
+      }
+      Linking.canOpenURL(emailLink).then((supported) => {
+        if (supported) {
+          Linking.openURL(emailLink);
+        } else {
+          // Open error alert
+          Alert.alert(
+            'Error Occurred',
+            'The Email could not be opened.',
+            [
+              {
+                text: 'OK'
+              },
+            ],
+          );
+        }
+      });
+    } else if (option === constants.OPTION_INSTAGRAM) {
+      const instaLink = 'https://www.instagram.com/drippyapp/';
+      Linking.canOpenURL(instaLink).then((supported) => {
+        if (supported) {
+          Linking.openURL(instaLink);
+        } else {
+          // Open error alert
+          Alert.alert(
+            'Error Occurred',
+            'Could not open Instagram.',
+            [
+              {
+                text: 'OK'
+              },
+            ],
+          );
+        }
+      });
     }
-  }
+  };
 
-  renderSettingCard = (idx, setting) => {
-    const { selected, premium } = this.state;
+  renderOption = (option, idx) => {
+    const { useMetric } = this.state;
 
-    let descriptionToUse = '';
-    let optionsToUse = [];
-    if (setting === SETTINGS_PRO && premium) {
-      descriptionToUse = settingsDescriptions[SETTINGS_PRO_EXISTS];
-      optionsToUse = settingsOptions[SETTINGS_PRO_EXISTS];
-    } else {
-      descriptionToUse = settingsDescriptions[setting];
-      optionsToUse = settingsOptions[setting];
+    let value = '';
+    if (option === constants.OPTION_TEMPERATURE_UNITS) {
+      if (useMetric) {
+        value = constants.CELSIUS;
+      } else {
+        value = constants.FAHRENHEIT;
+      }
     }
-
     return (
-      <SettingsCard
+      <Detail
         key={idx}
-        idx={idx}
-        type={setting}
-        description={descriptionToUse}
-        options={optionsToUse}
-        selected={selected[idx]}
-        onCardClick={this.onCardClick}
-        onPressItem={this.onPressItem}
+        value={value}
+        title={option}
+        modalId={option}
+        onDetailClick={this.onSettingsOptionClick}
+        showArrow
+        showSeparator
       />
     );
-  }
+  };
+
+  renderSection = (section, idx) => {
+    const { premium } = this.state;
+    return (
+      <View style={styles.sectionContainer} key={idx}>
+        <Text style={styles.sectionHeader}>{section}</Text>
+        {
+          (!premium || section !== constants.SETTINGS_SECTION_PRO)
+          && constants.settingsOptions[section].map((detail, optionIdx) => (
+            this.renderOption(
+              detail, optionIdx
+            )
+          ))
+        }
+        {
+          (premium && section === constants.SETTINGS_SECTION_PRO)
+          && (
+            <Text style={styles.proText}>
+              Thanks for purchasing Drippy Pro and supporting our team!
+            </Text>
+          )
+        }
+      </View>
+    );
+  };
 
   render() {
-    // Top margin - dynamic
-    const { height } = Dimensions.get('window');
-    const marginTopStyle = {
-      marginTop: height * 0.03
-    };
-
     return (
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={[styles.backcontainer, marginTopStyle]}>
-          <Back
-            onBackClick={this.onBackClick}
-            type={0}
-          />
-        </View>
-        <Text style={styles.title}>Settings</Text>
-        {settings.map((setting, idx) => (
-          this.renderSettingCard(idx, setting)
-        ))}
-      </ScrollView>
+      <View style={styles.container}>
+        <TopHeader title="Settings" onClose={this.onBackClick} showSeparator={false} />
+        <ScrollView style={styles.scrollContainer}>
+          {constants.settingsSections.map((section, idx) => (
+            this.renderSection(section, idx)
+          ))}
+          <Text style={styles.versionText}>Drippy V2.0.0</Text>
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -291,32 +225,47 @@ class SettingsPage extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4'
+    backgroundColor: '#FFFFFF'
   },
-  backcontainer: {
-    marginLeft: 15,
-    alignItems: 'flex-start',
+  scrollContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingTop: 12,
   },
-  title: {
-    marginLeft: 15,
-    marginBottom: 20,
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#1D5E9E',
-    alignSelf: 'flex-start',
+  sectionContainer: {
+    marginBottom: 24
+  },
+  sectionHeader: {
+    color: '#898989',
+    fontSize: 13,
+    marginLeft: 16,
+    marginBottom: 8,
+  },
+  proText: {
+    fontSize: 16,
+    color: '#898989',
+    marginLeft: 16,
+    marginRight: 16,
+    marginBottom: 14,
+  },
+  versionText: {
+    marginTop: 8,
+    color: '#C6C6C6',
+    fontSize: 12,
+    textAlign: 'center'
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#F1F3F6',
+    marginLeft: 16
   }
 });
 
 const mapStateToProps = state => ({
-  recipes: state.recipesReducer.recipes,
   user: state.userReducer.user,
 });
 
 const mapDispatchToProps = {
-  getDefaultRecipes: fetchDefaultRecipes,
-  deleteDefaultRecipes: hideDefaultRecipes,
   persistUsername: saveUsername,
-  changeTemperatureUnits: updateTemperatureUnits,
   buyDrippyPro: requestPurchaseIAP,
   restoreDrippyPro: restoreIAP,
 };

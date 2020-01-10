@@ -105,7 +105,7 @@ class BrewContentSteps extends Component {
     }
 
     return (
-      <React.Fragment>
+      <React.Fragment key={idx}>
         <BrewStep
           title={stepObj.title}
           description={description}

@@ -7,7 +7,7 @@ import * as constants from '../../constants';
 
 export default function Detail(props) {
   const {
-    onDetailClick, disabled, title, value, modalId, showArrow
+    onDetailClick, disabled, title, value, modalId, showArrow, showSeparator
   } = props;
 
   const baseButtonPath = '../../assets/buttons/';
@@ -36,6 +36,9 @@ export default function Detail(props) {
           {showArrow && <Image style={styles.icon} source={require(`${baseButtonPath}Modal_Arrow.png`)} />}
         </View>
       </View>
+      {showSeparator && (
+        <View style={styles.separator} />
+      )}
     </TouchableOpacity>
   );
 }
@@ -69,4 +72,9 @@ const styles = StyleSheet.create({
     height: 18,
     resizeMode: 'contain',
   },
+  separator: {
+    height: 1,
+    backgroundColor: '#F1F3F6',
+    marginLeft: 16
+  }
 });

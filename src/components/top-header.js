@@ -7,7 +7,7 @@ import {
 
 export default function TopHeader(props) {
   const {
-    title, onClose, showSeparator
+    title, onClose, showSeparator, useArrow
   } = props;
 
   const baseButtonPath = '../assets/buttons/';
@@ -21,7 +21,8 @@ export default function TopHeader(props) {
     <SafeAreaView>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose}>
-          <Image style={styles.close} source={require(`${baseButtonPath}Modal_X.png`)} />
+          {!useArrow && <Image style={styles.close} source={require(`${baseButtonPath}Modal_X.png`)} />}
+          {useArrow && <Image style={styles.close} source={require(`${baseButtonPath}Brew_Back.png`)} />}
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>

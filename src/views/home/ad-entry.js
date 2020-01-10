@@ -22,7 +22,7 @@ export default function AdEntry(props) {
     <View style={styles.outline}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose}>
-          <Image style={styles.close} source={require(`${baseButtonPath}XButton.png`)} />
+          <Image style={styles.close} source={require(`${baseButtonPath}Dashboard_Notice_X.png`)} />
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   close: {
-    height: 24,
-    width: 24,
+    height: 13,
+    width: 13,
   }
 });

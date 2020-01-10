@@ -5,6 +5,7 @@ import {
   ScrollView, StyleSheet, LayoutAnimation, View, Dimensions,
   Alert, Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import RNIap, {
   purchaseErrorListener,
   purchaseUpdatedListener
@@ -601,9 +602,6 @@ class HomePage extends Component {
 
     // Top margin
     const { width, height } = Dimensions.get('window');
-    const topPaddingStyle = {
-      paddingTop: height * 0.07
-    };
 
     // Floating left margin
     const marginLeftContainer = {
@@ -628,8 +626,8 @@ class HomePage extends Component {
     }
 
     return (
-      <View style={styles.outerContainer}>
-        <ScrollView style={[styles.container, topPaddingStyle]}>
+      <SafeAreaView forceInset={{ bottom: 'never' }} style={styles.outerContainer}>
+        <ScrollView style={[styles.container]}>
           {sponsors && !sponsors.sponsorsIsFetching
           && sponsors.sponsors.length !== 0 && (
           <SponsorCarousel
@@ -712,7 +710,7 @@ class HomePage extends Component {
             disabled={!menuSelected}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -720,10 +718,12 @@ class HomePage extends Component {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
+    backgroundColor: '#F1F3F6',
   },
   container: {
     flex: 1,
     backgroundColor: '#F1F3F6',
+    paddingTop: 8,
   },
   entrycontainer: {
     marginBottom: 90

@@ -569,7 +569,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   scrollContainer: {
-    flex: 1,
     backgroundColor: '#F1F3F6'
   },
   line: {

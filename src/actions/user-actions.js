@@ -46,7 +46,6 @@ export function fetchUser() {
           }
           AsyncStorage.setItem('user', JSON.stringify(userDetails));
         }
-        userDetails.premium = true;
         dispatch(receiveUser(userDetails));
       })
       .catch(error => dispatch(errorUser(error)));

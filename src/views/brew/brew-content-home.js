@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   description: {
-    fontSize: 15,
+    fontSize: 16,
+    lineHeight: 20,
     color: '#000000',
     textAlign: 'left',
   }

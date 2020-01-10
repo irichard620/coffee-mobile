@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, StyleSheet, Dimensions,
-  Alert, SafeAreaView, Linking
+  Alert, SafeAreaView, Linking, Vibration
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 import ButtonLarge from '../../components/button-large';
@@ -89,7 +89,7 @@ class BrewPage extends Component {
     if (timerRemaining === 0) {
       // Clear and enable next button
       clearInterval(this.interval);
-      // TODO: vibrate
+      Vibration.vibrate();
     }
   }
 

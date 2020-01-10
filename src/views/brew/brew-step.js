@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4
   },
   description: {
+    marginTop: 4,
     color: '#000000',
     fontSize: 16,
     textAlign: 'center'

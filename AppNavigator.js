@@ -7,6 +7,8 @@ import BrewPage from './src/views/brew/brew.view';
 import WelcomePage from './src/views/welcome/welcome.view';
 import TutorialPage from './src/views/tutorial/tutorial.view';
 import SettingsPage from './src/views/settings/settings.view';
+import DefaultRecipesPage from './src/views/settings/default-recipes.view';
+import TemperaturePage from './src/views/settings/temperature.view';
 
 const MainStack = createStackNavigator(
   {
@@ -34,16 +36,44 @@ const MainStack = createStackNavigator(
         gesturesEnabled: true
       }
     },
-    Settings: {
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'Welcome',
+    mode: 'card',
+  }
+);
+
+const SettingsStack = createStackNavigator(
+  {
+    Home: {
       screen: SettingsPage,
       navigationOptions: {
         gesturesEnabled: true
       }
     },
+    DefaultRecipes: {
+      screen: DefaultRecipesPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    Temperature: {
+      screen: TemperaturePage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    TutorialFromSettings: {
+      screen: TutorialPage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
+    },
   },
   {
     headerMode: 'none',
-    initialRouteName: 'Welcome',
+    initialRouteName: 'Home',
     mode: 'card',
   }
 );
@@ -65,6 +95,9 @@ const AppNavigator = createStackNavigator(
         gesturesEnabled: true
       }
     },
+    Settings: {
+      screen: SettingsStack,
+    }
   },
   {
     headerMode: 'none',

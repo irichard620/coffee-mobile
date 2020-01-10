@@ -13,20 +13,16 @@ class DetailsList extends Component {
     const showSeparator = (idx < details.length - 1);
 
     return (
-      <React.Fragment>
-        <Detail
-          key={idx}
-          value={detail.value}
-          title={detail.title}
-          modalId={detail.modalId}
-          disabled={detail.disabled}
-          onDetailClick={onDetailClick}
-          showArrow={detail.showArrow}
-        />
-        {showSeparator && (
-          <View style={styles.separator} />
-        )}
-      </React.Fragment>
+      <Detail
+        key={idx}
+        value={detail.value}
+        title={detail.title}
+        modalId={detail.modalId}
+        disabled={detail.disabled}
+        onDetailClick={onDetailClick}
+        showArrow={detail.showArrow}
+        showSeparator={showSeparator}
+      />
     );
   };
 
@@ -49,7 +45,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#F1F3F6',
-    marginLeft: 16
   }
 });
 

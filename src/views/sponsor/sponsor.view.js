@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert,
-  Dimensions, Platform
+  Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import { fetchSponsor } from '../../actions/sponsor-actions';
 import { sponsorRecipeAnalytics } from '../../actions/analytics-actions';
 import Entry from '../home/entry';
@@ -324,94 +325,95 @@ class SponsorPage extends Component {
     sponsorObj.textColor = sponsorTextColor;
     sponsorObj.disabled = true;
 
-    // Top margin - dynamic
-    const { height } = Dimensions.get('window');
-    const marginTopStyle = {
-      marginTop: height * 0.03
-    };
-
     // Temp units
     const useMetric = navigation.getParam('useMetric', false);
 
     return (
-      <ScrollView style={styles.container}>
-        <View style={[styles.backcontainer, marginTopStyle]}>
-          <Back
-            onBackClick={this.onBackClick}
-            type={0}
+      <SafeAreaView forceInset={{ bottom: 'never' }} style={styles.outerContainer}>
+        <ScrollView style={styles.container}>
+          <View style={[styles.backcontainer]}>
+            <Back
+              onBackClick={this.onBackClick}
+              type={0}
+            />
+          </View>
+          <Sponsor
+            sponsor={sponsorObj}
+            type={1}
           />
-        </View>
-        <Sponsor
-          sponsor={sponsorObj}
-          type={1}
-        />
-        <View style={styles.separator} />
-        {sponsorHasAddress && (
-        <Entry
-          idx={-1}
-          selected={selectedMap}
-          disabled={false}
-          title={`Visit ${sponsorVisitDescription}`}
-          description={`${sponsorStreetAddress}\n${sponsorLocation}`}
-          isMap
-          latitude={sponsorLatitude}
-          longitude={sponsorLongitude}
-          onEntryClick={this.onEntryClick}
-          onMapClick={this.onMapClick}
-        />
-        )}
-        <View style={styles.entrycontainer}>
-          {beans.map((bean, idx) => (
-            <Entry
-              key={bean.beanId}
-              idx={idx}
-              selected
-              disabled
-              title={bean.title}
-              description={bean.description}
-              isBean
-              onExploreClick={this.onExploreClick}
-            />
-          ))}
-          {recipes.map((recipe, idx) => (
-            <Entry
-              key={recipe.recipeId}
-              idx={idx}
-              selected={selectedRecipes[idx]}
-              vessel={recipe.brewingVessel}
-              title={recipe.recipeName}
-              description={recipeModel.getRecipeDescription(recipe, useMetric)}
-              onEntryClick={this.onEntryClick}
-              isSponsor
-              onDownloadClick={this.onDownloadClick}
-            />
-          ))}
-        </View>
-        <CustomModal
-          visibleModal={visibleModal}
-          onCloseClick={this.onCloseModalClick}
-          type={constants.MODAL_TYPE_CENTER}
-        >
-          <ModalContentCenter
-            title={constants.POPUP_TITLE_DRIPPY_PRO_LIBRARY}
-            description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
-            type={0}
-            primaryButtonTitle="Get Drippy Pro"
-            secondaryButtonTitle="Restore Previous Purchase"
+          <View style={styles.separator} />
+          {sponsorHasAddress && (
+          <Entry
+            idx={-1}
+            selected={selectedMap}
+            disabled={false}
+            title={`Visit ${sponsorVisitDescription}`}
+            description={`${sponsorStreetAddress}\n${sponsorLocation}`}
+            isMap
+            latitude={sponsorLatitude}
+            longitude={sponsorLongitude}
+            onEntryClick={this.onEntryClick}
+            onMapClick={this.onMapClick}
+          />
+          )}
+          <View style={styles.entrycontainer}>
+            {beans.map((bean, idx) => (
+              <Entry
+                key={bean.beanId}
+                idx={idx}
+                selected
+                disabled
+                title={bean.title}
+                description={bean.description}
+                isBean
+                onExploreClick={this.onExploreClick}
+              />
+            ))}
+            {recipes.map((recipe, idx) => (
+              <Entry
+                key={recipe.recipeId}
+                idx={idx}
+                selected={selectedRecipes[idx]}
+                vessel={recipe.brewingVessel}
+                title={recipe.recipeName}
+                description={recipeModel.getRecipeDescription(recipe, useMetric)}
+                onEntryClick={this.onEntryClick}
+                isSponsor
+                onDownloadClick={this.onDownloadClick}
+              />
+            ))}
+          </View>
+          <CustomModal
+            visibleModal={visibleModal}
             onCloseClick={this.onCloseModalClick}
-            onPrimaryButtonClick={this.alertBuyDrippyPro}
-            onSecondaryButtonClick={this.alertRestoreDrippyPro}
-          />
-        </CustomModal>
-      </ScrollView>
+            type={constants.MODAL_TYPE_CENTER}
+          >
+            <ModalContentCenter
+              title={constants.POPUP_TITLE_DRIPPY_PRO_LIBRARY}
+              description={constants.POPUP_DESCRIPTION_DRIPPY_PRO}
+              type={0}
+              primaryButtonTitle="Get Drippy Pro"
+              secondaryButtonTitle="Restore Previous Purchase"
+              onCloseClick={this.onCloseModalClick}
+              onPrimaryButtonClick={this.alertBuyDrippyPro}
+              onSecondaryButtonClick={this.alertRestoreDrippyPro}
+            />
+          </CustomModal>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#F1F3F6',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4'
+    backgroundColor: '#F1F3F6',
+    paddingTop: 8
   },
   backcontainer: {
     marginLeft: 15,

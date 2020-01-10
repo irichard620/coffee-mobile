@@ -23,11 +23,11 @@ class TutorialPage extends Component {
     } else {
       navigation.navigate('Home');
     }
-  }
+  };
 
   onSnapToItem = (idx) => {
     this.setState({ step: idx });
-  }
+  };
 
   renderItem = ({ item }) => {
     const basePath = '../../assets/tutorial/';
@@ -67,7 +67,7 @@ class TutorialPage extends Component {
         )}
       </View>
     );
-  }
+  };
 
   render() {
     const { step } = this.state;
