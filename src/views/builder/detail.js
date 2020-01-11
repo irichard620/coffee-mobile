@@ -7,7 +7,8 @@ import * as constants from '../../constants';
 
 export default function Detail(props) {
   const {
-    onDetailClick, disabled, title, value, modalId, showArrow, showSeparator
+    onDetailClick, disabled, title, value, modalId,
+    showArrow, showSeparator, descriptionColor
   } = props;
 
   const baseButtonPath = '../../assets/buttons/';
@@ -23,13 +24,20 @@ export default function Detail(props) {
     descriptionValue = `${value.slice(0, 22)}...`;
   }
 
+  const descriptionColorStyle = {
+    color: '#1D5E9E'
+  };
+  if (descriptionColor) {
+    descriptionColorStyle.color = descriptionColor;
+  }
+
   return (
     <TouchableOpacity onPress={() => onDetailClick(modalId)} disabled={disabled}>
       <View style={styles.outline}>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.rightView}>
           {descriptionValue !== '' && (
-            <Text style={styles.description}>
+            <Text style={[styles.description, descriptionColorStyle]}>
               {descriptionValue}
             </Text>
           )}
@@ -60,7 +68,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   description: {
-    color: '#1D5E9E',
     fontSize: 16,
     marginRight: 12
   },

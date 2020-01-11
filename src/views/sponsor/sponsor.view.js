@@ -299,7 +299,7 @@ class SponsorPage extends Component {
         },
       ],
     );
-  }
+  };
 
   render() {
     const { navigation } = this.props;
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1F3F6',
-    paddingTop: 8
+    paddingTop: 12
   },
   backcontainer: {
     marginLeft: 15,

@@ -20,6 +20,7 @@ export default function BrewStep(props) {
     <View style={styles.outline}>
       <Text style={[styles.title, titleColor]}>{title}</Text>
       {activeStep && <Text style={styles.description}>{description}</Text>}
+      <View style={styles.mainSeparator} />
     </View>
   );
 }
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   outline: {
     alignItems: 'center',
     paddingTop: 16,
-    paddingBottom: 16,
+    width: '100%'
   },
   title: {
     fontSize: 18,
@@ -39,5 +40,11 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 16,
     textAlign: 'center'
+  },
+  mainSeparator: {
+    marginTop: 16,
+    height: 1,
+    width: '100%',
+    backgroundColor: '#F1F3F6',
   },
 });

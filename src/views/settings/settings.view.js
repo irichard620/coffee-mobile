@@ -203,6 +203,12 @@ class SettingsPage extends Component {
             </Text>
           )
         }
+        {
+          (premium && section === constants.SETTINGS_SECTION_PRO)
+          && (
+            <View style={styles.separator} />
+          )
+        }
       </View>
     );
   };

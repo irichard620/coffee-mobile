@@ -2,9 +2,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  View, StyleSheet, Dimensions,
+  View, StyleSheet, Dimensions, LayoutAnimation,
   Alert, SafeAreaView, Linking, Vibration
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import KeepAwake from 'react-native-keep-awake';
 import ButtonLarge from '../../components/button-large';
 import * as constants from '../../constants';
@@ -72,15 +73,28 @@ class BrewPage extends Component {
       });
     } else if (vessels && vessels.vesselIsFetching && !nextVessels.vesselIsFetching) {
       // Update vessel link and description
-      this.setState({
-        vesselLink: nextVessels.vessel.vesselLink,
-        vesselDescription: nextVessels.vessel.vesselDescription,
-        modalCenterTitle: 'Learn More',
-        modalCenterDescription: nextVessels.vessel.vesselDescription,
-        modalCenterType: 1,
-        modalCenterPrimaryButtonText: `Shop ${nextVessels.vesselName}`,
-        modalCenterDisabled: false,
-      });
+      if (nextVessels.error !== '') {
+        // Show alert
+        Alert.alert(
+          'Error Occurred',
+          'Could not fetch vessel info from server.',
+          [
+            {
+              text: 'OK'
+            },
+          ],
+        );
+      } else {
+        this.setState({
+          vesselLink: nextVessels.vessel.vesselLink,
+          vesselDescription: nextVessels.vessel.vesselDescription,
+          modalCenterTitle: 'Learn More',
+          modalCenterDescription: nextVessels.vessel.vesselDescription,
+          modalCenterType: 1,
+          modalCenterPrimaryButtonText: `Shop ${nextVessels.vesselName}`,
+          modalCenterDisabled: false,
+        });
+      }
     }
   }
 
@@ -169,10 +183,6 @@ class BrewPage extends Component {
       } else {
         this.clearTimer(step - 1);
       }
-
-      this.setState({
-        step: step - 1
-      });
     }
   };
 
@@ -182,6 +192,7 @@ class BrewPage extends Component {
   };
 
   setupTimer = (newStep, nextStep) => {
+    LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
     this.setState({
       step: newStep,
       timerRemaining: nextStep.properties.seconds,
@@ -196,6 +207,7 @@ class BrewPage extends Component {
   };
 
   clearTimer = (newStep) => {
+    LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
     this.setState({
       step: newStep,
       timerRemaining: -1,
@@ -475,6 +487,14 @@ class BrewPage extends Component {
               useMetric={useMetric}
             />
           )}
+          <View style={styles.gradientContainer}>
+            <LinearGradient
+              colors={['#FFFFFF', '#ffffff00']}
+              style={styles.linearGradient}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 0, y: 0 }}
+            />
+          </View>
           <View style={styles.buttonView}>
             <ButtonLarge
               onButtonClick={this.onFirstButtonClick}
@@ -547,12 +567,20 @@ const styles = StyleSheet.create({
     color: '#727272',
     marginTop: 40
   },
+  gradientContainer: {
+    marginTop: -24,
+    height: 24,
+    backgroundColor: 'transparent',
+    width: '100%'
+  },
+  linearGradient: {
+    flex: 1,
+  },
   buttonView: {
     alignSelf: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    marginTop: 16,
     marginBottom: 16
   },
 });

@@ -22,6 +22,7 @@ class DetailsList extends Component {
         onDetailClick={onDetailClick}
         showArrow={detail.showArrow}
         showSeparator={showSeparator}
+        descriptionColor={detail.descriptionColor}
       />
     );
   };

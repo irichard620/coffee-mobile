@@ -399,6 +399,7 @@ class BuilderPage extends Component {
       let detailDisabled = false;
       let detailModalId = '';
       let detailShowArrow = true;
+      let detailDescriptionColor = null;
       if (detail === constants.BUILDER_RECIPE_NAME_DETAIL) {
         detailValue = recipeName;
         detailModalId = constants.RECIPE_NAME_ELEM;
@@ -418,17 +419,19 @@ class BuilderPage extends Component {
         detailModalId = constants.RECIPE_DESCRIPTION_ELEM;
       } else if (detail === constants.BUILDER_RATIO) {
         if (totalWater !== 0 && totalCoffee !== 0) {
-          detailValue = `1:${String(Math.round((totalWater / totalCoffee) * 100) / 100)}`;
+          detailValue = `1:${String(Math.round((totalWater / totalCoffee) * 10) / 10)}`;
         }
         detailDisabled = true;
         detailShowArrow = false;
+        detailDescriptionColor = '#898989';
       }
       arrToUse.push({
         title: detail,
         value: detailValue,
         disabled: detailDisabled,
         modalId: detailModalId,
-        showArrow: detailShowArrow
+        showArrow: detailShowArrow,
+        descriptionColor: detailDescriptionColor,
       });
     });
     return arrToUse;

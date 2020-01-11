@@ -20,7 +20,7 @@ export default function TopHeader(props) {
   return (
     <SafeAreaView>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onClose}>
+        <TouchableOpacity style={styles.touchable} onPress={onClose}>
           {!useArrow && <Image style={styles.close} source={require(`${baseButtonPath}Modal_X.png`)} />}
           {useArrow && <Image style={styles.close} source={require(`${baseButtonPath}Brew_Back.png`)} />}
         </TouchableOpacity>
@@ -33,13 +33,13 @@ export default function TopHeader(props) {
 
 const styles = StyleSheet.create({
   header: {
-    paddingLeft: 16,
+    paddingLeft: 8,
     paddingRight: 16,
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingTop: 13,
-    paddingBottom: 13,
+    paddingTop: 5,
+    paddingBottom: 5,
     width: '100%',
     backgroundColor: '#FFFFFF'
   },
@@ -58,5 +58,11 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#F1F3F6',
     width: '100%'
+  },
+  touchable: {
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
   }
 });

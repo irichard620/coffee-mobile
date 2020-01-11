@@ -105,14 +105,12 @@ class BrewContentSteps extends Component {
     }
 
     return (
-      <React.Fragment key={idx}>
-        <BrewStep
-          title={stepObj.title}
-          description={description}
-          activeStep={(step === idx)}
-        />
-        <View style={styles.mainSeparator} />
-      </React.Fragment>
+      <BrewStep
+        title={stepObj.title}
+        description={description}
+        activeStep={(step === idx)}
+        key={idx}
+      />
     );
   };
 
@@ -123,14 +121,14 @@ class BrewContentSteps extends Component {
     const stepsToUse = steps.slice(step);
 
     return (
-      <React.Fragment>
+      <View style={styles.brewSteps}>
         {stepsToUse.map((stepObj, idx) => (
           this.renderBrewStep(stepObj, idx + step)
         ))}
         {brewingVessel !== constants.VESSEL_MIZUDASHI && (
           this.renderBrewStep({ title: 'Brew Complete' }, steps.length)
         )}
-      </React.Fragment>
+      </View>
     );
   };
 
@@ -182,6 +180,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   iconView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     marginBottom: 8,
   },
   icon: {
@@ -204,6 +205,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500'
   },
+  brewSteps: {
+    width: '100%'
+  }
 });
 
 export default BrewContentSteps;
