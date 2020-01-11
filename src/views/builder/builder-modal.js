@@ -183,7 +183,7 @@ class BuilderModal extends Component {
       charLimit = 30;
     } else if (modalType === constants.RECIPE_DESCRIPTION_ELEM) {
       titleToDisplay = 'Recipe Description';
-      charLimit = 100;
+      charLimit = 1000;
     } else {
       titleToDisplay = modalType;
     }

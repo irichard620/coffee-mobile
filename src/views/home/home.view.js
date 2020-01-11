@@ -240,11 +240,19 @@ class HomePage extends Component {
   }
 
   switchTab = (index) => {
-    const { tab } = this.state;
+    const {
+      tab, selectedFavorites, selectedCustoms, selectedFeatured
+    } = this.state;
     if (tab !== index) {
+      const newSelectedFavorites = selectedFavorites.map(() => false);
+      const newSelectedCustoms = selectedCustoms.map(() => false);
+      const newSelectedFeatured = selectedFeatured.map(() => false);
       LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
       this.setState({
         tab: index,
+        selectedFavorites: newSelectedFavorites,
+        selectedCustoms: newSelectedCustoms,
+        selectedFeatured: newSelectedFeatured
       });
     }
   };

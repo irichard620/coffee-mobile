@@ -40,12 +40,12 @@ export default function ModalContentCenter(props) {
   return (
     <View style={[styles.content, modalDimensions]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onCloseClick}>
+        <TouchableOpacity style={styles.touchable} onPress={onCloseClick}>
           <Image style={styles.close} source={require(`${baseButtonPath}Modal_X.png`)} />
         </TouchableOpacity>
         <Text style={[styles.title, titleWidth]}>{title}</Text>
       </View>
-      <ScrollView>
+      <ScrollView style={styles.scrollContainer}>
         <List
           options={options}
           onPrimaryButtonClick={onPrimaryButtonClick}
@@ -60,16 +60,18 @@ export default function ModalContentCenter(props) {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
-    paddingTop: 16,
-    paddingLeft: 16,
+    paddingLeft: 10,
     paddingRight: 16,
     borderRadius: 20,
   },
+  scrollContainer: {
+    marginLeft: 6,
+  },
   header: {
+    height: 56,
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
-    marginBottom: 16,
     width: '100%'
   },
   title: {
@@ -80,8 +82,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center'
   },
+  touchable: {
+    padding: 6,
+  },
   close: {
     height: 14,
-    width: 14
+    width: 14,
+    alignSelf: 'center'
   },
 });

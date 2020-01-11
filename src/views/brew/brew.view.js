@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, StyleSheet, Dimensions, LayoutAnimation,
-  Alert, SafeAreaView, Linking, Vibration
+  Alert, Linking, Vibration
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import KeepAwake from 'react-native-keep-awake';
 import ButtonLarge from '../../components/button-large';
@@ -192,7 +193,10 @@ class BrewPage extends Component {
   };
 
   setupTimer = (newStep, nextStep) => {
-    LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
+    const { step } = this.state;
+    if (!(step === -1 && newStep === 0)) {
+      LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
+    }
     this.setState({
       step: newStep,
       timerRemaining: nextStep.properties.seconds,
@@ -207,7 +211,10 @@ class BrewPage extends Component {
   };
 
   clearTimer = (newStep) => {
-    LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
+    const { step } = this.state;
+    if (!((step === -1 && newStep === 0) || (step === 0 && newStep === -1))) {
+      LayoutAnimation.configureNext(constants.CustomLayoutEaseIn);
+    }
     this.setState({
       step: newStep,
       timerRemaining: -1,
@@ -472,7 +479,7 @@ class BrewPage extends Component {
     const useMetric = navigation.getParam('useMetric', false);
 
     return (
-      <React.Fragment>
+      <View style={styles.outerContainer}>
         <SafeAreaView style={[styles.container]}>
           <TopHeader title={recipeName} onClose={this.onBackScreenClick} showSeparator={false} />
           {step === -1 && (
@@ -520,52 +527,49 @@ class BrewPage extends Component {
         >
           {modalType === constants.MODAL_TYPE_BOTTOM
           && (
-          <ModalContentBottom
-            onPressItem={this.onPressItem}
-            title={modalTitle}
-            isListModal
-            isSelectInput={false}
-            options={this.getModalOptions()}
-          />
+            <ModalContentBottom
+              onPressItem={this.onPressItem}
+              title={modalTitle}
+              isListModal
+              isSelectInput={false}
+              options={this.getModalOptions()}
+            />
           )}
           {modalType === constants.MODAL_TYPE_CENTER
           && (
-          <ModalContentCenter
-            title={modalCenterTitle}
-            description={modalCenterDescription}
-            type={modalCenterType}
-            primaryButtonTitle={modalCenterPrimaryButtonText}
-            secondaryButtonTitle={modalCenterSecondayButtonText}
-            onCloseClick={this.onCloseModalClick}
-            onPrimaryButtonClick={this.onModalCenterPrimaryClicked}
-            onSecondaryButtonClick={this.alertRestoreDrippyPro}
-            disabled={modalCenterDisabled}
-          />
+            <ModalContentCenter
+              title={modalCenterTitle}
+              description={modalCenterDescription}
+              type={modalCenterType}
+              primaryButtonTitle={modalCenterPrimaryButtonText}
+              secondaryButtonTitle={modalCenterSecondayButtonText}
+              onCloseClick={this.onCloseModalClick}
+              onPrimaryButtonClick={this.onModalCenterPrimaryClicked}
+              onSecondaryButtonClick={this.alertRestoreDrippyPro}
+              disabled={modalCenterDisabled}
+            />
           )}
         </CustomModal>
         <KeepAwake />
-      </React.Fragment>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingLeft: 15,
-    paddingRight: 15,
   },
   title: {
     fontSize: 22,
     color: '#1D5E9E',
     alignSelf: 'center',
     fontWeight: '600',
-  },
-  description: {
-    fontSize: 16,
-    color: '#727272',
-    marginTop: 40
   },
   gradientContainer: {
     marginTop: -24,

@@ -54,12 +54,17 @@ class BrewContentHome extends Component {
         <View style={[styles.iconView, iconHeight]}>
           {this.getVesselIcon(recipe.brewingVessel)}
         </View>
-        {description !== '' && <View style={styles.separator} />}
-        {description !== '' && <Text stye={styles.description}>{description}</Text>}
-        {description !== '' && <View style={styles.separator} />}
+        {description !== '' && (
+          <View>
+            <View style={styles.separator} />
+            <Text style={styles.descriptionText}>{description}</Text>
+            <View style={styles.separator} />
+          </View>
+        )}
         {constants.brewDetails.map((detail, idx) => (
           this.renderBrewDetail(detail, idx)
         ))}
+        <View style={styles.bufferView} />
       </ScrollView>
     );
   }
@@ -67,7 +72,10 @@ class BrewContentHome extends Component {
 
 const styles = StyleSheet.create({
   scrollView: {
-    padding: 16
+    padding: 16,
+  },
+  bufferView: {
+    height: 24,
   },
   iconView: {
     marginBottom: 16,
@@ -83,9 +91,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 16,
   },
-  description: {
-    fontSize: 16,
-    lineHeight: 20,
+  descriptionText: {
+    fontSize: 15,
+    lineHeight: 18,
     color: '#000000',
     textAlign: 'left',
   }
