@@ -5,6 +5,7 @@ import sponsorsReducer from './sponsor-reducers';
 import recipesReducer from './recipe-reducers';
 import userReducer from './user-reducers';
 import vesselsReducer from './vessel-reducers';
+import locationsReducer from './location-reducers';
 
 const loggerMiddleware = createLogger();
 
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   recipesReducer,
   userReducer,
   vesselsReducer,
+  locationsReducer,
 });
 
 const store = createStore(

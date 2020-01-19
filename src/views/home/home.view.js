@@ -529,9 +529,10 @@ class HomePage extends Component {
       // Call clear
       this.onCloseClick();
     }
-  }
+  };
 
   onFloatingClick = (type) => {
+    const { navigation } = this.props;
     const { menuSelected } = this.state;
 
     if (type === 0) {
@@ -542,10 +543,14 @@ class HomePage extends Component {
       // Settings page
       this.setState({ menuSelected: false });
       this.onSettingsClick();
-    } else {
+    } else if (type === 2) {
       // New recipe
       this.setState({ menuSelected: false });
       this.onAddClick();
+    } else {
+      // Map
+      this.setState({ menuSelected: false });
+      navigation.navigate('DrippyMap');
     }
   };
 
@@ -705,6 +710,11 @@ class HomePage extends Component {
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={2}
+            disabled={!menuSelected}
+          />
+          <FloatingButton
+            onFloatingClick={this.onFloatingClick}
+            type={3}
             disabled={!menuSelected}
           />
           <FloatingButton

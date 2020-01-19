@@ -9,6 +9,7 @@ import TutorialPage from './src/views/tutorial/tutorial.view';
 import SettingsPage from './src/views/settings/settings.view';
 import DefaultRecipesPage from './src/views/settings/default-recipes.view';
 import TemperaturePage from './src/views/settings/temperature.view';
+import MapPage from './src/views/map/map.view';
 
 const MainStack = createStackNavigator(
   {
@@ -36,6 +37,12 @@ const MainStack = createStackNavigator(
         gesturesEnabled: true
       }
     },
+    SponsorMap: {
+      screen: MapPage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
+    }
   },
   {
     headerMode: 'none',
@@ -97,6 +104,12 @@ const AppNavigator = createStackNavigator(
     },
     Settings: {
       screen: SettingsStack,
+    },
+    DrippyMap: {
+      screen: MapPage,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     }
   },
   {

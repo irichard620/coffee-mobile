@@ -1,9 +1,10 @@
 
 import React from 'react';
 import {
-  SafeAreaView, Text, StyleSheet, Image, TouchableOpacity,
+  Text, StyleSheet, Image, TouchableOpacity,
   Dimensions, View
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 
 export default function TopHeader(props) {
   const {

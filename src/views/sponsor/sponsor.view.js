@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   View, ScrollView, StyleSheet, LayoutAnimation, Linking, Alert,
-  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { fetchSponsor } from '../../actions/sponsor-actions';
@@ -130,32 +129,40 @@ class SponsorPage extends Component {
       recipes: newRecipes,
       premium
     });
-  }
+  };
 
   onBackClick = () => {
     const { navigation } = this.props;
     navigation.goBack();
-  }
+  };
 
   onBeanClick = (idx) => {
     const { selectedBeans } = this.state;
 
     LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     this.setState({ selectedBeans: selectedBeans.map((val, i) => (i === idx ? !val : false)) });
-  }
+  };
 
   onEntryClick = (idx) => {
+    const { navigation } = this.props;
     const { selectedRecipes, selectedMap } = this.state;
 
-    LayoutAnimation.configureNext(constants.CustomLayoutSpring);
     if (idx === -1) {
+      const sponsor = navigation.getParam('sponsor', {});
+      const sponsorCompany = sponsor.company ? sponsor.company : '';
+      const sponsorID = sponsor.sponsorId || '';
+      navigation.navigate('SponsorMap', {
+        sponsorID,
+        sponsorCompany
+      });
       this.setState({ selectedMap: !selectedMap });
     } else {
+      LayoutAnimation.configureNext(constants.CustomLayoutSpring);
       this.setState({
         selectedRecipes: selectedRecipes.map((val, i) => (i === idx ? !val : false))
       });
     }
-  }
+  };
 
   onExploreClick = (idx) => {
     // Open link
@@ -181,57 +188,7 @@ class SponsorPage extends Component {
         );
       }
     });
-  }
-
-  onMapClick = () => {
-    Alert.alert(
-      'Open Maps',
-      'Do you want to open this location in maps?',
-      [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Open',
-          onPress: () => {
-            this.openMaps();
-          }
-        },
-      ],
-    );
-  }
-
-  openMaps = () => {
-    const { navigation } = this.props;
-    const sponsor = navigation.getParam('sponsor', {});
-    const sponsorLocation = sponsor.location ? sponsor.location : '';
-    const sponsorStreetAddress = sponsor.streetAddress ? sponsor.streetAddress : 'Missing street address';
-    const daddr = encodeURIComponent(`${sponsorStreetAddress}, ${sponsorLocation}`);
-
-    let urlToUse = '';
-    if (Platform.OS === 'ios') {
-      urlToUse = `http://maps.apple.com/?daddr=${daddr}`;
-    } else {
-      urlToUse = `http://maps.google.com/?daddr=${daddr}`;
-    }
-
-    Linking.canOpenURL(urlToUse).then((supported) => {
-      if (supported) {
-        Linking.openURL(urlToUse);
-      } else {
-        // Open error alert
-        Alert.alert(
-          'Error Occurred',
-          'The address could not be opened.',
-          [
-            {
-              text: 'OK'
-            },
-          ],
-        );
-      }
-    });
-  }
+  };
 
   onDownloadClick = (idx) => {
     const { persistRecipe } = this.props;
@@ -245,14 +202,14 @@ class SponsorPage extends Component {
       recipe.brewingVessel, recipe.sponsorId);
 
     persistRecipe(recipeModel.Recipe(recipe), premium);
-  }
+  };
 
   onCloseModalClick = () => {
     // Close and clear modal
     this.setState({
       visibleModal: false
     });
-  }
+  };
 
   alertBuyDrippyPro = () => {
     const { buyDrippyPro } = this.props;
@@ -276,7 +233,7 @@ class SponsorPage extends Component {
         },
       ],
     );
-  }
+  };
 
   alertRestoreDrippyPro = () => {
     const { restoreDrippyPro } = this.props;
@@ -304,7 +261,7 @@ class SponsorPage extends Component {
   render() {
     const { navigation } = this.props;
     const {
-      beans, recipes, selectedRecipes, selectedMap, visibleModal
+      beans, recipes, selectedRecipes, visibleModal
     } = this.state;
 
     const sponsor = navigation.getParam('sponsor', {});
@@ -345,7 +302,7 @@ class SponsorPage extends Component {
           {sponsorHasAddress && (
           <Entry
             idx={-1}
-            selected={selectedMap}
+            selected={false}
             disabled={false}
             title={`Visit ${sponsorVisitDescription}`}
             description={`${sponsorStreetAddress}\n${sponsorLocation}`}
@@ -353,7 +310,6 @@ class SponsorPage extends Component {
             latitude={sponsorLatitude}
             longitude={sponsorLongitude}
             onEntryClick={this.onEntryClick}
-            onMapClick={this.onMapClick}
           />
           )}
           <View style={styles.entrycontainer}>
