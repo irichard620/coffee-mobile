@@ -116,7 +116,7 @@ class BrewContentSteps extends Component {
 
   renderBrewSteps = () => {
     const { recipe, step } = this.props;
-    const { steps, brewingVessel } = recipe;
+    const { steps } = recipe;
 
     const stepsToUse = steps.slice(step);
 
@@ -125,31 +125,18 @@ class BrewContentSteps extends Component {
         {stepsToUse.map((stepObj, idx) => (
           this.renderBrewStep(stepObj, idx + step)
         ))}
-        {brewingVessel !== constants.VESSEL_MIZUDASHI && (
-          this.renderBrewStep({ title: 'Brew Complete' }, steps.length)
-        )}
       </View>
     );
   };
 
   render() {
     const { recipe, step } = this.props;
-    const { steps, brewingVessel } = recipe;
+    const { steps } = recipe;
 
     const { height } = Dimensions.get('window');
     const iconHeight = {
       height: height * 0.32,
     };
-
-    // Pagination
-    let stepsLength = 0;
-    if (steps && steps.length > 0) {
-      if (brewingVessel === constants.VESSEL_MIZUDASHI) {
-        stepsLength = steps.length;
-      } else {
-        stepsLength = steps.length + 1;
-      }
-    }
 
     return (
       <ScrollView
@@ -161,7 +148,7 @@ class BrewContentSteps extends Component {
           {this.getIcon(recipe)}
         </View>
         <Pagination
-          total={stepsLength}
+          total={steps.length}
           index={step}
           activeColor="#1D5E9E"
         />

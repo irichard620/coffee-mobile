@@ -22,6 +22,9 @@ import {
 import TopHeader from '../../components/top-header';
 import BrewContentHome from './brew-content-home';
 import BrewContentSteps from './brew-content-steps';
+import BrewContentComplete from './brew-content-complete';
+import History from '../../storage/history';
+import { saveHistory } from '../../actions/history-actions';
 
 class BrewPage extends Component {
   constructor(props) {
@@ -43,6 +46,9 @@ class BrewPage extends Component {
       premium: false,
       vesselLink: '',
       vesselDescription: '',
+      numStars: 0,
+      beansText: '',
+      notesText: ''
     };
   }
 
@@ -54,10 +60,14 @@ class BrewPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { user, vessels, recipes } = this.props;
+    const {
+      user, vessels, recipes, histories
+    } = this.props;
+
     const nextUser = nextProps.user;
     const nextVessels = nextProps.vessels;
     const nextRecipes = nextProps.recipes;
+    const nextHistories = nextProps.histories;
     if (recipes && recipes.recipesIsFetching && !nextRecipes.recipesIsFetching) {
       this.updateRecipe(nextRecipes);
     } else if (recipes && recipes.recipeIsSaving && !nextRecipes.recipeIsSaving) {
@@ -96,6 +106,8 @@ class BrewPage extends Component {
           modalCenterDisabled: false,
         });
       }
+    } else if (histories && histories.historyIsSaving && !nextHistories.historyIsSaving) {
+      this.onBackScreenClick();
     }
   }
 
@@ -161,7 +173,10 @@ class BrewPage extends Component {
   };
 
   onFirstButtonClick = () => {
-    const { step, recipe } = this.state;
+    const {
+      step, recipe, numStars, beansText, notesText
+    } = this.state;
+    const { steps } = recipe;
     if (step === -1) {
       // Recipe settings
       this.setState({
@@ -169,7 +184,7 @@ class BrewPage extends Component {
         modalType: constants.MODAL_TYPE_BOTTOM,
         deleteModal: false
       });
-    } else {
+    } else if (step < steps.length) {
       // Clear interval
       clearInterval(this.interval);
 
@@ -184,6 +199,16 @@ class BrewPage extends Component {
       } else {
         this.clearTimer(step - 1);
       }
+    } else {
+      // Save brew history
+      const { persistHistory } = this.props;
+      const objToUse = {};
+      objToUse.recipeId = recipe.recipeId;
+      objToUse.numStars = numStars;
+      objToUse.beans = beansText;
+      objToUse.notes = notesText;
+      const newHistory = History(objToUse);
+      persistHistory(newHistory);
     }
   };
 
@@ -434,14 +459,37 @@ class BrewPage extends Component {
     return options;
   };
 
+  onChangeText = (text, isBeans) => {
+    if (isBeans) {
+      this.setState({
+        beansText: text
+      });
+    } else {
+      this.setState({
+        notesText: text
+      });
+    }
+  };
+
+  onStarClicked = (starNum) => {
+    const { numStars } = this.state;
+    let starToUse = starNum;
+    if (starNum === 1 && numStars === 1) {
+      starToUse = 0;
+    }
+    this.setState({
+      numStars: starToUse
+    });
+  };
+
   render() {
     const { navigation } = this.props;
     const {
       step, visibleModal, recipe, deleteModal, modalType, timerTotal, timerRemaining,
       modalCenterTitle, modalCenterDescription, modalCenterType, modalCenterPrimaryButtonText,
-      modalCenterSecondayButtonText, modalCenterDisabled
+      modalCenterSecondayButtonText, modalCenterDisabled, numStars, beansText, notesText
     } = this.state;
-    const { recipeName } = recipe;
+    const { recipeName, steps } = recipe;
 
     // Button styles
     let firstButtonTitle = 'Recipe Settings';
@@ -453,21 +501,16 @@ class BrewPage extends Component {
       firstButtonTitle = 'Previous';
       secondButtonTitle = 'Next Step';
     } else if (step === recipe.steps.length - 1) {
-      if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
-        firstButtonTitle = 'Previous';
-        secondButtonTitle = 'Finish';
-      } else {
-        firstButtonTitle = 'Previous';
-        secondButtonTitle = 'Next Step';
-      }
-    } else if (step === recipe.steps.length) {
       firstButtonTitle = 'Previous';
       secondButtonTitle = 'Finish';
+    } else if (step === recipe.steps.length) {
+      firstButtonTitle = 'Save to Brew History';
     }
 
     // Icon view styles
     const { width } = Dimensions.get('window');
     const buttonWidth = (width - 16 - 16 - 9) / 2;
+    const largeButtonWidth = (width - 16 - 16);
 
     // Modal title
     let modalTitle = 'Recipe Settings';
@@ -485,13 +528,22 @@ class BrewPage extends Component {
           {step === -1 && (
             <BrewContentHome recipe={recipe} onDetailClick={this.onBrewDetailClick} />
           )}
-          {step >= 0 && (
+          {steps && step >= 0 && step < steps.length && (
             <BrewContentSteps
               recipe={recipe}
               step={step}
               timerTotal={timerTotal}
               timerRemaining={timerRemaining}
               useMetric={useMetric}
+            />
+          )}
+          {steps && step >= steps.length && (
+            <BrewContentComplete
+              numStars={numStars}
+              beansText={beansText}
+              notesText={notesText}
+              onChangeText={this.onChangeText}
+              onStarClicked={this.onStarClicked}
             />
           )}
           <View style={styles.gradientContainer}>
@@ -503,21 +555,33 @@ class BrewPage extends Component {
             />
           </View>
           <View style={styles.buttonView}>
-            <ButtonLarge
-              onButtonClick={this.onFirstButtonClick}
-              title={firstButtonTitle}
-              margin={[0, 9, 0, 0]}
-              buttonWidth={buttonWidth}
-              textColor="#000000"
-              backgroundColor="#FFFFFF"
-              borderColor="#D3D3D3"
-            />
-            <ButtonLarge
-              onButtonClick={this.onSecondButtonClick}
-              title={secondButtonTitle}
-              margin={[0, 0, 0, 0]}
-              buttonWidth={buttonWidth}
-            />
+            {steps && step < steps.length && (
+              <ButtonLarge
+                onButtonClick={this.onFirstButtonClick}
+                title={firstButtonTitle}
+                margin={[0, 9, 0, 0]}
+                buttonWidth={buttonWidth}
+                textColor="#000000"
+                backgroundColor="#FFFFFF"
+                borderColor="#D3D3D3"
+              />
+            )}
+            {steps && step < steps.length && (
+              <ButtonLarge
+                onButtonClick={this.onSecondButtonClick}
+                title={secondButtonTitle}
+                margin={[0, 0, 0, 0]}
+                buttonWidth={buttonWidth}
+              />
+            )}
+            {steps && step === steps.length && (
+              <ButtonLarge
+                onButtonClick={this.onFirstButtonClick}
+                title="Save to Brew History"
+                margin={[0, 0, 0, 0]}
+                buttonWidth={largeButtonWidth}
+              />
+            )}
           </View>
         </SafeAreaView>
         <CustomModal
@@ -593,6 +657,7 @@ const mapStateToProps = state => ({
   recipes: state.recipesReducer.recipes,
   user: state.userReducer.user,
   vessels: state.vesselsReducer.vessels,
+  histories: state.historiesReducer.histories,
 });
 
 const mapDispatchToProps = {
@@ -602,6 +667,7 @@ const mapDispatchToProps = {
   buyDrippyPro: requestPurchaseIAP,
   restoreDrippyPro: restoreIAP,
   getVessel: fetchVessel,
+  persistHistory: saveHistory,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BrewPage);
