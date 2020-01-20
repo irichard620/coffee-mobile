@@ -9,6 +9,7 @@ import TutorialPage from './src/views/tutorial/tutorial.view';
 import SettingsPage from './src/views/settings/settings.view';
 import DefaultRecipesPage from './src/views/settings/default-recipes.view';
 import TemperaturePage from './src/views/settings/temperature.view';
+import HistoryPage from './src/views/history/history.view';
 
 const MainStack = createStackNavigator(
   {
@@ -91,6 +92,12 @@ const AppNavigator = createStackNavigator(
     },
     Brew: {
       screen: BrewPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    History: {
+      screen: HistoryPage,
       navigationOptions: {
         gesturesEnabled: true
       }

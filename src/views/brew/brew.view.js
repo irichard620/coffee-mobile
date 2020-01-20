@@ -204,6 +204,7 @@ class BrewPage extends Component {
       const { persistHistory } = this.props;
       const objToUse = {};
       objToUse.recipeId = recipe.recipeId;
+      objToUse.recipeName = recipe.recipeName;
       objToUse.numStars = numStars;
       objToUse.beans = beansText;
       objToUse.notes = notesText;
@@ -384,7 +385,7 @@ class BrewPage extends Component {
   };
 
   onBrewDetailClick = (detail) => {
-    const { getVessel } = this.props;
+    const { getVessel, navigation } = this.props;
     const { recipe, vesselLink, vesselDescription } = this.state;
     if (detail === constants.BREW_LEARN_MORE_DETAIL) {
       // Get vessel if needed - else show modal
@@ -413,6 +414,8 @@ class BrewPage extends Component {
           modalCenterDisabled: false,
         });
       }
+    } else if (detail === constants.BREW_HISTORY_DETAIL) {
+      navigation.navigate('History', { recipe });
     } else {
       Alert.alert(
         'Coming Soon!',

@@ -12,6 +12,9 @@ export default function History(historyObj) {
   // Link to recipe
   history.recipeId = historyObj.recipeId;
 
+  // Recipe name for display
+  history.recipeName = historyObj.recipeName;
+
   // Num stars
   history.stars = historyObj.numStars || 0;
 

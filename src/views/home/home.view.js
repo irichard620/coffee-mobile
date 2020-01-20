@@ -281,6 +281,12 @@ class HomePage extends Component {
     navigation.navigate('Settings');
   };
 
+  onBrewJournalClick = () => {
+    // Pull up history menu
+    const { navigation } = this.props;
+    navigation.navigate('History');
+  };
+
   onSponsorClick = (sponsor) => {
     // Pull up sponsor page
     const { navigation } = this.props;
@@ -542,10 +548,13 @@ class HomePage extends Component {
       // Settings page
       this.setState({ menuSelected: false });
       this.onSettingsClick();
-    } else {
+    } else if (type === 2) {
       // New recipe
       this.setState({ menuSelected: false });
       this.onAddClick();
+    } else {
+      this.setState({ menuSelected: false });
+      this.onBrewJournalClick();
     }
   };
 
@@ -705,6 +714,11 @@ class HomePage extends Component {
           <FloatingButton
             onFloatingClick={this.onFloatingClick}
             type={2}
+            disabled={!menuSelected}
+          />
+          <FloatingButton
+            onFloatingClick={this.onFloatingClick}
+            type={3}
             disabled={!menuSelected}
           />
           <FloatingButton

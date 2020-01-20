@@ -50,9 +50,11 @@ export default function FloatingButton(props) {
           <View style={styles.iconContainer}>
             {type === 1 && <Image style={styles.floatingIcon} source={require(`${baseButtonPath}Menu_Settings.png`)} />}
             {type === 2 && <Image style={styles.floatingIcon} source={require(`${baseButtonPath}Menu_NewRecipe.png`)} />}
+            {type === 3 && <Image style={styles.floatingIcon} source={require(`${baseButtonPath}Menu_Journal.png`)} />}
           </View>
           {type === 1 && !disabled && <Text style={styles.textStyle}>Settings</Text>}
           {type === 2 && !disabled && <Text style={styles.textStyle}>New Recipe</Text>}
+          {type === 3 && !disabled && <Text style={styles.textStyle}>Brew Journal</Text>}
         </View>
       </TouchableOpacity>
       )}
