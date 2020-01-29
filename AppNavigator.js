@@ -10,6 +10,7 @@ import SettingsPage from './src/views/settings/settings.view';
 import DefaultRecipesPage from './src/views/settings/default-recipes.view';
 import TemperaturePage from './src/views/settings/temperature.view';
 import HistoryPage from './src/views/history/history.view';
+import HistoryEditPage from './src/views/history/history-edit.view';
 
 const MainStack = createStackNavigator(
   {
@@ -79,6 +80,47 @@ const SettingsStack = createStackNavigator(
   }
 );
 
+const HistoryStack = createStackNavigator(
+  {
+    Home: {
+      screen: HistoryPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    HistoryEdit: {
+      screen: HistoryEditPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    }
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'Home',
+    mode: 'card',
+  }
+);
+
+const BrewStack = createStackNavigator(
+  {
+    Home: {
+      screen: BrewPage,
+      navigationOptions: {
+        gesturesEnabled: true
+      }
+    },
+    History: {
+      screen: HistoryStack,
+    },
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'Home',
+    mode: 'card',
+  }
+);
+
 const AppNavigator = createStackNavigator(
   {
     Main: {
@@ -91,16 +133,10 @@ const AppNavigator = createStackNavigator(
       }
     },
     Brew: {
-      screen: BrewPage,
-      navigationOptions: {
-        gesturesEnabled: true
-      }
+      screen: BrewStack,
     },
     History: {
-      screen: HistoryPage,
-      navigationOptions: {
-        gesturesEnabled: true
-      }
+      screen: HistoryStack,
     },
     Settings: {
       screen: SettingsStack,

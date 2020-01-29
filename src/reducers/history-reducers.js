@@ -3,6 +3,8 @@ import {
   SAVED_HISTORY,
   REQUEST_HISTORY,
   RECEIVE_HISTORY,
+  DELETING_HISTORY,
+  DELETED_HISTORY,
 } from '../actions/history-actions';
 
 function histories(
@@ -11,6 +13,7 @@ function histories(
     history: {},
     historyIsFetching: false,
     histories: [],
+    historyIsDeleting: false,
     error: ''
   },
   action
@@ -24,6 +27,7 @@ function histories(
       return Object.assign({}, state, {
         historyIsSaving: false,
         history: action.history,
+        histories: action.histories,
         error: '',
         lastUpdated: action.receivedAt
       });
@@ -34,6 +38,18 @@ function histories(
     case RECEIVE_HISTORY:
       return Object.assign({}, state, {
         historyIsFetching: false,
+        histories: action.histories,
+        error: '',
+        lastUpdated: action.receivedAt
+      });
+    case DELETING_HISTORY:
+      return Object.assign({}, state, {
+        historyIsDeleting: true,
+      });
+    case DELETED_HISTORY:
+      return Object.assign({}, state, {
+        historyIsDeleting: false,
+        historyId: action.historyId,
         histories: action.histories,
         error: '',
         lastUpdated: action.receivedAt
@@ -49,6 +65,8 @@ function historiesReducer(state = {}, action) {
     case SAVED_HISTORY:
     case RECEIVE_HISTORY:
     case REQUEST_HISTORY:
+    case DELETING_HISTORY:
+    case DELETED_HISTORY:
       return Object.assign({}, state, {
         histories: histories(state.histories, action)
       });

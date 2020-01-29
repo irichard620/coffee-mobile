@@ -9,7 +9,8 @@ import ButtonLarge from '../../components/button-large';
 
 export default function HistoryEntry(props) {
   const {
-    history, index, hasRecipe, selected, onEntryClick, onDeleteClick
+    history, index, hasRecipe, selected, onEntryClick, onDeleteClick,
+    onEditClick
   } = props;
 
   const baseButtonPath = '../../assets/buttons/';
@@ -50,7 +51,9 @@ export default function HistoryEntry(props) {
         <View style={styles.outline}>
           <Text style={styles.title}>{title}</Text>
           {!hasRecipe && <Text style={styles.subtitle}>{dateString}</Text>}
-          {history.stars > 0 && <HistoryStars numStars={history.stars} />}
+          {history.stars > 0 && (
+            <HistoryStars numStars={history.stars} historyId={history.historyId} />
+          )}
           {selected && (
             <View>
               {history.beans !== '' && <Text style={styles.header}>COFFEE BEANS</Text>}
@@ -65,8 +68,9 @@ export default function HistoryEntry(props) {
                   buttonHeight={40}
                   textColor="#2D8CD3"
                   backgroundColor="#2D8CD321"
+                  onButtonClick={() => onEditClick(index)}
                 />
-                <TouchableOpacity onPress={() => onDeleteClick(index)}>
+                <TouchableOpacity onPress={() => onDeleteClick(history.historyId)}>
                   <View style={styles.deleteOutline}>
                     <Image style={styles.deleteIcon} source={require(`${baseButtonPath}Journal_DeleteButton.png`)} />
                   </View>

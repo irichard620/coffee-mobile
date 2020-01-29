@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 
 export default function HistoryStars(props) {
-  const { numStars } = props;
+  const { numStars, historyId } = props;
 
   const starValues = [];
   for (let i = 1; i < 6; i += 1) {
@@ -20,14 +20,16 @@ export default function HistoryStars(props) {
 
   return (
     <View style={styles.outline}>
-      {starValues.map((starValue) => {
+      {starValues.map((starValue, index) => {
         if (starValue) {
           return (
-            <Image style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Filled.png`)} />
+            // eslint-disable-next-line react/no-array-index-key
+            <Image key={`${historyId}${index}`} style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Filled.png`)} />
           );
         }
         return (
-          <Image style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Empty.png`)} />
+          // eslint-disable-next-line react/no-array-index-key
+          <Image key={`${historyId}${index}`} style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Empty.png`)} />
         );
       })}
     </View>

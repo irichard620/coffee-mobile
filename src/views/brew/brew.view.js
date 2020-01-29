@@ -5,7 +5,7 @@ import {
   View, StyleSheet, Dimensions, LayoutAnimation,
   Alert, Linking, Vibration
 } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
+import { NavigationActions, SafeAreaView } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import KeepAwake from 'react-native-keep-awake';
 import ButtonLarge from '../../components/button-large';
@@ -63,6 +63,7 @@ class BrewPage extends Component {
     const {
       user, vessels, recipes, histories
     } = this.props;
+    const { step } = this.state;
 
     const nextUser = nextProps.user;
     const nextVessels = nextProps.vessels;
@@ -107,7 +108,9 @@ class BrewPage extends Component {
         });
       }
     } else if (histories && histories.historyIsSaving && !nextHistories.historyIsSaving) {
-      this.onBackScreenClick();
+      if (step !== -1) {
+        this.onBackScreenClick();
+      }
     }
   }
 
@@ -215,7 +218,7 @@ class BrewPage extends Component {
 
   onBackScreenClick = () => {
     const { navigation } = this.props;
-    navigation.goBack();
+    navigation.dispatch(NavigationActions.back());
   };
 
   setupTimer = (newStep, nextStep) => {
@@ -415,7 +418,7 @@ class BrewPage extends Component {
         });
       }
     } else if (detail === constants.BREW_HISTORY_DETAIL) {
-      navigation.navigate('History', { recipe });
+      navigation.navigate('History', { recipe, useArrow: true });
     } else {
       Alert.alert(
         'Coming Soon!',

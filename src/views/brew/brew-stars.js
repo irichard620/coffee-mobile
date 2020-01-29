@@ -25,13 +25,15 @@ export default function BrewStars(props) {
       {starValues.map((starValue, index) => {
         if (starValue) {
           return (
-            <TouchableWithoutFeedback onPress={() => onStarClicked(index + 1)}>
+            // eslint-disable-next-line react/no-array-index-key
+            <TouchableWithoutFeedback key={`star-${index}`} onPress={() => onStarClicked(index + 1)}>
               <Image style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Filled.png`)} />
             </TouchableWithoutFeedback>
           );
         }
         return (
-          <TouchableWithoutFeedback onPress={() => onStarClicked(index + 1)}>
+          // eslint-disable-next-line react/no-array-index-key
+          <TouchableWithoutFeedback key={`star-${index}`} onPress={() => onStarClicked(index + 1)}>
             <Image style={styles.icon} source={require(`${baseBrewPath}Journal_Star_Empty.png`)} />
           </TouchableWithoutFeedback>
         );
