@@ -14,7 +14,8 @@ function histories(
     historyIsFetching: false,
     histories: [],
     historyIsDeleting: false,
-    error: ''
+    error: '',
+    recipeId: '',
   },
   action
 ) {
@@ -39,6 +40,7 @@ function histories(
       return Object.assign({}, state, {
         historyIsFetching: false,
         histories: action.histories,
+        recipeId: action.recipeId,
         error: '',
         lastUpdated: action.receivedAt
       });

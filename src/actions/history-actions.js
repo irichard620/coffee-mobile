@@ -48,10 +48,11 @@ function requestHistory() {
 }
 
 export const RECEIVE_HISTORY = 'RECEIVE_HISTORY';
-function receiveHistory(h) {
+function receiveHistory(h, recipeId) {
   return {
     type: RECEIVE_HISTORY,
     histories: h,
+    recipeId,
     receivedAt: Date.now()
   };
 }
@@ -64,15 +65,13 @@ export function fetchHistories(recipeId) {
         const h = histories ? JSON.parse(histories) : [];
         const historiesToReturn = [];
         for (let i = 0; i < h.length; i += 1) {
-          if (recipeId) {
-            if (recipeId === h[i].recipeId) {
-              historiesToReturn.push(h[i]);
-            }
-          } else {
+          if (recipeId && recipeId === h[i].recipeId) {
+            historiesToReturn.push(h[i]);
+          } else if (!recipeId) {
             historiesToReturn.push(h[i]);
           }
         }
-        dispatch(receiveHistory(historiesToReturn));
+        dispatch(receiveHistory(historiesToReturn, recipeId));
       });
   };
 }

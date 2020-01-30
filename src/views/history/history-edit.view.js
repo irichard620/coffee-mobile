@@ -56,7 +56,7 @@ class HistoryEditPage extends Component {
     // Save brew history
     const { persistHistory } = this.props;
     const objToUse = history;
-    objToUse.numStars = numStars;
+    objToUse.stars = numStars;
     objToUse.beans = beansText;
     objToUse.notes = notesText;
     persistHistory(objToUse);

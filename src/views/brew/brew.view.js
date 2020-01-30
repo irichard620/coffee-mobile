@@ -63,7 +63,7 @@ class BrewPage extends Component {
     const {
       user, vessels, recipes, histories
     } = this.props;
-    const { step } = this.state;
+    const { step, recipe } = this.state;
 
     const nextUser = nextProps.user;
     const nextVessels = nextProps.vessels;
@@ -109,6 +109,9 @@ class BrewPage extends Component {
       }
     } else if (histories && histories.historyIsSaving && !nextHistories.historyIsSaving) {
       if (step !== -1) {
+        // Analytics
+        brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
+          recipe.brewingVessel, recipe.sponsorId);
         this.onBackScreenClick();
       }
     }
@@ -138,7 +141,6 @@ class BrewPage extends Component {
   };
 
   onSecondButtonClick = () => {
-    const { navigation } = this.props;
     const { step, recipe } = this.state;
 
     // Clear interval
@@ -148,16 +150,7 @@ class BrewPage extends Component {
     if (step !== recipe.steps.length) {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
-        // If cold brew, no serve step at end - skip
-        if (recipe.brewingVessel === constants.VESSEL_MIZUDASHI) {
-          // Analytics
-          brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
-            recipe.brewingVessel, recipe.sponsorId);
-
-          navigation.goBack();
-        } else {
-          this.clearTimer(step + 1);
-        }
+        this.clearTimer(step + 1);
       } else {
         const nextStep = recipe.steps[step + 1];
         if (nextStep.title === constants.STEP_WAIT) {
@@ -166,12 +159,6 @@ class BrewPage extends Component {
           this.clearTimer(step + 1);
         }
       }
-    } else {
-      // Analytics
-      brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
-        recipe.brewingVessel, recipe.sponsorId);
-
-      navigation.goBack();
     }
   };
 

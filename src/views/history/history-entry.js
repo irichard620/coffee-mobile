@@ -45,11 +45,20 @@ export default function HistoryEntry(props) {
   const { width } = Dimensions.get('window');
   const mainButtonWidth = width - 32 - 56 - 8;
 
+  // Arrow
+  const rotStyle = {};
+  if (selected) {
+    rotStyle.transform = [{ rotate: '90deg' }];
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => onEntryClick(index)}>
       <View>
         <View style={styles.outline}>
-          <Text style={styles.title}>{title}</Text>
+          <View style={styles.titleLine}>
+            <Text style={styles.title}>{title}</Text>
+            <Image style={[styles.arrowIcon, rotStyle]} source={require(`${baseButtonPath}details/Brew_Arrow.png`)} />
+          </View>
           {!hasRecipe && <Text style={styles.subtitle}>{dateString}</Text>}
           {history.stars > 0 && (
             <HistoryStars numStars={history.stars} historyId={history.historyId} />
@@ -93,12 +102,22 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
   },
+  titleLine: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: {
     fontWeight: '600',
     textAlign: 'left',
     color: '#000000',
     fontSize: 18,
     lineHeight: 23,
+  },
+  arrowIcon: {
+    height: 12,
+    resizeMode: 'contain'
   },
   subtitle: {
     textAlign: 'left',
@@ -132,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   deleteIcon: {
-    height: 10.25,
+    height: 13,
     resizeMode: 'contain',
   },
   separator: {

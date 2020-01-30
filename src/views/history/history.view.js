@@ -17,9 +17,9 @@ class HistoryPage extends Component {
     super(props);
 
     this.state = {
+      recipeId: '',
       histories: [],
       selected: [],
-      historyIsFetched: false,
       historyIsDeleting: false,
       historyIsSaving: false,
     };
@@ -29,6 +29,7 @@ class HistoryPage extends Component {
     const { navigation, getHistories } = this.props;
     const recipe = navigation.getParam('recipe', {});
     const { recipeId } = recipe;
+    this.setState({ recipeId });
     getHistories(recipeId);
   }
 
@@ -43,7 +44,12 @@ class HistoryPage extends Component {
       return {
         historyIsSaving: true
       };
-    } if (nextHistories && !prevState.historyIsFetched && !nextHistories.historyIsFetching) {
+    } if (
+      nextHistories
+      && prevState.histories.length === 0
+      && nextHistories.histories.length !== 0
+      && nextHistories.recipeId === prevState.recipeId
+    ) {
       const newSelected = [];
       for (let i = 0; i < nextHistories.histories.length; i += 1) {
         newSelected.push(false);

@@ -14,7 +14,7 @@ export default function TopHeader(props) {
 
   const { width } = Dimensions.get('window');
   const titleWidth = {
-    width: width - 32 - 40
+    width: width - 32 - 40 - 16
   };
 
   return (
