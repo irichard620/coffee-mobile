@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     lineHeight: 23,
   },
   arrowIcon: {
-    height: 12,
+    height: 14,
     resizeMode: 'contain'
   },
   subtitle: {

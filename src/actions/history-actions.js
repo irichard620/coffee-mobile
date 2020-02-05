@@ -1,5 +1,17 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
+function getHistories(histories, recipeId) {
+  const historiesToReturn = [];
+  for (let i = 0; i < histories.length; i += 1) {
+    if (recipeId && recipeId === histories[i].recipeId) {
+      historiesToReturn.push(histories[i]);
+    } else if (!recipeId || recipeId === '') {
+      historiesToReturn.push(histories[i]);
+    }
+  }
+  return historiesToReturn;
+}
+
 export const SAVING_HISTORY = 'SAVING_HISTORY';
 function savingHistory() {
   return {
@@ -17,7 +29,16 @@ function savedHistory(history, histories) {
   };
 }
 
-export function saveHistory(historyToSave) {
+export const ERROR_SAVING_HISTORY = 'ERROR_SAVING_HISTORY';
+function errorSavingHistory(err) {
+  return {
+    type: ERROR_SAVING_HISTORY,
+    error: err,
+    receivedAt: Date.now()
+  };
+}
+
+export function saveHistory(historyToSave, recipeId = '', premium = false, reset = false) {
   return function (dispatch) {
     dispatch(savingHistory());
     return AsyncStorage.getItem('histories')
@@ -31,11 +52,27 @@ export function saveHistory(historyToSave) {
             break;
           }
         }
+        let shouldSave = true;
         if (!found) {
-          h.unshift(historyToSave);
+          if (!premium && h.length >= 5) {
+            shouldSave = false;
+            dispatch(
+              errorSavingHistory(
+                'Unlimited Brew Journal entry is a Drippy Pro feature. Upgrade to Drippy Pro from the Settings menu.'
+              )
+            );
+          } else {
+            h.unshift(historyToSave);
+          }
         }
-        AsyncStorage.setItem('histories', JSON.stringify(h));
-        dispatch(savedHistory(historyToSave, h));
+        if (shouldSave) {
+          AsyncStorage.setItem('histories', JSON.stringify(h));
+          let historiesToReturn = [];
+          if (!reset) {
+            historiesToReturn = getHistories(h, recipeId);
+          }
+          dispatch(savedHistory(historyToSave, historiesToReturn));
+        }
       });
   };
 }
@@ -63,14 +100,7 @@ export function fetchHistories(recipeId) {
     return AsyncStorage.getItem('histories')
       .then((histories) => {
         const h = histories ? JSON.parse(histories) : [];
-        const historiesToReturn = [];
-        for (let i = 0; i < h.length; i += 1) {
-          if (recipeId && recipeId === h[i].recipeId) {
-            historiesToReturn.push(h[i]);
-          } else if (!recipeId) {
-            historiesToReturn.push(h[i]);
-          }
-        }
+        const historiesToReturn = getHistories(h, recipeId);
         dispatch(receiveHistory(historiesToReturn, recipeId));
       });
   };
@@ -93,7 +123,7 @@ function deletedHistory(id, histories) {
   };
 }
 
-export function deleteHistory(id) {
+export function deleteHistory(id, recipeId) {
   return function (dispatch) {
     dispatch(deletingHistory());
     return AsyncStorage.getItem('histories')
@@ -107,7 +137,8 @@ export function deleteHistory(id) {
           }
         }
         AsyncStorage.setItem('histories', JSON.stringify(h));
-        dispatch(deletedHistory(id, h));
+        const historiesToReturn = getHistories(h, recipeId);
+        dispatch(deletedHistory(id, historiesToReturn));
       });
   };
 }

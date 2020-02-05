@@ -1,6 +1,7 @@
 import {
   SAVING_HISTORY,
   SAVED_HISTORY,
+  ERROR_SAVING_HISTORY,
   REQUEST_HISTORY,
   RECEIVE_HISTORY,
   DELETING_HISTORY,
@@ -30,6 +31,12 @@ function histories(
         history: action.history,
         histories: action.histories,
         error: '',
+        lastUpdated: action.receivedAt
+      });
+    case ERROR_SAVING_HISTORY:
+      return Object.assign({}, state, {
+        historyIsSaving: false,
+        error: action.error,
         lastUpdated: action.receivedAt
       });
     case REQUEST_HISTORY:
@@ -65,6 +72,7 @@ function historiesReducer(state = {}, action) {
   switch (action.type) {
     case SAVING_HISTORY:
     case SAVED_HISTORY:
+    case ERROR_SAVING_HISTORY:
     case RECEIVE_HISTORY:
     case REQUEST_HISTORY:
     case DELETING_HISTORY:

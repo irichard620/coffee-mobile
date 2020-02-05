@@ -134,12 +134,21 @@ const AppNavigator = createStackNavigator(
     },
     Brew: {
       screen: BrewStack,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
     History: {
       screen: HistoryStack,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     },
     Settings: {
       screen: SettingsStack,
+      navigationOptions: {
+        gesturesEnabled: false
+      }
     }
   },
   {

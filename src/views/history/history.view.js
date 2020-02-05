@@ -101,6 +101,7 @@ class HistoryPage extends Component {
 
   onDeleteClick = (historyId) => {
     const { deleteHistoryById } = this.props;
+    const { recipeId } = this.state;
     Alert.alert(
       'Are you sure?',
       'Do you want to remove this brew history entry? There will be now way to recover it.',
@@ -111,7 +112,7 @@ class HistoryPage extends Component {
         {
           text: 'Delete',
           onPress: () => {
-            deleteHistoryById(historyId);
+            deleteHistoryById(historyId, recipeId);
           }
         },
       ],
@@ -121,9 +122,10 @@ class HistoryPage extends Component {
   onEditClick = (idx) => {
     // Open edit view with this history item
     const { navigation } = this.props;
-    const { histories } = this.state;
+    const { histories, recipeId } = this.state;
     navigation.navigate('HistoryEdit', {
-      history: histories[idx]
+      history: histories[idx],
+      recipeId,
     });
   };
 
@@ -177,6 +179,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     backgroundColor: '#FFFFFF',
+    paddingBottom: 45,
   },
 });
 

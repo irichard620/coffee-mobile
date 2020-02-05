@@ -63,7 +63,7 @@ class BrewPage extends Component {
     const {
       user, vessels, recipes, histories
     } = this.props;
-    const { step, recipe } = this.state;
+    const { step } = this.state;
 
     const nextUser = nextProps.user;
     const nextVessels = nextProps.vessels;
@@ -108,10 +108,20 @@ class BrewPage extends Component {
         });
       }
     } else if (histories && histories.historyIsSaving && !nextHistories.historyIsSaving) {
-      if (step !== -1) {
-        // Analytics
-        brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
-          recipe.brewingVessel, recipe.sponsorId);
+      if (nextHistories.error !== '') {
+        Alert.alert(
+          'Brew Journal Full',
+          nextHistories.error,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                this.onBackScreenClick();
+              }
+            },
+          ],
+        );
+      } else if (step !== -1) {
         this.onBackScreenClick();
       }
     }
@@ -151,6 +161,9 @@ class BrewPage extends Component {
       // Check if next one is a timer
       if (step + 1 === recipe.steps.length) {
         this.clearTimer(step + 1);
+        // Analytics
+        brewFinishAnalytics(recipe.recipeId, recipe.recipeName,
+          recipe.brewingVessel, recipe.sponsorId);
       } else {
         const nextStep = recipe.steps[step + 1];
         if (nextStep.title === constants.STEP_WAIT) {
@@ -164,7 +177,7 @@ class BrewPage extends Component {
 
   onFirstButtonClick = () => {
     const {
-      step, recipe, numStars, beansText, notesText
+      step, recipe, numStars, beansText, notesText, premium
     } = this.state;
     const { steps } = recipe;
     if (step === -1) {
@@ -199,7 +212,7 @@ class BrewPage extends Component {
       objToUse.beans = beansText;
       objToUse.notes = notesText;
       const newHistory = History(objToUse);
-      persistHistory(newHistory);
+      persistHistory(newHistory, '', premium, true);
     }
   };
 

@@ -19,6 +19,7 @@ class HistoryEditPage extends Component {
       beansText: '',
       notesText: '',
       recipeName: '',
+      recipeId: '',
       history: {}
     };
   }
@@ -26,9 +27,11 @@ class HistoryEditPage extends Component {
   componentDidMount() {
     const { navigation } = this.props;
     const history = navigation.getParam('history', {});
+    const recipeId = navigation.getParam('recipeId', {});
     // Get attributes to pre-fill
     this.setState({
       history,
+      recipeId,
       recipeName: history.recipeName,
       numStars: history.stars,
       beansText: history.beans,
@@ -50,7 +53,7 @@ class HistoryEditPage extends Component {
 
   onFirstButtonClick = () => {
     const {
-      history, numStars, beansText, notesText
+      history, numStars, beansText, notesText, recipeId
     } = this.state;
 
     // Save brew history
@@ -59,7 +62,7 @@ class HistoryEditPage extends Component {
     objToUse.stars = numStars;
     objToUse.beans = beansText;
     objToUse.notes = notesText;
-    persistHistory(objToUse);
+    persistHistory(objToUse, recipeId, false, false);
   };
 
   onBackScreenClick = () => {

@@ -11,17 +11,17 @@ class BrewContentHome extends Component {
     const baseBrewPath = '../../assets/brew/';
 
     if (vessel === constants.VESSEL_AEROPRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Aero.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_Aeropress.png`)} />);
     } if (vessel === constants.VESSEL_CHEMEX) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Chemex.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_Chemex.png`)} />);
     } if (vessel === constants.VESSEL_FRENCH_PRESS) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_FP.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_FrenchPress.png`)} />);
     } if (vessel === constants.VESSEL_MIZUDASHI) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_Mizudashi.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_Mizudashi.png`)} />);
     } if (vessel === constants.VESSEL_KALITA_WAVE) {
-      return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_KalitaWave.png`)} />);
+      return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_KalitaWave.png`)} />);
     }
-    return (<Image style={styles.icon} source={require(`${baseBrewPath}Vessel_V60.png`)} />);
+    return (<Image style={styles.icon} source={require(`${baseBrewPath}Badge_V60.png`)} />);
   };
 
   renderBrewDetail = (detail, idx) => {
@@ -46,7 +46,7 @@ class BrewContentHome extends Component {
 
     const { height } = Dimensions.get('window');
     const iconHeight = {
-      height: height * 0.27,
+      height: height * 0.21,
     };
 
     return (
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   iconView: {
-    marginBottom: 16,
+    marginBottom: 24,
     alignSelf: 'center'
   },
   icon: {
@@ -89,13 +89,14 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#F1F3F6',
     marginBottom: 16,
-    marginTop: 16,
   },
   descriptionText: {
-    fontSize: 15,
-    lineHeight: 18,
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 21,
     color: '#000000',
     textAlign: 'left',
+    marginBottom: 16
   }
 });
 
